@@ -1,0 +1,15 @@
+{
+  "name": "luma-server",
+  "version": "1.0.0",
+  "description": "Node.js + Express API Backend for Luma, the Gamified Project Management Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --watch server.js ",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Angel Moreno",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
