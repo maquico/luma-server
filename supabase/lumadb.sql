@@ -1,4 +1,4 @@
-CREATE TABLE "Proyecto" (
+CREATE TABLE "Proyectos" (
   "Proyecto_ID" INT PRIMARY KEY,
   "nombre" VARCHAR(100),
   "descripcion" TEXT,
@@ -13,8 +13,8 @@ CREATE TABLE "Iconos" (
   "fechaModificacion" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE "Recompensas_Personalizadas" (
-  "Personalizada_ID" INT PRIMARY KEY,
+CREATE TABLE "Recompensas" (
+  "Recompensa_ID" INT PRIMARY KEY,
   "Proyecto_ID" INT,
   "Icono_ID" INT,
   "nombre" VARCHAR(100),
@@ -24,15 +24,15 @@ CREATE TABLE "Recompensas_Personalizadas" (
   "limite" INT,
   "fechaRegistro" TIMESTAMP DEFAULT NOW(),
   "fechaModificacion" TIMESTAMP DEFAULT NOW(),
-  CONSTRAINT "FK_Recompensas_Personalizadas.Proyecto_ID"
+  CONSTRAINT "FK_Recompensas.Proyecto_ID"
     FOREIGN KEY ("Proyecto_ID")
-      REFERENCES "Proyecto"("Proyecto_ID"),
-  CONSTRAINT "FK_Recompensas_Personalizadas.Icono_ID"
+      REFERENCES "Proyectos"("Proyecto_ID"),
+  CONSTRAINT "FK_Recompensas.Icono_ID"
     FOREIGN KEY ("Icono_ID")
       REFERENCES "Iconos"("Icono_ID")
 );
 
-CREATE TABLE "Recompensas_Temas" (
+CREATE TABLE "Temas" (
   "Tema_ID" INT PRIMARY KEY,
   "nombre" VARCHAR(100),
   "precio" NUMERIC(10, 2),
@@ -82,7 +82,7 @@ CREATE TABLE "Idiomas" (
   "fechaModificacion" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE "Usuario" (
+CREATE TABLE "Usuarios" (
   "Usuario_ID" INT PRIMARY KEY,
   "nombre" VARCHAR(100),
   "apellido" VARCHAR(100),
@@ -99,7 +99,7 @@ CREATE TABLE "Usuario" (
   "esAdmin" BOOLEAN,
   "Idioma_ID" INT,
   "contraseña" VARCHAR(255),
-  CONSTRAINT "FK_Usuario.Idioma_ID"
+  CONSTRAINT "FK_Usuarios.Idioma_ID"
     FOREIGN KEY ("Idioma_ID")
       REFERENCES "Idiomas"("Idioma_ID")
 );
@@ -114,10 +114,10 @@ CREATE TABLE "Insignia_Conseguida" (
       REFERENCES "Insignias"("Insignia_ID"),
   CONSTRAINT "FK_Insignia_Conseguida.Usuario_ID"
     FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuario"("Usuario_ID")
+      REFERENCES "Usuarios"("Usuario_ID")
 );
 
-CREATE TABLE "Recompensas_Fuente" (
+CREATE TABLE "Fuentes" (
   "Fuente_ID" INT PRIMARY KEY,
   "nombre" VARCHAR(100),
   "precio" NUMERIC(10, 2),
@@ -125,49 +125,49 @@ CREATE TABLE "Recompensas_Fuente" (
   "fechaModificacion" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE "Historial_Recompensas_Temas" (
+CREATE TABLE "Historial_Temas" (
   "Usuario_ID" INT,
-  "Recompensa_Tema_ID" INT,
+  "Tema_ID" INT,
   "cantidadComprada" INT,
   "precioCompra" NUMERIC(10, 2),
   "fechaRegistro" TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY ("Usuario_ID", "Recompensa_Tema_ID"),
   CONSTRAINT "FK_Historial_Recompensas_Temas.Usuario_ID"
     FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuario"("Usuario_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Temas.Recompensa_Tema_ID"
-    FOREIGN KEY ("Recompensa_Tema_ID")
-      REFERENCES "Recompensas_Temas"("Tema_ID")
+      REFERENCES "Usuarios"("Usuario_ID"),
+  CONSTRAINT "FK_Historial_Recompensas_Temas.Tema_ID"
+    FOREIGN KEY ("Tema_ID")
+      REFERENCES "Temas"("Tema_ID")
 );
 
-CREATE TABLE "Historial_Recompensas_Fuentes" (
+CREATE TABLE "Historial_Fuentes" (
   "Usuario_ID" INT,
-  "Recompensa_Fuente_ID" INT,
+  "Fuente_ID" INT,
   "cantidadComprada" INT,
   "precioCompra" NUMERIC(10, 2),
   "fechaRegistro" TIMESTAMP DEFAULT NOW(),
   PRIMARY KEY ("Usuario_ID", "Recompensa_Fuente_ID"),
   CONSTRAINT "FK_Historial_Recompensas_Fuentes.Usuario_ID"
     FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuario"("Usuario_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Fuentes.Recompensa_Fuente_ID"
-    FOREIGN KEY ("Recompensa_Fuente_ID")
-      REFERENCES "Recompensas_Fuente"("Fuente_ID")
+      REFERENCES "Usuarios"("Usuario_ID"),
+  CONSTRAINT "FK_Historial_Recompensas_Fuentes.Fuente_ID"
+    FOREIGN KEY ("Fuente_ID")
+      REFERENCES "Fuentes"("Fuente_ID")
 );
 
-CREATE TABLE "Historial_Recompensas_Personalizadas" (
+CREATE TABLE "Historial_Recompensas" (
   "Usuario_ID" INT,
-  "Recompensa_Personalizada_ID" INT,
+  "Recompensa_ID" INT,
   "cantidadComprada" INT,
   "precioCompra" NUMERIC(10, 2),
   "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY ("Usuario_ID", "Recompensa_Personalizada_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Personalizadas.Usuario_ID"
+  PRIMARY KEY ("Usuario_ID", "Recompensa_ID"),
+  CONSTRAINT "FK_Historial_Recompensas.Usuario_ID"
     FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuario"("Usuario_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Personalizadas.Recompensa_Personalizada_ID"
-    FOREIGN KEY ("Recompensa_Personalizada_ID")
-      REFERENCES "Recompensas_Personalizadas"("Personalizada_ID")
+      REFERENCES "Usuarios"("Usuario_ID"),
+  CONSTRAINT "FK_Historial_Recompensas.Recompensa_ID"
+    FOREIGN KEY ("Recompensa_ID")
+      REFERENCES "Recompensas_Personalizadas"("Recompensa_ID")
 );
 
 CREATE TABLE "Roles" (
@@ -191,10 +191,10 @@ CREATE TABLE "Miembro_Proyecto" (
       REFERENCES "Roles"("Rol_ID"),
   CONSTRAINT "FK_Miembro_Proyecto.Proyecto_ID"
     FOREIGN KEY ("Proyecto_ID")
-      REFERENCES "Proyecto"("Proyecto_ID"),
+      REFERENCES "Proyectos"("Proyecto_ID"),
   CONSTRAINT "FK_Miembro_Proyecto.Usuario_ID"
     FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuario"("Usuario_ID"),
+      REFERENCES "Usuarios"("Usuario_ID"),
   CONSTRAINT "UNIQUE_Usuario_Proyecto" UNIQUE ("Usuario_ID", "Proyecto_ID")
 );
 
@@ -223,7 +223,7 @@ CREATE TABLE "Tareas" (
   "fechaModificacion" TIMESTAMP DEFAULT NOW(),
   CONSTRAINT "FK_Tareas.Proyecto_ID"
     FOREIGN KEY ("Proyecto_ID")
-      REFERENCES "Proyecto"("Proyecto_ID"),
+      REFERENCES "Proyectos"("Proyecto_ID"),
   CONSTRAINT "FK_Tareas.Estado_tarea_ID"
     FOREIGN KEY ("Estado_tarea_ID")
       REFERENCES "Estados_Tarea"("Estado_tarea_ID"),
