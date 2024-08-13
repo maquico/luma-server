@@ -146,7 +146,7 @@ CREATE TABLE "Historial_Fuentes" (
   "cantidadComprada" INT,
   "precioCompra" NUMERIC(10, 2),
   "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY ("Usuario_ID", "Recompensa_Fuente_ID"),
+  PRIMARY KEY ("Usuario_ID", "Fuente_ID"),
   CONSTRAINT "FK_Historial_Recompensas_Fuentes.Usuario_ID"
     FOREIGN KEY ("Usuario_ID")
       REFERENCES "Usuarios"("Usuario_ID"),
