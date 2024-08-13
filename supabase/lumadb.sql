@@ -117,23 +117,6 @@ CREATE TABLE "Insignia_Conseguida" (
       REFERENCES "Usuarios"("Usuario_ID")
 );
 
-
-
-CREATE TABLE "Historial_Temas" (
-  "Usuario_ID" INT,
-  "Tema_ID" INT,
-  "cantidadComprada" INT,
-  "precioCompra" NUMERIC(10, 2),
-  "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY ("Usuario_ID", "Tema_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Temas.Usuario_ID"
-    FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuarios"("Usuario_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Temas.Tema_ID"
-    FOREIGN KEY ("Tema_ID")
-      REFERENCES "Temas"("Tema_ID")
-);
-
 CREATE TABLE "Fuentes" (
   "Fuente_ID" INT PRIMARY KEY,
   "nombre" VARCHAR(100) NOT NULL,
