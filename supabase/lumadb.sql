@@ -131,7 +131,7 @@ CREATE TABLE "Historial_Temas" (
   "cantidadComprada" INT,
   "precioCompra" NUMERIC(10, 2),
   "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY ("Usuario_ID", "Recompensa_Tema_ID"),
+  PRIMARY KEY ("Usuario_ID", "Tema_ID"),
   CONSTRAINT "FK_Historial_Recompensas_Temas.Usuario_ID"
     FOREIGN KEY ("Usuario_ID")
       REFERENCES "Usuarios"("Usuario_ID"),
