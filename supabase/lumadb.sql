@@ -167,7 +167,7 @@ CREATE TABLE "Historial_Recompensas" (
       REFERENCES "Usuarios"("Usuario_ID"),
   CONSTRAINT "FK_Historial_Recompensas.Recompensa_ID"
     FOREIGN KEY ("Recompensa_ID")
-      REFERENCES "Recompensas_Personalizadas"("Recompensa_ID")
+      REFERENCES "Recompensas"("Recompensa_ID")
 );
 
 CREATE TABLE "Roles" (
