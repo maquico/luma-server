@@ -117,13 +117,7 @@ CREATE TABLE "Insignia_Conseguida" (
       REFERENCES "Usuarios"("Usuario_ID")
 );
 
-CREATE TABLE "Fuentes" (
-  "Fuente_ID" INT PRIMARY KEY,
-  "nombre" VARCHAR(100) NOT NULL,
-  "precio" NUMERIC(10, 2) NOT NULL,
-  "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  "fechaModificacion" TIMESTAMP DEFAULT NOW()
-);
+
 
 CREATE TABLE "Historial_Temas" (
   "Usuario_ID" INT,
@@ -138,64 +132,6 @@ CREATE TABLE "Historial_Temas" (
   CONSTRAINT "FK_Historial_Recompensas_Temas.Tema_ID"
     FOREIGN KEY ("Tema_ID")
       REFERENCES "Temas"("Tema_ID")
-);
-
-CREATE TABLE "Historial_Fuentes" (
-  "Usuario_ID" INT,
-  "Fuente_ID" INT,
-  "cantidadComprada" INT,
-  "precioCompra" NUMERIC(10, 2),
-  "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY ("Usuario_ID", "Fuente_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Fuentes.Usuario_ID"
-    FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuarios"("Usuario_ID"),
-  CONSTRAINT "FK_Historial_Recompensas_Fuentes.Fuente_ID"
-    FOREIGN KEY ("Fuente_ID")
-      REFERENCES "Fuentes"("Fuente_ID")
-);
-
-CREATE TABLE "Historial_Recompensas" (
-  "Usuario_ID" INT,
-  "Recompensa_ID" INT,
-  "cantidadComprada" INT,
-  "precioCompra" NUMERIC(10, 2),
-  "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  PRIMARY KEY ("Usuario_ID", "Recompensa_ID"),
-  CONSTRAINT "FK_Historial_Recompensas.Usuario_ID"
-    FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuarios"("Usuario_ID"),
-  CONSTRAINT "FK_Historial_Recompensas.Recompensa_ID"
-    FOREIGN KEY ("Recompensa_ID")
-      REFERENCES "Recompensas"("Recompensa_ID")
-);
-
-CREATE TABLE "Roles" (
-  "Rol_ID" INT PRIMARY KEY,
-  "nombre" VARCHAR(100),
-  "descripcion" TEXT,
-  "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  "fechaModificacion" TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE "Miembro_Proyecto" (
-  "Miembro_ID" INT PRIMARY KEY,
-  "Usuario_ID" INT,
-  "Proyecto_ID" INT,
-  "Rol_ID" INT,
-  "gemas" INT,
-  "fechaRegistro" TIMESTAMP DEFAULT NOW(),
-  "fechaModificacion" TIMESTAMP DEFAULT NOW(),
-  CONSTRAINT "FK_Miembro_Proyecto.Rol_ID"
-    FOREIGN KEY ("Rol_ID")
-      REFERENCES "Roles"("Rol_ID"),
-  CONSTRAINT "FK_Miembro_Proyecto.Proyecto_ID"
-    FOREIGN KEY ("Proyecto_ID")
-      REFERENCES "Proyectos"("Proyecto_ID"),
-  CONSTRAINT "FK_Miembro_Proyecto.Usuario_ID"
-    FOREIGN KEY ("Usuario_ID")
-      REFERENCES "Usuarios"("Usuario_ID"),
-  CONSTRAINT "UNIQUE_Usuario_Proyecto" UNIQUE ("Usuario_ID", "Proyecto_ID")
 );
 
 CREATE TABLE "Fuentes" (
