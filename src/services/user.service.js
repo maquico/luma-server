@@ -15,5 +15,5 @@ async function create(email, password, first_name, last_name) {
 }
 
 module.exports = {
-    signUp: create,
+    create,
 };
