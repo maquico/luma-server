@@ -4,12 +4,15 @@
   "description": "Node.js + Express API Backend for Luma, the Gamified Project Management Platform",
   "main": "server.js",
   "scripts": {
-    "start": "node --watch server.js ",
+    "start": "node --watch server.js --env-file=.env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Angel Moreno",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "@supabase/supabase-js": "^2.45.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "supabase": "^1.190.0"
   }
 }
