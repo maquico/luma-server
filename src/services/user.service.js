@@ -1,6 +1,6 @@
 const supabase = require("../configs/supabase");
 
-async function signUp(email, password, first_name, last_name) {
+async function create(email, password, first_name, last_name) {
     const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
@@ -15,9 +15,5 @@ async function signUp(email, password, first_name, last_name) {
 }
 
 module.exports = {
-    signUp,
+    create,
 };
-
-signUp("angelgmorenor@gmail.com", "Test@123", "Angel", "Moreno").then((response) => {
-    console.log(response);
-  });

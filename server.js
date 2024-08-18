@@ -1,15 +1,26 @@
 const express = require('express');
 const userRouter = require('./src/routes/user.router');
+const swaggerUI = require('swagger-ui-express');
+const swaggerFile = require('./src/configs/swagger-output.json');
 
 const app = express();
 const port = 3000;
 
+// Express middlewares
+app.use(express.json());
+
+// Base route
 app.get('/', (req, res) => {
   res.send('Luma API running...');
 })
 
-app.use('/user', userRouter);
+// Swagger documentation
+app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
 
+// API routes
+app.use('/api/user', userRouter);
+
+// Start server
 app.listen(port, () => {
   console.log(`Luma API listening on port ${port}`);
 })
