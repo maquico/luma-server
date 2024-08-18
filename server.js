@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 
 app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
 
-app.use('/user', userRouter);
+app.use('api/user', userRouter);
 
 app.listen(port, () => {
   console.log(`Luma API listening on port ${port}`);
