@@ -17,7 +17,3 @@ async function signUp(email, password, first_name, last_name) {
 module.exports = {
     signUp,
 };
-
-signUp("angelgmorenor@gmail.com", "Test@123", "Angel", "Moreno").then((response) => {
-    console.log(response);
-  });
