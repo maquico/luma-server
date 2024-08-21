@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');  
 const userRouter = require('./src/routes/user.router');
 const sessionRouter = require('./src/routes/session.router');
 const swaggerUI = require('swagger-ui-express');
@@ -8,6 +9,7 @@ const app = express();
 const port = 3000;
 
 // Express middlewares
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
