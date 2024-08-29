@@ -1,4 +1,4 @@
-const supabase = require("../configs/supabase");
+import supabase from "../configs/supabase.js";
 
 async function login(email, password) {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -8,6 +8,6 @@ async function login(email, password) {
     return { data, error };
 }
 
-module.exports = {
+export default {
     login,
 };

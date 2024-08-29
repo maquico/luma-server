@@ -2,6 +2,7 @@
   "name": "luma-server",
   "version": "1.0.0",
   "description": "Node.js + Express API Backend for Luma, the Gamified Project Management Platform",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node --watch server.js --env-file=.env",

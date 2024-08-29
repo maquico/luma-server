@@ -1,4 +1,4 @@
-const supabase = require("../configs/supabase");
+import supabase from "../configs/supabase.js";
 
 async function create(email, password, first_name, last_name) {
     const { data, error } = await supabase.auth.signUp({
@@ -14,6 +14,6 @@ async function create(email, password, first_name, last_name) {
   return { data, error };
 }
 
-module.exports = {
+export default {
     create,
 };

@@ -1,4 +1,4 @@
-const user = require('../services/user.service');
+import user from '../services/user.service.js';
 
 // Controller using sign up service with try catch for error handling
 const create = async (req, res) => {
@@ -14,6 +14,6 @@ const create = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   create,
 };

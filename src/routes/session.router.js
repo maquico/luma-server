@@ -1,7 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const sessionController = require('../controllers/session.controller');
+import { Router } from 'express';
+import sessionRouter from '../controllers/session.controller.js';
 
-router.post('/', sessionController.login);
+const router = Router();
+router.post('/', sessionRouter.login);
 
-module.exports = router;
+export default router;
