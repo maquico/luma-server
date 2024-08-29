@@ -1,17 +1,17 @@
-const express = require('express');
-const cors = require('cors');  
-const userRouter = require('./src/routes/user.router');
-const sessionRouter = require('./src/routes/session.router');
-const swaggerUI = require('swagger-ui-express');
-const swaggerFile = require('./src/configs/swagger-output.json');
+import express, { urlencoded, json } from 'express';
+import cors from 'cors';  
+import userRouter from './src/routes/user.router.js';
+import sessionRouter from './src/routes/session.router.js';
+import { serve, setup } from 'swagger-ui-express';
+import swaggerFile from './src/configs/swagger-output.json' assert { type: "json" };
 
 const app = express();
 const port = 3000;
 
 // Express middlewares
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(urlencoded({ extended: true }));
+app.use(json());
 
 // Base route
 app.get('/', (req, res) => {
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 })
 
 // Swagger documentation
-app.use('/doc', swaggerUI.serve, swaggerUI.setup(swaggerFile));
+app.use('/doc', serve, setup(swaggerFile));
 
 // API routes
 app.use('/api/user', userRouter);

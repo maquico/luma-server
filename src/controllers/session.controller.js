@@ -1,4 +1,4 @@
-const session = require('../services/session.service');
+import session from '../services/session.service.js';
 
 // Controller using login service with try catch for error handling
 const login = async (req, res) => {
@@ -14,6 +14,6 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     login,
 };

@@ -1,4 +1,5 @@
 const swaggerAutogen = require('swagger-autogen')();
+
 const doc = {
   info: {
     title: 'Luma - Server',
