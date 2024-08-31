@@ -9,3 +9,16 @@ async function create(projectId, userId) {
     .select()
   return { data, error };
 }
+
+async function getByEmail(email, projectId) {
+  const { data, error } = await supabase
+      .from('Miembro_Proyecto')
+      .select()
+      .eq('correo', email)
+      .eq('Proyecto_ID', projectId)
+  return { data, error };
+}
+
+export default {
+    create,
+};
