@@ -21,4 +21,5 @@ async function getByEmail(email, projectId) {
 
 export default {
     create,
+    getByEmail,
 };

@@ -18,11 +18,11 @@ const create = async (req, res) => {
 const validate = async (req, res) => {
     try {
         const { token } = req.params;
-        const { data, error } = await invitation.validate(token);
-        if (error) {
-            return res.status(400).send(error.message);
+        const result = await invitation.validate(token);
+        if (result.error !== null) {
+            return res.status(400).send(result.error);
         }
-        return res.status(200).send(data);
+        return res.status(200).send(result);
     } catch (error) {
         return res.status(500).send(error.message);
     }

@@ -4,7 +4,7 @@ import projectMemberService from "./projectMember.service.js";
 
 const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
 
-async function create(projectId, email) {
+async function create(email, projectId) {
   const token = generateToken();
   const { data, error } = await supabase
     .from('Invitaciones')
@@ -34,7 +34,7 @@ async function getByToken(token) {
 async function validate(token) {
     // validar existencia de invitacion por token
     let continueValidation = true;
-    let errorMessage = '';
+    let errorMessage = null;
     const { data, error } = await getByToken(token);
     
     if (error) {
@@ -64,11 +64,11 @@ async function validate(token) {
     if(continueValidation === true){
         const invitation = data[0];
         const email = invitation.correo;
-        const { data, error } = await supabase
+        const { dataUsuario, errorUsuario } = await supabase
             .from('Usuarios')
             .select()
             .eq('correo', email)
-        if(data.length === 0){
+        if(dataUsuario === null){
             errorMessage = 'User not found';
             continueValidation = false;
         }
@@ -78,16 +78,16 @@ async function validate(token) {
         const invitation = data[0];
         const email = invitation.correo;
         const projectId = invitation.Proyecto_ID;
-        const { data, error } = await projectMemberService.getByEmail(email, projectId);
-        if(data.length > 0){
+        const { dataMiembro, errorMiembro } = await projectMemberService.getByEmail(email, projectId);
+        if(dataMiembro){
             errorMessage = 'User already in project';
             continueValidation = false;
         }
     }
 
     return {
-      'message': errorMessage,
-      'result': continueValidation
+      'error': errorMessage,
+      'content': continueValidation
     }
 }
 
