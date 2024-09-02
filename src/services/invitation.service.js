@@ -13,8 +13,14 @@ async function create(projectId, email) {
     ])
     .select()
 
-  const invitationLink = `${DOMAIN}/invite/${token}`;
-  return invitationLink;
+    if (error) {
+        console.log(error);
+        return { error };
+    }
+    else {
+        const invitationLink = `${DOMAIN}/invite/${token}`;
+        return invitationLink;
+    }
 }
 
 async function getByToken(token) {
@@ -87,4 +93,5 @@ async function validate(token) {
 
 export default {
     create,
+    validate,
 };
