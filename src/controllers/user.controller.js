@@ -4,6 +4,7 @@ import user from '../services/user.service.js';
 const create = async (req, res) => {
   try {
     const { email, password, first_name, last_name } = req.body;
+    console.log(req.body);
     const { data, error } = await user.create(email, password, first_name, last_name);
     if (error) {
       return res.status(400).send(error.message);
