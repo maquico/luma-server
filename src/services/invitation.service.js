@@ -3,6 +3,7 @@ import generateToken from "../utils/invitation-token.js";
 import projectMemberService from "./projectMember.service.js";
 import userService from "./user.service.js";
 import moment from 'moment-timezone';
+import { Resend } from 'resend';
 
 const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
 
@@ -20,7 +21,7 @@ async function create(email, projectId) {
         return { error };
     }
     else {
-        console.log("Invitation created: ", data);
+        //console.log("Invitation created: ", data);
         const invitationLink = `${DOMAIN}/invite/${token}`;
         return invitationLink;
     }
@@ -43,6 +44,7 @@ async function update(invitationId) {
 }
 
 async function validate(token) {
+    console.log("Validating invitation: ", token);
     let continueValidation = true;
     let sign_up_required = false;
     let errorMessage = null;
@@ -134,7 +136,28 @@ async function validate(token) {
     };
 }
 
+async function sendEmail(email, projectId) {
+    console.log("Sending email to: ", email);
+    const invitationLink = await create(email, projectId);
+    if (invitationLink == null || invitationLink === undefined ) { 
+        return { error: 'Error creating invitation' };
+    }
+    
+    const resend = new Resend('re_123456789');
+    response = await resend.emails.send({
+        from: 'Luma - Gamified Project Management <team@luma-gpm.com>',
+        to: [email],
+        subject: 'Invitation to join project',
+        html: '<p>Hello! You have been invited to join a project.</p>' 
+            + '<p>Click on the following link to accept the invitation: </p>'
+            + `<a href="${invitationLink}">${invitationLink}</a>`,
+      });
+
+    return response;
+}
+    
 export default {
     create,
     validate,
+    sendEmail,
 };

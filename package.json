@@ -17,6 +17,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "moment-timezone": "^0.5.45",
+    "resend": "^4.0.0",
     "supabase": "^1.190.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
