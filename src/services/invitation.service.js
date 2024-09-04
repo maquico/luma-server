@@ -62,7 +62,6 @@ async function validate(token) {
     // Validate if the invitation was used
     if (invitationData && continueValidation) {
         invitation = invitationData[0];
-        console.log('invitation: ', invitation);
         if (invitation.fueUsado) {
             errorMessage = 'Invitation already used';
             continueValidation = false;
@@ -72,8 +71,6 @@ async function validate(token) {
     if (continueValidation) {
         const expirationDate = moment(invitation.fechaExpiracion).utc(); 
         const currentDate = moment().utc(); 
-        console.log('currentDate: ', currentDate);
-        console.log('expirationDate: ', expirationDate);
         if (currentDate.isAfter(expirationDate)) {
             errorMessage = 'Invitation expired';
             continueValidation = false;
@@ -85,7 +82,6 @@ async function validate(token) {
         const email = invitation.correo;
         const { data: userDataResponse, error: userError } = await userService.getByEmail(email);
         userData = userDataResponse;
-        console.log('userData: ', userData);
         if (userError) {
             console.log(userError);
             errorMessage = 'Error finding user by email: ' + userError.message;
