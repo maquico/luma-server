@@ -6,8 +6,9 @@ const create = async (req, res) => {
         const { email, projectId } = req.body;
         const { data, error } = await invitation.create(email, projectId);
         if (error) {
-            const errorCode = parseInt(error.code, 10)
-            return res.status(errorCode).send(error.message);
+          const errorStatusCode = parseInt(error.status, 10)
+          console.log(errorStatusCode);
+          return res.status(errorStatusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -21,7 +22,7 @@ const validate = async (req, res) => {
         const { token } = req.params;
         const result = await invitation.validate(token);
         if (result.error !== null) {
-            return res.status(400).send(result.error);
+            return res.status(400).send(result);
         }
         return res.status(200).send(result);
     } catch (error) {

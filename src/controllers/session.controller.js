@@ -6,8 +6,9 @@ const create = async (req, res) => {
         const { email, password } = req.body;
         const { data, error } = await session.create(email, password);
         if (error) {
-            const errorCode = parseInt(error.code, 10)
-            return res.status(errorCode).send(error.message);
+            const errorStatusCode = parseInt(error.status, 10)
+            console.log(errorStatusCode);
+            return res.status(errorStatusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
