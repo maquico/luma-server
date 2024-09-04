@@ -6,7 +6,8 @@ const create = async (req, res) => {
     const { email, password, first_name, last_name } = req.body;
     const { data, error } = await user.create(email, password, first_name, last_name);
     if (error) {
-      return res.status(400).send(error.message);
+      const errorCode = parseInt(error.code, 10)
+      return res.status(errorCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {

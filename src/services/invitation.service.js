@@ -1,6 +1,7 @@
 import supabase from "../configs/supabase.js";
 import generateToken from "../utils/invitation-token.js";
 import projectMemberService from "./projectMember.service.js";
+import moment from 'moment-timezone';
 
 const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
 
@@ -34,6 +35,7 @@ async function getByToken(token) {
 async function validate(token) {
     // validar existencia de invitacion por token
     let continueValidation = true;
+    let sign_up_required = false;
     let errorMessage = null;
     const { data, error } = await getByToken(token);
     
@@ -45,7 +47,8 @@ async function validate(token) {
     // validar si fue usado
     if(data && continueValidation === true){
         const invitation = data[0];
-        if(invitation.usado){
+        console.log('invitation: ', invitation);
+        if(invitation.fueUsado){
             errorMessage = 'Invitation already used';
             continueValidation = false;
         } 
@@ -53,9 +56,11 @@ async function validate(token) {
     // validar si expiró
     if(continueValidation === true){
         const invitation = data[0];
-        const expirationDate = invitation.fechaExpiracion;
-        const currentDate = new Date();
-        if( currentDate > expirationDate){
+        const expirationDate = moment(invitation.fechaExpiracion).utc(); 
+        const currentDate = moment().utc(); 
+        console.log('currentDate: ', currentDate);
+        console.log('expirationDate: ', expirationDate);
+        if(currentDate.isAfter(expirationDate)){
             errorMessage = 'Invitation expired';
             continueValidation = false;
         }
@@ -68,10 +73,19 @@ async function validate(token) {
             .from('Usuarios')
             .select()
             .eq('correo', email)
-        if(dataUsuario === null){
-            errorMessage = 'User not found';
+        console.log('dataUsuario: ', dataUsuario);
+        console.log('errorUsuario: ', errorUsuario);
+        if (errorUsuario) {
+            console.log(errorUsuario);
+            errorMessage = 'Error finding user by email: ' + errorUsuario.message;
             continueValidation = false;
         }
+        else if(dataUsuario === undefined){
+            errorMessage = 'User not found';
+            sign_up_required = true;
+            continueValidation = false;
+        }
+
     }
     // validar que el usuario no esté ya en el proyecto 
     if (continueValidation === true){
@@ -79,17 +93,23 @@ async function validate(token) {
         const email = invitation.correo;
         const projectId = invitation.Proyecto_ID;
         const { dataMiembro, errorMiembro } = await projectMemberService.getByEmail(email, projectId);
-        if(dataMiembro){
+        if (errorMiembro) {
+            console.log(errorMiembro);
+            errorMessage = 'Error finding project member by email: ' + errorMiembro.message;
+            continueValidation = false;
+        }
+        else if(dataMiembro){
             errorMessage = 'User already in project';
             continueValidation = false;
         }
     }
-
     return {
-      'error': errorMessage,
-      'content': continueValidation
+      "error": errorMessage,
+      "content": continueValidation,
+      "sign_up": sign_up_required
     }
 }
+
 
 export default {
     create,
