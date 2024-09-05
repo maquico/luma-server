@@ -4,7 +4,7 @@ async function create(projectId, userId) {
   const { data, error } = await supabase
     .from('Miembro_Proyecto')
     .insert([
-    { Proyecto_ID: projectId, Usuario_ID: userId},
+      { Proyecto_ID: projectId, Usuario_ID: userId },
     ])
     .select()
   return { data, error };
@@ -12,13 +12,13 @@ async function create(projectId, userId) {
 
 async function getByUserId(userId) {
   const { data, error } = await supabase
-      .from('Miembro_Proyecto')
-      .select()
-      .eq('Usuario_ID', userId)
+    .from('Miembro_Proyecto')
+    .select()
+    .eq('Usuario_ID', userId)
   return { data, error };
 }
 
 export default {
-    create,
-    getByUserId,
+  create,
+  getByUserId,
 };
