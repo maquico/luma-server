@@ -143,8 +143,9 @@ async function sendEmail(email, projectId) {
         return { error: 'Error creating invitation' };
     }
     
-    const resend = new Resend('re_123456789');
-    response = await resend.emails.send({
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const resend = new Resend(RESEND_API_KEY);
+    let response = await resend.emails.send({
         from: 'Luma - Gamified Project Management <team@luma-gpm.com>',
         to: [email],
         subject: 'Invitation to join project',
