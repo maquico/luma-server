@@ -2,6 +2,7 @@ import express, { urlencoded, json } from 'express';
 import cors from 'cors';  
 import userRouter from './src/routes/user.router.js';
 import sessionRouter from './src/routes/session.router.js';
+import invitationRouter from './src/routes/invitation.router.js';
 import { serve, setup } from 'swagger-ui-express';
 import swaggerFile from './src/configs/swagger-output.json' assert { type: "json" };
 
@@ -23,8 +24,8 @@ app.use('/doc', serve, setup(swaggerFile));
 
 // API routes
 app.use('/api/user', userRouter);
-
 app.use('/api/session', sessionRouter);
+app.use('/api/invitation', invitationRouter);
 
 // Start server
 app.listen(port, () => {
