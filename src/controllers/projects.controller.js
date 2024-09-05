@@ -1,4 +1,4 @@
-import project from '../src/services/projects.service.js';
+import project from '../services/projects.service.js';
 
 // Controller using login service with try catch for error handling
 const create = async (req, res) => {
