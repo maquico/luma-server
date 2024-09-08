@@ -19,12 +19,14 @@ const create = async (req, res) => {
 // Controller using validate service with try catch for error handling
 const validate = async (req, res) => {
     try {
-        const { token } = req.params;
-        const result = await invitation.validate(token);
-        if (result.error !== null) {
-            return res.status(400).send(result);
+        const { token, userId } = req.body;
+        const { data, error} = await invitation.validate(token, userId);
+        if (error) {
+          const errorStatusCode = parseInt(error.status, 10)
+          console.log(errorStatusCode);
+          return res.status(errorStatusCode).send(error.message);
         }
-        return res.status(200).send(result);
+        return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send(error.message);
     }
@@ -46,8 +48,25 @@ const sendEmail = async (req, res) => {
     }
 };
 
+const getInvitationRoute = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { data, error } = await invitation.getInvitationRoute(token);
+        if (error) {
+          const errorStatusCode = parseInt(error.status, 10)
+          console.log("Error code: ", errorStatusCode);
+          console.log("Error message: ", error.message);
+          return res.status(errorStatusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
 export default {
     create,
     validate,
     sendEmail,
+    getInvitationRoute,
 };
