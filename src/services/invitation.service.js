@@ -50,6 +50,7 @@ async function validate(token, userId) {
     let invitation = null;
     let userData = null;
     let content = null;
+    let member = null;
 
     // Get the user by id
     const { data: userDataResponse, error: userError } = await userService.getById(userId);
@@ -135,12 +136,31 @@ async function validate(token, userId) {
             errorObject.message = 'Error finding project member: ' + memberError.message;
             errorObject.status = memberError.status;
             continueValidation = false;
-        } else if (memberData.length > 0) {
+        } else if (memberData.length > 5) {
             errorObject.message = 'User already in project';
             errorObject.status = 400;
             continueValidation = false;
-        }
+        }   
     }
+    // Validate project has not reached the maximum number of members
+    if (continueValidation) {
+      const { 
+        data: projectMembersData,
+        error: projectMembersError
+      } = await projectMemberService.getByProjectId(invitation.Proyecto_ID);
+      
+      if(projectMembersError) {
+        console.log(projectMembersError);
+        errorObject.message = 'Error finding project members: ' + projectMembersError.message;
+        errorObject.status = projectMembersError.status;
+        continueValidation = false;
+      } else if (projectMembersData.length == 6) {
+        errorObject.message = 'Project has reached the maximum number of members';
+        errorObject.status = 400;
+        continueValidation = false;
+      }
+    }
+
     if (continueValidation) {
         // Update the invitation to mark it as used and add the user to the project
         const transactionParams = {
