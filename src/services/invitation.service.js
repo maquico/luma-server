@@ -9,6 +9,7 @@ const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
 
 async function create(email, projectId) {
   const token = generateToken();
+  let invitationLink = null;
   const { data, error } = await supabase
     .from('Invitaciones')
     .insert([
@@ -18,12 +19,15 @@ async function create(email, projectId) {
 
     if (error) {
         console.log(error);
-        return { error };
     }
     else {
         //console.log("Invitation created: ", data);
-        const invitationLink = `${DOMAIN}/invite/${token}`;
-        return invitationLink;
+        invitationLink = `${DOMAIN}/invite/${token}`;
+    }
+
+    return {
+        data: invitationLink,
+        error: error
     }
 }
 
@@ -50,7 +54,6 @@ async function validate(token, userId) {
     let invitation = null;
     let userData = null;
     let content = null;
-    let member = null;
 
     // Get the user by id
     const { data: userDataResponse, error: userError } = await userService.getById(userId);
@@ -188,23 +191,38 @@ async function validate(token, userId) {
 
 async function sendEmail(email, projectId) {
     console.log("Sending email to: ", email);
-    const invitationLink = await create(email, projectId);
-    if (invitationLink == null || invitationLink === undefined ) { 
-        return { error: 'Error creating invitation' };
+
+    let errorObject = { message: null, status: null };
+    let response = null;
+    
+    const { data: invitationData, error: invitationError } = await create(email, projectId);
+    if (invitationError) {
+        console.log(invitationError);
+        errorObject.message = 'Error creating invitation: ' + invitationError.message;
+        errorObject.status = invitationError.status;
     }
     
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const resend = new Resend(RESEND_API_KEY);
-    let response = await resend.emails.send({
-        from: 'Luma - Gamified Project Management <team@luma-gpm.com>',
-        to: [email],
-        subject: 'Invitation to join project',
-        html: '<p>Hello! You have been invited to join a project.</p>' 
-            + '<p>Click on the following link to accept the invitation: </p>'
-            + `<a href="${invitationLink}">${invitationLink}</a>`,
-      });
-
-    return response;
+    try {
+      const RESEND_API_KEY = process.env.RESEND_API_KEY;
+      const resend = new Resend(RESEND_API_KEY);
+      response = await resend.emails.send({
+          from: 'Luma - Gamified Project Management <team@luma-gpm.com>',
+          to: [email],
+          subject: 'Invitation to join project',
+          html: '<p>Hello! You have been invited to join a project.</p>' 
+              + '<p>Click on the following link to accept the invitation: </p>'
+              + `<a href="${invitationData}">${invitationData}</a>`,
+        });
+    } catch (error) {
+        console.error(error);
+        errorObject.message = 'Error sending email: ' + error.message;
+        errorObject.status = 500;
+    }
+   
+    return {
+        data: response,
+        error: errorObject,
+    };
 }
 
 async function getInvitationRoute(token) { 

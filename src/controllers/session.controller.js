@@ -2,6 +2,18 @@ import session from '../services/session.service.js';
 
 // Controller using login service with try catch for error handling
 const create = async (req, res) => {
+    /* #swagger.tags = ['Session']
+         #swagger.description = 'Endpoint para iniciar sesión.'
+         #swagger.parameters['obj'] = {
+              in: 'body',
+              description: 'Datos del usuario para iniciar sesión',
+              required: true,
+              schema: {
+                email: 'usuario@correo.com',
+                password: 123456,
+            }
+        }
+    */
     try {
         const { email, password } = req.body;
         const { data, error } = await session.create(email, password);
