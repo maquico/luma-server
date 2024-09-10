@@ -213,6 +213,7 @@ async function sendEmail(email, projectId) {
               + '<p>Click on the following link to accept the invitation: </p>'
               + `<a href="${invitationData}">${invitationData}</a>`,
         });
+        errorObject = null;
     } catch (error) {
         console.error(error);
         errorObject.message = 'Error sending email: ' + error.message;
