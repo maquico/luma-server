@@ -23,25 +23,26 @@
     },
     "/api/user/": {
       "post": {
-        "description": "",
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para registrar un usuario.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del usuario para registro",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "usuario@correo.com"
                 },
                 "password": {
-                  "example": "any"
-                },
-                "first_name": {
-                  "example": "any"
-                },
-                "last_name": {
-                  "example": "any"
+                  "type": "number",
+                  "example": 123456
                 }
               }
             }
@@ -59,19 +60,26 @@
     },
     "/api/session/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Session"
+        ],
+        "description": "Endpoint para iniciar sesión.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del usuario para iniciar sesión",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "usuario@correo.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type": "number",
+                  "example": 123456
                 }
               }
             }
@@ -89,7 +97,10 @@
     },
     "/api/invitation/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Invitation"
+        ],
+        "description": "Endpoint para crear una invitación.",
         "parameters": [
           {
             "name": "body",
@@ -117,23 +128,32 @@
         }
       }
     },
-    "/api/invitation/validate/{token}": {
+    "/api/invitation/validate/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Invitation"
+        ],
+        "description": "Endpoint para validar una invitación.",
         "parameters": [
           {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "example": "any"
+                },
+                "userId": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "500": {
             "description": "Internal Server Error"
@@ -143,7 +163,10 @@
     },
     "/api/invitation/send/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Invitation"
+        ],
+        "description": "Endpoint para enviar una invitación a un proyecto por correo.",
         "parameters": [
           {
             "name": "body",
@@ -227,6 +250,18 @@
                 }
               }
             }
+    "/api/invitation/route/{token}": {
+      "get": {
+        "tags": [
+          "Invitation"
+        ],
+        "description": "Endpoint para obtener validar si redirigir al signup o al login.",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
