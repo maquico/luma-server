@@ -22,7 +22,16 @@ async function getByEmail(email) {
     return { data, error };
 }
 
+async function getById(id) {
+    const { data, error } = await supabase
+        .from('Usuarios')
+        .select()
+        .eq('Usuario_ID', id)
+    return { data, error };
+}
+
 export default {
     create,
     getByEmail,
+    getById,
 };

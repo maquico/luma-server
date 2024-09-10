@@ -18,7 +18,16 @@ async function getByUserId(userId) {
   return { data, error };
 }
 
+async function getByProjectId(projectId) {
+  const { data, error } = await supabase
+      .from('Miembro_Proyecto')
+      .select()
+      .eq('Proyecto_ID', projectId)
+  return { data, error };
+}
+
 export default {
     create,
     getByUserId,
+    getByProjectId,
 };

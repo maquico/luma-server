@@ -2,6 +2,18 @@ import user from '../services/user.service.js';
 
 // Controller using sign up service with try catch for error handling
 const create = async (req, res) => {
+  /* #swagger.tags = ['User']
+       #swagger.description = 'Endpoint para registrar un usuario.'
+       #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos del usuario para registro',
+            required: true,
+            schema: {
+                email: 'usuario@correo.com',
+                password: 123456,
+            }
+        }
+    */
   try {
     const { email, password, first_name, last_name } = req.body;
     const { data, error } = await user.create(email, password, first_name, last_name);
