@@ -1,4 +1,4 @@
-import supabase from "../configs/supabase.js";
+import supabaseConfig from "../configs/supabase.js"; 
 import generateToken from "../utils/invitation-token.js";
 import projectMemberService from "./projectMember.service.js";
 import userService from "./user.service.js";
@@ -6,6 +6,7 @@ import moment from 'moment-timezone';
 import sendMail from "../utils/sendMail.js";
 
 const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
+const { supabase } = supabaseConfig; 
 
 async function create(email, projectId) {
   const token = generateToken();

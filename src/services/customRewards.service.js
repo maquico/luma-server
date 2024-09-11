@@ -1,4 +1,4 @@
-import supabase from "../configs/supabase.js";
+const { supabase } = supabaseConfig; 
 
 async function create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite) {
     const { data, error } = await supabase
