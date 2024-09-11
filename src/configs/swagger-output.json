@@ -194,6 +194,30 @@
         }
       }
     },
+    "/api/invitation/route/{token}": {
+      "get": {
+        "tags": [
+          "Invitation"
+        ],
+        "description": "Endpoint para obtener validar si redirigir al signup o al login.",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/projects/": {
       "post": {
         "description": "",
@@ -250,18 +274,6 @@
                 }
               }
             }
-    "/api/invitation/route/{token}": {
-      "get": {
-        "tags": [
-          "Invitation"
-        ],
-        "description": "Endpoint para obtener validar si redirigir al signup o al login.",
-        "parameters": [
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "type": "string"
           }
         ],
         "responses": {

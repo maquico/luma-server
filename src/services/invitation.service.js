@@ -1,11 +1,12 @@
-import supabase from "../configs/supabase.js";
+import supabaseConfig from "../configs/supabase.js"; 
 import generateToken from "../utils/invitation-token.js";
 import projectMemberService from "./projectMember.service.js";
 import userService from "./user.service.js";
 import moment from 'moment-timezone';
-import { Resend } from 'resend';
+import sendMail from "../utils/sendMail.js";
 
 const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
+const { supabase } = supabaseConfig; 
 
 async function create(email, projectId) {
   const token = generateToken();
@@ -203,17 +204,13 @@ async function sendEmail(email, projectId) {
     }
     
     try {
-      const RESEND_API_KEY = process.env.RESEND_API_KEY;
-      const resend = new Resend(RESEND_API_KEY);
-      response = await resend.emails.send({
-          from: 'Luma - Gamified Project Management <team@luma-gpm.com>',
-          to: [email],
-          subject: 'Invitation to join project',
-          html: '<p>Hello! You have been invited to join a project.</p>' 
+      const to = [email];
+      const subject = 'Invitation to join project';
+      const html = '<p>Hello! You have been invited to join a project.</p>' 
               + '<p>Click on the following link to accept the invitation: </p>'
-              + `<a href="${invitationData}">${invitationData}</a>`,
-        });
-        errorObject = null;
+              + `<a href="${invitationData}">${invitationData}</a>`
+      response = await sendMail(to, subject, html);
+      errorObject = null;
     } catch (error) {
         console.error(error);
         errorObject.message = 'Error sending email: ' + error.message;
