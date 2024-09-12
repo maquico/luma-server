@@ -3,8 +3,10 @@ import swaggerAutogen from 'swagger-autogen';
 const doc = {
   info: {
     title: 'Luma - Server',
-    description: 'Backend API for Luma Platform'
+    description: 'Backend API for Luma Platform',
+
   },
+  schemes: ['http', 'https'],
   host: process.env.HOST
 };
 
