@@ -1,3 +1,4 @@
+import supabaseConfig from "../configs/supabase.js"; 
 const { supabase } = supabaseConfig; 
 
 async function create(nombre, precio) {

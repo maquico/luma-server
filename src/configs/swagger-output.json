@@ -29,20 +29,118 @@
         "description": "Endpoint para registrar un usuario.",
         "parameters": [
           {
-            "name": "obj",
+            "name": "body",
             "in": "body",
-            "description": "Datos del usuario para registro",
-            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "type": "string",
-                  "example": "usuario@correo.com"
+                  "example": "any"
                 },
                 "password": {
-                  "type": "number",
-                  "example": 123456
+                  "example": "any"
+                },
+                "first_name": {
+                  "example": "any"
+                },
+                "last_name": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/otp/send": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para enviar un OTP a un usuario.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/otp/verify": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para verificar un OTP de un usuario.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "token": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/password/reset": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para resetear la contraseña de un usuario.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "example": "any"
+                },
+                "newPassword": {
+                  "example": "any"
                 }
               }
             }
