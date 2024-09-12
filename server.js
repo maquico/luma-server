@@ -11,7 +11,7 @@ import { serve, setup } from 'swagger-ui-express';
 import swaggerFile from './src/configs/swagger-output.json' assert { type: "json" };
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Express middlewares
 app.use(cors());
