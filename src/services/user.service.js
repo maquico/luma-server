@@ -66,10 +66,10 @@ async function resetPassword(userId, newPassword) {
         console.log(error)
     }
     else {
-        console.log("Password reset for user: ", user[0].mail)
+        console.log("Password reset for user: ", user.user.email)
         returnData = {
-            email: user[0].email,
-            aud: user[0].aud,
+            email: user.user.email,
+            aud: user.user.aud,
         }  
     }
     return { data: returnData, error };
