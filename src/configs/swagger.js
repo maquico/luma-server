@@ -5,7 +5,7 @@ const doc = {
     title: 'Luma - Server',
     description: 'Backend API for Luma Platform'
   },
-  host: 'localhost:3000'
+  host: process.env.HOST
 };
 
 const outputFile = './swagger-output.json';
