@@ -386,7 +386,10 @@
     },
     "/api/fonts/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Fonts"
+        ],
+        "description": "Endpoint para registrar una fuente.",
         "parameters": [
           {
             "name": "body",
@@ -414,7 +417,10 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "Fonts"
+        ],
+        "description": "Endpoint para eliminar una fuente.",
         "parameters": [
           {
             "name": "body",
@@ -439,7 +445,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Fonts"
+        ],
+        "description": "Endpoint para actualizar una fuente.",
         "parameters": [
           {
             "name": "body",
@@ -470,7 +479,10 @@
         }
       },
       "get": {
-        "description": "",
+        "tags": [
+          "Fonts"
+        ],
+        "description": "Endpoint para obtener todas las fuentes.",
         "responses": {
           "200": {
             "description": "OK"
@@ -483,7 +495,10 @@
     },
     "/api/themes/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Themes"
+        ],
+        "description": "Endpoint para registrar un tema.",
         "parameters": [
           {
             "name": "body",
@@ -526,7 +541,10 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "Themes"
+        ],
+        "description": "Endpoint para eliminar un tema.",
         "parameters": [
           {
             "name": "body",
@@ -551,7 +569,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Themes"
+        ],
+        "description": "Endpoint para actualizar un tema.",
         "parameters": [
           {
             "name": "body",
@@ -597,7 +618,10 @@
         }
       },
       "get": {
-        "description": "",
+        "tags": [
+          "Themes"
+        ],
+        "description": "Endpoint para obtener todos los temas.",
         "responses": {
           "200": {
             "description": "OK"
@@ -610,7 +634,10 @@
     },
     "/api/rewards/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Custom Rewards"
+        ],
+        "description": "Endpoint para registrar una recompensa.",
         "parameters": [
           {
             "name": "body",
@@ -653,7 +680,10 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "Custom Rewards"
+        ],
+        "description": "Endpoint para eliminar una recompensa.",
         "parameters": [
           {
             "name": "body",
@@ -678,7 +708,10 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Custom Rewards"
+        ],
+        "description": "Endpoint para actualizar una recompensa.",
         "parameters": [
           {
             "name": "body",
@@ -721,7 +754,37 @@
         }
       },
       "get": {
-        "description": "",
+        "tags": [
+          "Custom Rewards"
+        ],
+        "description": "Endpoint para obtener todas las recompens",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/rewards/project": {
+      "post": {
+        "tags": [
+          "Custom Rewards"
+        ],
+        "description": "Endpoint para obtener todas las recompensas de un proyecto.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "projectId": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

@@ -2,6 +2,9 @@ import themes from '../services/themesRewards.service.js'
 
 // Controller using create service with try catch for error handling
 const create = async (req, res) => {
+    /* #swagger.tags = ['Themes']
+       #swagger.description = 'Endpoint para registrar un tema.'
+  */
     try {
         const { nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex } = req.body;
         const { data, error } = await themes.create(nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex);
@@ -18,6 +21,9 @@ const create = async (req, res) => {
 
 // Controller using eliminate service with try catch for error handling
 const eliminate = async (req, res) => {
+    /* #swagger.tags = ['Themes']
+       #swagger.description = 'Endpoint para eliminar un tema.'
+  */
     try {
         const { id } = req.body;
         const { error } = await themes.eliminate(id);
@@ -34,6 +40,9 @@ const eliminate = async (req, res) => {
 
 // Controller using update service with try catch for error handling
 const update = async (req, res) => {
+    /* #swagger.tags = ['Themes']
+       #swagger.description = 'Endpoint para actualizar un tema.'
+    */
     try {
         const { nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex, id } = req.body;
         const { data, error } = await themes.update(nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex, id);
@@ -50,6 +59,9 @@ const update = async (req, res) => {
 
 // Controller using getTemas service with try catch for error handling
 const getTemas = async (req, res) => {
+    /* #swagger.tags = ['Themes']
+       #swagger.description = 'Endpoint para obtener todos los temas.'
+    */
     try {
         const { data, error } = await themes.getTemas();
         if (error) {

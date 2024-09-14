@@ -6,5 +6,6 @@ router.post("/", customRewardsController.create);
 router.delete("/", customRewardsController.eliminate);
 router.put("/", customRewardsController.update);
 router.get("/", customRewardsController.getRecompensas);
+router.post("/project", customRewardsController.getByProject);
 
 export default router;

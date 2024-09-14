@@ -1,5 +1,5 @@
-import supabaseConfig from "../configs/supabase.js"; 
-const { supabase } = supabaseConfig; 
+import supabaseConfig from "../configs/supabase.js";
+const { supabase } = supabaseConfig;
 
 async function create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite) {
     const { data, error } = await supabase
@@ -50,9 +50,18 @@ async function getRecompensas() {
     return { data, error };
 }
 
+async function getByProject(projectId) {
+    const { data, error } = await supabase
+        .from('Recompensas')
+        .select('*')
+        .eq('Proyecto_ID', projectId)
+    return { data, error };
+}
+
 export default {
     create,
     eliminate,
     update,
     getRecompensas,
+    getByProject,
 };
