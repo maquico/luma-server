@@ -58,12 +58,12 @@ const update = async (req, res) => {
 };
 
 // Controller using getFuentes service with try catch for error handling
-const getFuentes = async (req, res) => {
+const get = async (req, res) => {
     /* #swagger.tags = ['Fonts']
        #swagger.description = 'Endpoint para obtener todas las fuentes.'
     */
     try {
-        const { data, error } = await fonts.getFuentes();
+        const { data, error } = await fonts.get();
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)
             console.log(errorStatusCode);
@@ -79,5 +79,5 @@ export default {
     create,
     eliminate,
     update,
-    getFuentes,
+    get,
 };

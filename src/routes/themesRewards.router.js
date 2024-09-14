@@ -5,6 +5,6 @@ const router = Router();
 router.post("/", themesRewardsController.create);
 router.delete("/", themesRewardsController.eliminate);
 router.put("/", themesRewardsController.update);
-router.get("/", themesRewardsController.getTemas);
+router.get("/", themesRewardsController.get);
 
 export default router;

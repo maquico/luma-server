@@ -31,7 +31,7 @@ async function update(nombre, precio, id) {
     return { data, error };
 }
 
-async function getFuentes() {
+async function get() {
     const { data, error } = await supabase
         .from('Fuentes')
         .select('*')
@@ -43,5 +43,5 @@ export default {
     create,
     eliminate,
     update,
-    getFuentes,
+    get,
 };
