@@ -50,6 +50,14 @@ async function getRecompensas() {
     return { data, error };
 }
 
+async function getById(id) {
+    const { data, error } = await supabase
+        .from('Recompensas')
+        .select('*')
+        .eq('Recompensa_ID', id)
+    return { data, error };
+}
+
 async function getByProject(projectId) {
     const { data, error } = await supabase
         .from('Recompensas')
@@ -63,5 +71,6 @@ export default {
     eliminate,
     update,
     getRecompensas,
+    getById,
     getByProject,
 };

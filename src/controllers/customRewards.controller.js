@@ -75,6 +75,25 @@ const getRecompensas = async (req, res) => {
     }
 };
 
+//Controller using getById service with try catch for error handling
+const getById = async (req, res) => {
+    /* #swagger.tags = ['Custom Rewards']
+       #swagger.description = 'Endpoint para obtener una recompensa por id.'
+    */
+    try {
+        const { id } = req.body;
+        const { data, error } = await rewards.getById(id);
+        if (error) {
+            const errorStatusCode = parseInt(error.status, 10)
+            console.log(errorStatusCode);
+            return res.status(errorStatusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
 //Controller using getByProject service with try catch for error handling
 const getByProject = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
@@ -99,5 +118,6 @@ export default {
     eliminate,
     update,
     getRecompensas,
+    getById,
     getByProject,
 };
