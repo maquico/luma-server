@@ -3,6 +3,7 @@ import fontsRewardsService from "./fontsRewards.service.js";
 import themesRewardsService from "./themesRewards.service.js";
 import fontsHistoryService from "./fontsHistory.service.js";
 import themesHistoryService from "./themesHistory.service.js";
+import userService from "./user.service.js";
 
 const { supabase } = supabaseConfig; 
 
@@ -103,6 +104,88 @@ async function getByUserId(userId) {
         data: rewards, 
         error: errorObject
     };
+}
+
+async function buyReward(userId, rewardId, rewardType) {
+    let errorObject = { message: '', status: 200 };
+    let continueFunction = true;
+    let reward = null;
+    let rewardHistory = null;
+
+    // get the reward
+    if (rewardType === "font") {
+        const { data: fontReward, error: fontRewardError } = await fontsRewardsService.getById(rewardId);
+        reward = fontReward;
+        if(fontRewardError) {
+            console.log(`Error getting font reward: ${fontRewardError.message}`);
+            errorObject.message = fontRewardError.message;
+            errorObject.status = fontRewardError.status;
+            continueFunction = false;
+        }
+    }
+    else if (rewardType === "theme") {
+        const { data: themeReward, error: themeRewardError } = await themesRewardsService.getById(rewardId);
+        reward = themeReward;
+        if(themeRewardError) {
+            console.log(`Error getting theme reward: ${themeRewardError.message}`);
+            errorObject.message = themeRewardError.message;
+            errorObject.status = themeRewardError.status;
+            continueFunction = false;
+        }
+    }
+
+    // check if the user has enough coins
+    const { data: user, error: userError } = await userService.getById(userId);
+    if(userError) {
+        console.log(`Error getting user: ${userError.message}`);
+        errorObject.message = userError.message;
+        errorObject.status = userError.status;
+        continueFunction = false;
+    }
+    else if(user.monedas < reward.precio) {
+        console.log(`User does not have enough coins to buy the reward`);
+        errorObject.message = `User does not have enough coins to buy the reward`;
+        errorObject.status = 400;
+        continueFunction = false;
+    }
+
+    // check if the reward is hasnt been boughy by that user
+    if (rewardType === "font" && continueFunction) {
+        const { data: fontHistory, error: fontHistoryError } = await fontsHistoryService.getByUserId(userId);
+        rewardHistory = fontHistory.find(font => font.Fuente_ID === rewardId);
+        if(fontHistoryError) {
+            console.log(`Error getting font history: ${fontHistoryError.message}`);
+            errorObject.message = fontHistoryError.message;
+            errorObject.status = fontHistoryError.status;
+            continueFunction = false;
+        }
+        else if(rewardHistory) {
+            console.log(`User already bought the font`);
+            errorObject.message = `User already bought the font`;
+            errorObject.status = 400;
+            continueFunction = false;
+        }
+    }
+    else if (rewardType === "theme" && continueFunction) {
+        const { data: themeHistory, error: themeHistoryError } = await themesHistoryService.getByUserId(userId);
+        rewardHistory = themeHistory.find(theme => theme.Tema_ID === rewardId);
+        if(themeHistoryError) {
+            console.log(`Error getting theme history: ${themeHistoryError.message}`);
+            errorObject.message = themeHistoryError.message;
+            errorObject.status = themeHistoryError.status;
+            continueFunction = false;
+        }
+        else if(rewardHistory) {
+            console.log(`User already bought the theme`);
+            errorObject.message = `User already bought the theme`;
+            errorObject.status = 400;
+            continueFunction = false;
+        }
+    }
+
+    // ON A TRANSACTION:
+    // add to the appropriate history table
+    // reduce users coins
 }
 
 export default {
