@@ -12,7 +12,7 @@ BEGIN
 
     -- Insertar el creador en la tabla Miembro_Proyecto con Rol_ID = 1
     INSERT INTO public."Miembro_Proyecto" ("Usuario_ID", "Proyecto_ID", "Rol_ID")
-    VALUES (creator_user_id, proyecto_id, 1)
+    VALUES (creator_user_id, proyecto_id, 2)
     RETURNING "Usuario_ID", "Rol_ID" INTO miembro_usuario_id, miembro_rol_id;
     
     -- Retornar los registros del proyecto y del miembro
