@@ -58,12 +58,12 @@ const update = async (req, res) => {
 };
 
 // Controller using getTemas service with try catch for error handling
-const getTemas = async (req, res) => {
+const get = async (req, res) => {
     /* #swagger.tags = ['Themes']
        #swagger.description = 'Endpoint para obtener todos los temas.'
     */
     try {
-        const { data, error } = await themes.getTemas();
+        const { data, error } = await themes.get();
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)
             console.log(errorStatusCode);
@@ -79,5 +79,5 @@ export default {
     create,
     eliminate,
     update,
-    getTemas,
+    get,
 };

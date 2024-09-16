@@ -765,6 +765,36 @@
         }
       }
     },
+    "/api/rewards/id": {
+      "post": {
+        "tags": [
+          "Custom Rewards"
+        ],
+        "description": "Endpoint para obtener una recompensa por id.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/rewards/project": {
       "post": {
         "tags": [
@@ -783,6 +813,30 @@
                 }
               }
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/rewards/predefined/{userId}": {
+      "get": {
+        "tags": [
+          "Predefined Rewards"
+        ],
+        "description": "Endpoint para obtener todas las recompensas predefinidas segun el usuario.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
