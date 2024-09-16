@@ -113,6 +113,25 @@ const getByProject = async (req, res) => {
     }
 };
 
+const getByUserAndProject = async (req, res) => {
+    /* #swagger.tags = ['Custom Rewards']
+       #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.'
+    */
+    try {
+        const { userId, projectId } = req.params;
+        const { data, error } = await rewards.getByUserAndProject(userId, projectId);
+        if (error) {
+            const errorStatusCode = parseInt(error.status, 10)
+            console.log(errorStatusCode);
+            return res.status(errorStatusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+
 export default {
     create,
     eliminate,
@@ -120,4 +139,5 @@ export default {
     getRecompensas,
     getById,
     getByProject,
+    getByUserAndProject,
 };
