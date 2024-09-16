@@ -36,7 +36,7 @@ async function update(nombre, precio, accentHex, primaryHex, secondaryHex, backg
     return { data, error };
 }
 
-async function getTemas() {
+async function get() {
     const { data, error } = await supabase
         .from('Temas')
         .select('*')
@@ -47,5 +47,5 @@ export default {
     create,
     eliminate,
     update,
-    getTemas,
+    get,
 };

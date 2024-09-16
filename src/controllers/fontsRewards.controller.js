@@ -2,6 +2,9 @@ import fonts from '../services/fontsRewards.service.js'
 
 // Controller using create service with try catch for error handling
 const create = async (req, res) => {
+    /* #swagger.tags = ['Fonts']
+       #swagger.description = 'Endpoint para registrar una fuente.'
+    */
     try {
         const { nombre, precio } = req.body;
         const { data, error } = await fonts.create(nombre, precio);
@@ -18,6 +21,9 @@ const create = async (req, res) => {
 
 // Controller using eliminate service with try catch for error handling
 const eliminate = async (req, res) => {
+    /* #swagger.tags = ['Fonts']
+       #swagger.description = 'Endpoint para eliminar una fuente.'
+    */
     try {
         const { id } = req.body;
         const { error } = await fonts.eliminate(id);
@@ -34,6 +40,9 @@ const eliminate = async (req, res) => {
 
 // Controller using update service with try catch for error handling
 const update = async (req, res) => {
+    /* #swagger.tags = ['Fonts']
+       #swagger.description = 'Endpoint para actualizar una fuente.'
+    */
     try {
         const { nombre, precio, id } = req.body;
         const { data, error } = await fonts.update(nombre, precio, id);
@@ -49,9 +58,12 @@ const update = async (req, res) => {
 };
 
 // Controller using getFuentes service with try catch for error handling
-const getFuentes = async (req, res) => {
+const get = async (req, res) => {
+    /* #swagger.tags = ['Fonts']
+       #swagger.description = 'Endpoint para obtener todas las fuentes.'
+    */
     try {
-        const { data, error } = await fonts.getFuentes();
+        const { data, error } = await fonts.get();
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)
             console.log(errorStatusCode);
@@ -67,5 +79,5 @@ export default {
     create,
     eliminate,
     update,
-    getFuentes,
+    get,
 };

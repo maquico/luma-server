@@ -5,6 +5,6 @@ const router = Router();
 router.post("/", fontsRewardsController.create);
 router.delete("/", fontsRewardsController.eliminate);
 router.put("/", fontsRewardsController.update);
-router.get("/", fontsRewardsController.getFuentes);
+router.get("/", fontsRewardsController.get);
 
 export default router;
