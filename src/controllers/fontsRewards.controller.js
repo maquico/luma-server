@@ -4,6 +4,15 @@ import fonts from '../services/fontsRewards.service.js'
 const create = async (req, res) => {
     /* #swagger.tags = ['Fonts']
        #swagger.description = 'Endpoint para registrar una fuente.'
+       #swagger.parameters['obj'] = {
+          in: 'body',
+          description: 'Datos de la fuente',
+          required: true,
+          schema: {
+              nombre: 'Fuente',
+              precio: 100
+          }
+     }
     */
     try {
         const { nombre, precio } = req.body;
@@ -23,6 +32,14 @@ const create = async (req, res) => {
 const eliminate = async (req, res) => {
     /* #swagger.tags = ['Fonts']
        #swagger.description = 'Endpoint para eliminar una fuente.'
+       #swagger.parameters['obj'] = {
+              in: 'body',
+              description: 'Datos de la fuente',
+              required: true,
+              schema: {
+              id: 123456
+              }
+     }
     */
     try {
         const { id } = req.body;
@@ -42,6 +59,16 @@ const eliminate = async (req, res) => {
 const update = async (req, res) => {
     /* #swagger.tags = ['Fonts']
        #swagger.description = 'Endpoint para actualizar una fuente.'
+       #swagger.parameters['obj'] = {
+          in: 'body',
+          description: 'Datos de la fuente',
+          required: true,
+          schema: {
+              nombre: 'Fuente',
+              precio: 100,
+              id: 123456
+          }
+       }
     */
     try {
         const { nombre, precio, id } = req.body;

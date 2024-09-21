@@ -4,7 +4,7 @@ import projectsController from '../controllers/projects.controller.js';
 const router = Router();
 router.post("/", projectsController.create);
 router.get("/", projectsController.getProyectos);
-router.post("/id", projectsController.getById);
-router.post("/user", projectsController.getByUser);
+router.get("/:id", projectsController.getById);
+router.get("/:userId", projectsController.getByUser);
 
 export default router;

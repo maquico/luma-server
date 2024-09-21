@@ -4,6 +4,17 @@ import user from '../services/user.service.js';
 const create = async (req, res) => {
   /* #swagger.tags = ['User']
        #swagger.description = 'Endpoint para registrar un usuario.'
+        #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos del usuario',
+            required: true,
+            schema: {
+                email: 'example@gmail.com',
+                password: 'password',
+                first_name: 'First',
+                last_name: 'Last'
+            }
+        }
   */
   try {
     const { email, password, first_name, last_name } = req.body;
@@ -23,6 +34,15 @@ const create = async (req, res) => {
 const resetPassword = async (req, res) => {
   /* #swagger.tags = ['User']
        #swagger.description = 'Endpoint para resetear la contraseña de un usuario.'
+        #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos del usuario',
+            required: true,
+            schema: {
+                userId: 'abc123',
+                newPassword: 'password'
+            } 
+        }
   */
   try {
     const { userId, newPassword } = req.body;
@@ -42,6 +62,14 @@ const resetPassword = async (req, res) => {
 const sendOtp = async (req, res) => {
   /* #swagger.tags = ['User']
        #swagger.description = 'Endpoint para enviar un OTP a un usuario.'
+        #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos del usuario',
+            required: true,
+            schema: {
+                email: 'example@gmail.com'
+            }
+        }
   */
   try {
     const { email } = req.body;
@@ -61,6 +89,15 @@ const sendOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   /* #swagger.tags = ['User']
        #swagger.description = 'Endpoint para verificar un OTP de un usuario.'
+        #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos del usuario',
+            required: true,
+            schema: {
+                email: 'example@gmail.com',
+                token: 'abc123'
+            }
+        }
   */
   try {
     const { email, token } = req.body;
