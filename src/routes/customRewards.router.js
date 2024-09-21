@@ -6,9 +6,9 @@ router.post("/", customRewardsController.create);
 router.delete("/", customRewardsController.eliminate);
 router.put("/", customRewardsController.update);
 router.get("/", customRewardsController.getRecompensas);
-router.get("/:userId/:projectId", customRewardsController.getByUserAndProject);
-router.get("/:id", customRewardsController.getById);
-router.get("/:projectId", customRewardsController.getByProject);
+router.get("user/:userId/project/:projectId", customRewardsController.getByUserAndProject);
+router.get("user/:id", customRewardsController.getById);
+router.get("project/:projectId", customRewardsController.getByProject);
 
 
 export default router;
