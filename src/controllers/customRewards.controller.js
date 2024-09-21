@@ -4,6 +4,20 @@ import rewards from '../services/customRewards.service.js'
 const create = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para registrar una recompensa.'
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos de la recompensa',
+           required: true,
+           schema: {
+               projectId: 123456,
+               iconoId: 123456,
+               nombre: 'Recompensa',
+               descripcion: 'Descripción de la recompensa',
+               precio: 100,
+               cantidad: 10,
+               limite: 5
+           }
+       }
     */
     try {
         const { projectId, iconoId, nombre, descripcion, precio, cantidad, limite } = req.body;
@@ -23,6 +37,14 @@ const create = async (req, res) => {
 const eliminate = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para eliminar una recompensa.'
+       #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos de la recompensa',
+            required: true,
+            schema: {
+              id: 123456
+            }
+        }
     */
     try {
         const { id } = req.body;
@@ -42,6 +64,20 @@ const eliminate = async (req, res) => {
 const update = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para actualizar una recompensa.'
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos de la recompensa',
+           required: true,
+           schema: {
+               iconoId: 123456,
+               nombre: 'Recompensa',
+               descripcion: 'Descripción de la recompensa',
+               precio: 100,
+               cantidad: 10,
+               limite: 5,
+               id: 123456
+           }
+       }   
     */
     try {
         const { iconoId, nombre, descripcion, precio, cantidad, limite, id } = req.body;
@@ -60,7 +96,7 @@ const update = async (req, res) => {
 // Controller using getRecompensas service with try catch for error handling
 const getRecompensas = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
-       #swagger.description = 'Endpoint para obtener todas las recompens
+       #swagger.description = 'Endpoint para obtener todas las recompensas personalizadas.'
     */
     try {
         const { data, error } = await rewards.getRecompensas();
@@ -79,6 +115,14 @@ const getRecompensas = async (req, res) => {
 const getById = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para obtener una recompensa por id.'
+       #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos de la recompensa',
+            required: true,
+            schema: {
+              id: 123456
+            }
+        }
     */
     try {
         const { id } = req.body;
@@ -98,6 +142,14 @@ const getById = async (req, res) => {
 const getByProject = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto.'
+       #swagger.parameters['obj'] = {
+          in: 'body',
+          description: 'Datos de la recompensa',
+          required: true,
+          schema: {
+            projectId: 123456
+          }
+        }
     */
     try {
         const { projectId } = req.body;
@@ -116,6 +168,15 @@ const getByProject = async (req, res) => {
 const getByUserAndProject = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.'
+       #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos de la recompensa',
+            required: true,
+            schema: {
+                userId: 123456,
+                projectId: 123456
+            }
+        }
     */
     try {
         const { userId, projectId } = req.params;
