@@ -4,6 +4,16 @@ import project from '../services/projects.service.js';
 const create = async (req, res) => {
     /* #swagger.tags = ['Projects']
          #swagger.description = 'Endpoint para crear un proyecto.'
+            #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos del proyecto',
+                required: true,
+                schema: {
+                    nombre: 'Proyecto',
+                    descripcion: 'Descripcion',
+                    userId: 'u12ms2i919al'
+                }
+            }
     */
     try {
         const { nombre, descripcion, userId } = req.body;
@@ -41,9 +51,15 @@ const getProyectos = async (req, res) => {
 const getById = async (req, res) => {
     /* #swagger.tags = ['Projects']
          #swagger.description = 'Endpoint para obtener un proyecto por id.'
+            #swagger.parameters['id'] = {
+                in: 'path',
+                description: 'Id del proyecto',
+                required: true,
+                type: 'integer'
+            }
     */
     try {
-        const { id } = req.body;
+        const { id } = req.params;
         const { data, error } = await project.getById(id);
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)
@@ -60,9 +76,15 @@ const getById = async (req, res) => {
 const getByUser = async (req, res) => {
     /* #swagger.tags = ['Projects']
          #swagger.description = 'Endpoint para obtener un proyecto por id de usuario.'
+            #swagger.parameters['userId'] = {
+                in: 'path',
+                description: 'Id del usuario',
+                required: true,
+                type: 'string'
+            }
     */
     try {
-        const { userId } = req.body;
+        const { userId } = req.params;
         const { Proyectos, error } = await project.getByUser(userId);
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)

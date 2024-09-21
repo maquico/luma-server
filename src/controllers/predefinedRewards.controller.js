@@ -3,7 +3,13 @@ import predefinedReward from "../services/predefinedRewards.service.js"
 // Controller for handling request with error catching
 async function getByUserId(req, res) {
     /* #swagger.tags = ['Predefined Rewards']
-        #swagger.description = 'Endpoint para obtener todas las recompensas predefinidas segun el usuario.'
+       #swagger.description = 'Endpoint para obtener todas las recompensas predefinidas segun el usuario.'
+       #swagger.parameters['userId'] = {
+           in: 'path',
+           description: 'Id del usuario',
+           required: true,
+           type: 'string'
+       }
     */
    try {
     const { data, error } = await predefinedReward.getByUserId(req.params.userId)

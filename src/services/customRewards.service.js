@@ -100,7 +100,7 @@ async function getByUserAndProject(userId, projectId) {
         const customRewardsMap = customRewards.map(reward => {
             const customRewardHistory = customRewardsHistory.find(customRewardHistory => customRewardHistory.Recompensa_ID === reward.Recompensa_ID);
             const customRewardBought = customRewardHistory ? customRewardHistory.cantidadComprada : 0;
-            const customRewardAvailable = customRewardBought < reward.limite && reward.totalCompras < reward.cantidad ? false : true;
+            const customRewardAvailable = customRewardBought < reward.limite && reward.totalCompras < reward.cantidad ? true : false;
 
             return {
                 type: 'custom',
@@ -138,4 +138,5 @@ export default {
     getRecompensas,
     getById,
     getByProject,
+    getByUserAndProject,
 };

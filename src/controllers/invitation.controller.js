@@ -3,7 +3,17 @@ import invitation from '../services/invitation.service.js';
 // Controller using sendEmail service with try catch for error handling
 const sendEmail = async (req, res) => {
     /* #swagger.tags = ['Invitation']
-        #swagger.description = 'Endpoint para enviar una invitación a un proyecto por correo.'
+       #swagger.description = 'Endpoint para enviar una invitación a un proyecto por correo.'
+       #swagger.parameters['obj'] = {
+              in: 'body',
+              description: 'Datos de la invitación',
+              required: true,
+              schema: {
+                email: 'example@gmail.com',
+                projectId: 123456
+                }
+        }  
+
     */
     try {
         const { email, projectId } = req.body;
@@ -21,7 +31,13 @@ const sendEmail = async (req, res) => {
 
 const getInvitationRoute = async (req, res) => {
     /* #swagger.tags = ['Invitation']
-        #swagger.description = 'Endpoint para obtener validar si redirigir al signup o al login.'
+       #swagger.description = 'Endpoint para obtener validar si redirigir al signup o al login.'
+         #swagger.parameters['token'] = {
+                in: 'path',
+                description: 'Token de la invitación',
+                required: true,
+                type: 'string'
+        }
     */
     try {
         const { token } = req.params;
@@ -42,6 +58,15 @@ const getInvitationRoute = async (req, res) => {
 const validate = async (req, res) => {
     /* #swagger.tags = ['Invitation']
         #swagger.description = 'Endpoint para validar una invitación.'
+        #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos de la invitación',
+                required: true,
+                schema: {
+                token: 'eak182mane1',
+                userId: 'abc123'
+                }
+        }
     */
     try {
         const { token, userId } = req.body;
@@ -61,6 +86,15 @@ const validate = async (req, res) => {
 const create = async (req, res) => {
     /* #swagger.tags = ['Invitation']
         #swagger.description = 'Endpoint para crear una invitación.'
+        #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos de la invitación',
+                required: true,
+                schema: {
+                email: 'example@gmail.com',
+                projectId: 123456
+                }
+        }
     */
     try {
         const { email, projectId } = req.body;
