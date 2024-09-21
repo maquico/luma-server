@@ -7,8 +7,8 @@ router.delete("/", customRewardsController.eliminate);
 router.put("/", customRewardsController.update);
 router.get("/", customRewardsController.getRecompensas);
 router.get("/:userId/:projectId", customRewardsController.getByUserAndProject);
-router.post("/id", customRewardsController.getById);
-router.post("/project", customRewardsController.getByProject);
+router.get("/:id", customRewardsController.getById);
+router.get("/:projectId", customRewardsController.getByProject);
 
 
 export default router;

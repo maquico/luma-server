@@ -115,17 +115,15 @@ const getRecompensas = async (req, res) => {
 const getById = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para obtener una recompensa por id.'
-       #swagger.parameters['obj'] = {
-            in: 'body',
-            description: 'Datos de la recompensa',
+         #swagger.parameters['id'] = {
+            in: 'path',
+            description: 'Id de la recompensa',
             required: true,
-            schema: {
-              id: 123456
-            }
+            type: 'integer'
         }
     */
     try {
-        const { id } = req.body;
+        const { id } = req.params;
         const { data, error } = await rewards.getById(id);
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)
@@ -142,17 +140,15 @@ const getById = async (req, res) => {
 const getByProject = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto.'
-       #swagger.parameters['obj'] = {
-          in: 'body',
-          description: 'Datos de la recompensa',
-          required: true,
-          schema: {
-            projectId: 123456
-          }
-        }
+            #swagger.parameters['projectId'] = {
+                in: 'path',
+                description: 'Id del proyecto',
+                required: true,
+                type: 'integer'
+            }
     */
     try {
-        const { projectId } = req.body;
+        const { projectId } = req.params;
         const { data, error } = await rewards.getByProject(projectId);
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)
@@ -168,18 +164,21 @@ const getByProject = async (req, res) => {
 const getByUserAndProject = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.'
-       #swagger.parameters['obj'] = {
-            in: 'body',
-            description: 'Datos de la recompensa',
-            required: true,
-            schema: {
-                userId: 123456,
-                projectId: 123456
+            #swagger.parameters['projectId'] = {
+                in: 'path',
+                description: 'Id del proyecto',
+                required: true,
+                type: 'integer'
             }
-        }
+            #swagger.parameters['userId'] = {
+                in: 'path',
+                description: 'Id del usuario',
+                required: true,
+                type: 'string'
+            }
     */
     try {
-        const { userId, projectId } = req.params;
+        const { projectId, userId } = req.params;
         const { data, error } = await rewards.getByUserAndProject(userId, projectId);
         if (error) {
             const errorStatusCode = parseInt(error.status, 10)

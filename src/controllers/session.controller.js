@@ -10,7 +10,7 @@ const create = async (req, res) => {
               required: true,
               schema: {
                 email: 'usuario@correo.com',
-                password: 123456,
+                password: 'password',
             }
         }
     */

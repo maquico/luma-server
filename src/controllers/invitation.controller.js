@@ -32,12 +32,12 @@ const sendEmail = async (req, res) => {
 const getInvitationRoute = async (req, res) => {
     /* #swagger.tags = ['Invitation']
        #swagger.description = 'Endpoint para obtener validar si redirigir al signup o al login.'
-         #swagger.parameters['obj'] = {
+         #swagger.parameters['token'] = {
                 in: 'path',
                 description: 'Token de la invitación',
                 required: true,
                 type: 'string'
-          }
+        }
     */
     try {
         const { token } = req.params;
@@ -64,7 +64,7 @@ const validate = async (req, res) => {
                 required: true,
                 schema: {
                 token: 'eak182mane1',
-                userId: 123456
+                userId: 'abc123'
                 }
         }
     */

@@ -29,22 +29,28 @@
         "description": "Endpoint para registrar un usuario.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del usuario",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "example@gmail.com"
                 },
                 "password": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "password"
                 },
                 "first_name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "First"
                 },
                 "last_name": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Last"
                 }
               }
             }
@@ -68,13 +74,16 @@
         "description": "Endpoint para enviar un OTP a un usuario.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del usuario",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "example@gmail.com"
                 }
               }
             }
@@ -98,16 +107,20 @@
         "description": "Endpoint para verificar un OTP de un usuario.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del usuario",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "example@gmail.com"
                 },
                 "token": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "abc123"
                 }
               }
             }
@@ -131,16 +144,20 @@
         "description": "Endpoint para resetear la contraseña de un usuario.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del usuario",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "userId": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "abc123"
                 },
                 "newPassword": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "password"
                 }
               }
             }
@@ -176,8 +193,8 @@
                   "example": "usuario@correo.com"
                 },
                 "password": {
-                  "type": "number",
-                  "example": 123456
+                  "type": "string",
+                  "example": "password"
                 }
               }
             }
@@ -250,8 +267,8 @@
                   "example": "eak182mane1"
                 },
                 "userId": {
-                  "type": "number",
-                  "example": 123456
+                  "type": "string",
+                  "example": "abc123"
                 }
               }
             }
@@ -315,14 +332,8 @@
             "name": "token",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "path",
-            "description": "Token de la invitación",
-            "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Token de la invitación"
           }
         ],
         "responses": {
@@ -343,19 +354,24 @@
         "description": "Endpoint para crear un proyecto.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del proyecto",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "nombre": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Proyecto"
                 },
                 "descripcion": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Descripcion"
                 },
                 "userId": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "u12ms2i919al"
                 }
               }
             }
@@ -385,24 +401,19 @@
         }
       }
     },
-    "/api/projects/id": {
-      "post": {
+    "/api/projects/{id}": {
+      "get": {
         "tags": [
           "Projects"
         ],
         "description": "Endpoint para obtener un proyecto por id.",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "Id del proyecto"
           }
         ],
         "responses": {
@@ -415,24 +426,19 @@
         }
       }
     },
-    "/api/projects/user": {
-      "post": {
+    "/api/projects/{userId}": {
+      "get": {
         "tags": [
           "Projects"
         ],
         "description": "Endpoint para obtener un proyecto por id de usuario.",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Id del usuario"
           }
         ],
         "responses": {
@@ -574,31 +580,40 @@
         "description": "Endpoint para registrar un tema.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del tema",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "nombre": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Tema"
                 },
                 "precio": {
-                  "example": "any"
+                  "type": "number",
+                  "example": 100
                 },
                 "accentHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "primaryHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "secondaryHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "backgroundHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "textHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 }
               }
             }
@@ -620,13 +635,16 @@
         "description": "Endpoint para eliminar un tema.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del tema",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "id": {
-                  "example": "any"
+                  "type": "number",
+                  "example": 123456
                 }
               }
             }
@@ -648,34 +666,44 @@
         "description": "Endpoint para actualizar un tema.",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Datos del tema",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "nombre": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "Tema"
                 },
                 "precio": {
-                  "example": "any"
+                  "type": "number",
+                  "example": 100
                 },
                 "accentHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "primaryHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "secondaryHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "backgroundHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "textHex": {
-                  "example": "any"
+                  "type": "string",
+                  "example": "#FFFFFF"
                 },
                 "id": {
-                  "example": "any"
+                  "type": "number",
+                  "example": 123456
                 }
               }
             }
@@ -873,32 +901,15 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Id del usuario"
           },
           {
             "name": "projectId",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "obj",
-            "in": "body",
-            "description": "Datos de la recompensa",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "userId": {
-                  "type": "number",
-                  "example": 123456
-                },
-                "projectId": {
-                  "type": "number",
-                  "example": 123456
-                }
-              }
-            }
+            "type": "integer",
+            "description": "Id del proyecto"
           }
         ],
         "responses": {
@@ -911,27 +922,19 @@
         }
       }
     },
-    "/api/rewards/id": {
-      "post": {
+    "/api/rewards/{id}": {
+      "get": {
         "tags": [
           "Custom Rewards"
         ],
         "description": "Endpoint para obtener una recompensa por id.",
         "parameters": [
           {
-            "name": "obj",
-            "in": "body",
-            "description": "Datos de la recompensa",
+            "name": "id",
+            "in": "path",
             "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "number",
-                  "example": 123456
-                }
-              }
-            }
+            "type": "integer",
+            "description": "Id de la recompensa"
           }
         ],
         "responses": {
@@ -944,27 +947,19 @@
         }
       }
     },
-    "/api/rewards/project": {
-      "post": {
+    "/api/rewards/{projectId}": {
+      "get": {
         "tags": [
           "Custom Rewards"
         ],
         "description": "Endpoint para obtener todas las recompensas de un proyecto.",
         "parameters": [
           {
-            "name": "obj",
-            "in": "body",
-            "description": "Datos de la recompensa",
+            "name": "projectId",
+            "in": "path",
             "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "projectId": {
-                  "type": "number",
-                  "example": 123456
-                }
-              }
-            }
+            "type": "integer",
+            "description": "Id del proyecto"
           }
         ],
         "responses": {
@@ -988,7 +983,8 @@
             "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Id del usuario"
           }
         ],
         "responses": {

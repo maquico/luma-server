@@ -4,6 +4,20 @@ import themes from '../services/themesRewards.service.js'
 const create = async (req, res) => {
     /* #swagger.tags = ['Themes']
        #swagger.description = 'Endpoint para registrar un tema.'
+         #swagger.parameters['obj'] = {
+            in: 'body',
+            description: 'Datos del tema',
+            required: true,
+            schema: {
+                nombre: 'Tema',
+                precio: 100,
+                accentHex: '#FFFFFF',
+                primaryHex: '#FFFFFF',
+                secondaryHex: '#FFFFFF',
+                backgroundHex: '#FFFFFF',
+                textHex: '#FFFFFF'
+            }
+        }
   */
     try {
         const { nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex } = req.body;
@@ -23,6 +37,14 @@ const create = async (req, res) => {
 const eliminate = async (req, res) => {
     /* #swagger.tags = ['Themes']
        #swagger.description = 'Endpoint para eliminar un tema.'
+            #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos del tema',
+                required: true,
+                schema: {
+                    id: 123456
+                }
+            }
   */
     try {
         const { id } = req.body;
@@ -42,6 +64,21 @@ const eliminate = async (req, res) => {
 const update = async (req, res) => {
     /* #swagger.tags = ['Themes']
        #swagger.description = 'Endpoint para actualizar un tema.'
+            #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos del tema',
+                required: true,
+                schema: {
+                    nombre: 'Tema',
+                    precio: 100,
+                    accentHex: '#FFFFFF',
+                    primaryHex: '#FFFFFF',
+                    secondaryHex: '#FFFFFF',
+                    backgroundHex: '#FFFFFF',
+                    textHex: '#FFFFFF',
+                    id: 123456
+                }
+            }   
     */
     try {
         const { nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex, id } = req.body;
