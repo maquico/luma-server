@@ -135,20 +135,22 @@ async function buyReward(userId, rewardId, rewardType) {
     }
 
     // check if the user has enough coins
-    const { data: user, error: userError } = await userService.getById(userId);
-    if(userError) {
-        console.log(`Error getting user: ${userError.message}`);
-        errorObject.message = userError.message;
-        errorObject.status = userError.status;
-        continueFunction = false;
+    if (continueFunction){
+        const { data: user, error: userError } = await userService.getById(userId);
+        if(userError) {
+            console.log(`Error getting user: ${userError.message}`);
+            errorObject.message = userError.message;
+            errorObject.status = userError.status;
+            continueFunction = false;
+        }
+        else if(user.monedas < reward.precio) {
+            console.log(`User does not have enough coins to buy the reward`);
+            errorObject.message = `User does not have enough coins to buy the reward`;
+            errorObject.status = 400;
+            continueFunction = false;
+        }
     }
-    else if(user.monedas < reward.precio) {
-        console.log(`User does not have enough coins to buy the reward`);
-        errorObject.message = `User does not have enough coins to buy the reward`;
-        errorObject.status = 400;
-        continueFunction = false;
-    }
-
+    
     // check if the reward is hasnt been boughy by that user
     if (rewardType === "font" && continueFunction) {
         const { data: fontHistory, error: fontHistoryError } = await fontsHistoryService.getByUserId(userId);
