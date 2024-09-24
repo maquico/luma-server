@@ -65,6 +65,7 @@ async function getByUser(userId) {
 
     if (errorIds) {
         console.error('Error al obtener IDs de proyectos:', errorIds);
+        
         return { Proyectos: null, error: errorIds };
     }
 
@@ -140,14 +141,6 @@ async function getByUser(userId) {
     // Devolvemos los proyectos con miembros y creador, pero sin Usuario_ID
     return { Proyectos, error: null };
 }
-
-
-
-
-
-
-
-
 
 // async function getByUser(userId) {
 //     // Primero, obtenemos los IDs de los proyectos en los que el usuario está involucrado

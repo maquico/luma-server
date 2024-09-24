@@ -23,9 +23,7 @@ const create = async (req, res) => {
         const { projectId, iconoId, nombre, descripcion, precio, cantidad, limite } = req.body;
         const { data, error } = await rewards.create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -50,9 +48,7 @@ const eliminate = async (req, res) => {
         const { id } = req.body;
         const { error } = await rewards.eliminate(id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send('Recompensa eliminada');
     } catch (error) {
@@ -83,9 +79,7 @@ const update = async (req, res) => {
         const { iconoId, nombre, descripcion, precio, cantidad, limite, id } = req.body;
         const { data, error } = await rewards.update(iconoId, nombre, descripcion, precio, cantidad, limite, id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -101,9 +95,7 @@ const getRecompensas = async (req, res) => {
     try {
         const { data, error } = await rewards.getRecompensas();
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -126,9 +118,7 @@ const getById = async (req, res) => {
         const { id } = req.params;
         const { data, error } = await rewards.getById(id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -151,9 +141,7 @@ const getByProject = async (req, res) => {
         const { projectId } = req.params;
         const { data, error } = await rewards.getByProject(projectId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -181,9 +169,7 @@ const getByUserAndProject = async (req, res) => {
         const { projectId, userId } = req.params;
         const { data, error } = await rewards.getByUserAndProject(userId, projectId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
