@@ -182,6 +182,7 @@ async function validate(token, userId) {
                 message: 'Invitation validated, user added to project',
                 function_data: data
             };
+            errorObject = null;
         }
     }
     return {
