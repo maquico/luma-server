@@ -2,26 +2,30 @@ import supabaseConfig from "../configs/supabase.js";
 
 const { supabase } = supabaseConfig; 
 
-async function create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite) {
+async function create(taskObj) {
+    
     const { data, error } = await supabase
         .from('Tareas')
         .insert([
             {
-                Proyecto_ID: projectId,
-                Estado_tarea_ID: estadoTareaId,
-                etiquetas: etiquetas,
-                nombre: nombre,
-                descripcion: descripcion,
-                prioridad: prioridad,
-                valorGemas: valorGemas,
-                fechaInicio: fechaInicio,
-                fechaFinal: fechaFinal,
-                fueReclamada: fueReclamada,
-                Usuario_ID: usuarioId,
-                //esCritica: esCritica,
-                gasto: gasto,
-                presupuesto: presupuesto,
-                tiempo: tiempo
+                // requerido
+                Proyecto_ID: taskObj.projectId,
+                nombre: taskObj.nombre,
+                prioridad: taskObj.prioridad,
+                tiempo: taskObj.tiempo,
+                // automatico
+                fueReclamada: taskObj.fueReclamada,
+                valorGemas: taskObj.valorGemas,
+                Estado_Tarea_ID: taskObj.estadoTareaId, 
+                // opcional
+                fechaInicio: taskObj.fechaInicio,
+                fechaFin: taskObj.fechaFin,
+                Usuario_ID: taskObj.usuarioId,
+                esCritica: taskObj.esCritica,
+                gasto: taskObj.gasto,
+                presupuesto: taskObj.presupuesto,
+                descripcion: taskObj.descripcion,
+                etiquetas: taskObj.etiquetas,
             },
         ])
         .select()
