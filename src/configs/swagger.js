@@ -1,12 +1,14 @@
 import swaggerAutogen from 'swagger-autogen';
 
+let schemes;
+process.env.NODE_ENV === 'production' ? schemes = ['https'] : schemes = ['http'];
 const doc = {
   info: {
     title: 'Luma - Server',
     description: 'Backend API for Luma Platform',
 
   },
-  schemes: ['http', 'https'],
+  schemes: schemes,
   host: process.env.HOST
 };
 
