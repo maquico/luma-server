@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js --env-file=.env",
+    "start": "nodemon server.js --env-file=.env",
     "test": "echo \"Error: no test specified\" && exit 1",
     "swagger": "node ./src/configs/swagger.js",
     "deploy": "node ./src/configs/swagger.js && node server.js"
@@ -22,5 +22,8 @@
     "supabase": "^1.190.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }

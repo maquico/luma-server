@@ -1,5 +1,6 @@
 import express, { urlencoded, json } from 'express';
 import cors from 'cors';
+import * as fs from 'fs';
 import userRouter from './src/routes/user.router.js';
 import sessionRouter from './src/routes/session.router.js';
 import invitationRouter from './src/routes/invitation.router.js';
@@ -9,7 +10,8 @@ import themesRouter from './src/routes/themesRewards.router.js';
 import rewardsRouter from './src/routes/customRewards.router.js';
 import predefinedRewardsRouter from './src/routes/predefinedRewards.router.js';
 import { serve, setup } from 'swagger-ui-express';
-import swaggerFile from './src/configs/swagger-output.json' assert { type: "json" };
+
+const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
 
 const app = express();
 const port = process.env.PORT || 3000;
