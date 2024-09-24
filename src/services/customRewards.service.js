@@ -1,6 +1,6 @@
 import supabaseConfig from "../configs/supabase.js";
 import customRewardsHistoryService from "./customRewardsHistory.service.js";
-import customRewardsService from "./customRewards.service.js";
+import projectMemberService from "./projectMember.service.js";
 const { supabase } = supabaseConfig;
 
 async function create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite) {
@@ -68,62 +68,76 @@ async function getByProject(projectId) {
     return { data, error };
 }
 
-async function getByUserAndProject(userId, projectId) {
-    const continueFunction = true;
+async function getByUserShop(userId) {
     let errorObject = { message: '', status: 200 };
-    let rewards = [];
+    let rewards = null;
 
     const [
         { data: customRewardsHistory, error: customRewardsHistoryError },
-        { data: customRewards, error: customRewardsError }
-      ] = await Promise.all([
-        customRewardsHistoryService.getByUserAndProject(userId, projectId),
-        getByProject(projectId)
-      ]);
+        { data: projectMemberships, error: projectMembershipsError }
+    ] = await Promise.all([
+        customRewardsHistoryService.getByUser(userId),
+        projectMemberService.getByUserId(userId)
+    ]);
 
-    if(customRewardsHistoryError) {
+    if (customRewardsHistoryError) {
         console.log(`Error getting custom rewards history: ${customRewardsHistoryError.message}`);
         errorObject.message = customRewardsHistoryError.message;
         errorObject.status = customRewardsHistoryError.status;
-        continueFunction = false;
-    }
-    else if(customRewardsError) {
-        console.log(`Error getting custom rewards: ${customRewardsError.message}`);
-        errorObject.message = customRewardsError.message;
-        errorObject.status = customRewardsError.status;
-        continueFunction = false;
+        return { data: rewards, error: errorObject };
     }
 
-    if(continueFunction) {
-
-        // map the custom rewards
-        const customRewardsMap = customRewards.map(reward => {
-            const customRewardHistory = customRewardsHistory.find(customRewardHistory => customRewardHistory.Recompensa_ID === reward.Recompensa_ID);
-            const customRewardBought = customRewardHistory ? customRewardHistory.cantidadComprada : 0;
-            const customRewardAvailable = customRewardBought < reward.limite && reward.totalCompras < reward.cantidad ? true : false;
-
-            return {
-                type: 'custom',
-                id: reward.Recompensa_ID,
-                name: reward.nombre,
-                price: reward.precio,
-                available: customRewardAvailable,
-                totalAvailable: reward.cantidad,
-                totalBought: customRewardBought ,
-                totalCapacity: reward.limite,
-                metadata: {
-                    icon: reward.Icono_ID,
-                    description: reward.descripcion,
-                },
-            };
-        });
-        
-        // Return a single list with all the rewards
-        rewards = customRewardsMap;
-        // console log as json
-        console.log(JSON.stringify(rewards));
-        errorObject = null;
+    if (projectMembershipsError) {
+        console.log(`Error getting project memberships: ${projectMembershipsError.message}`);
+        errorObject.message = projectMembershipsError.message;
+        errorObject.status = projectMembershipsError.status;
+        return { data: rewards, error: errorObject };
     }
+
+    // Get all project IDs the user belongs to
+    const projectIds = projectMemberships.map(membership => membership.Proyecto_ID);
+
+    //console.log(projectIds);
+
+    // Fetch all recompensas for each project ID
+    const recompensasPromises = projectIds.map(projectId => getByProject(projectId));
+    const recompensasResults = await Promise.all(recompensasPromises);
+
+    //console.log(recompensasResults);
+    // Flatten the recompensas results
+    const recompensas = recompensasResults.flatMap(result => result.data);
+
+    //console.log(`Found ${recompensas.length} recompensas for user ID ${userId}`);
+    //console.log(recompensas);
+
+    // Map the recompensas with the custom rewards history
+    const customRewardsMap = recompensas.map(reward => {
+        const customRewardHistory = customRewardsHistory.find(hist => hist.Recompensa_ID === reward.Recompensa_ID);
+        const customRewardBought = customRewardHistory ? customRewardHistory.cantidadComprada : 0;
+        const customRewardAvailable = customRewardBought < reward.limite && reward.totalCompras < reward.cantidad;
+
+        return {
+            type: 'custom',
+            id: reward.Recompensa_ID,
+            name: reward.nombre,
+            price: reward.precio,
+            available: customRewardAvailable,
+            totalAvailable: reward.cantidad,
+            totalBought: customRewardBought,
+            totalCapacity: reward.limite,
+            metadata: {
+                icon: reward.Icono_ID,
+                description: reward.descripcion,
+                projectId: reward.Proyecto_ID,
+            },
+        };
+    });
+
+    // Return a single list with all the rewards
+    rewards = customRewardsMap;
+    // console log as json
+    //console.log(JSON.stringify(rewards));
+    errorObject = null;
 
     return { 
         data: rewards, 
@@ -138,5 +152,5 @@ export default {
     getRecompensas,
     getById,
     getByProject,
-    getByUserAndProject,
+    getByUserShop,
 };

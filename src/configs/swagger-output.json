@@ -889,7 +889,7 @@
         }
       }
     },
-    "/api/rewardsuser/{userId}/project/{projectId}": {
+    "/api/rewards/user/{userId}/": {
       "get": {
         "tags": [
           "Custom Rewards"
@@ -902,13 +902,6 @@
             "required": true,
             "type": "string",
             "description": "Id del usuario"
-          },
-          {
-            "name": "projectId",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "description": "Id del proyecto"
           }
         ],
         "responses": {
@@ -921,7 +914,7 @@
         }
       }
     },
-    "/api/rewardsuser/{id}": {
+    "/api/rewards/{id}": {
       "get": {
         "tags": [
           "Custom Rewards"
@@ -946,7 +939,7 @@
         }
       }
     },
-    "/api/rewardsproject/{projectId}": {
+    "/api/rewards/project/{projectId}": {
       "get": {
         "tags": [
           "Custom Rewards"
