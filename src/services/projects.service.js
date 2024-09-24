@@ -16,6 +16,8 @@ const { supabase } = supabaseConfig;
 // }
 
 async function create(nombre, descripcion, userId) {
+    let project = null;
+    let errorObject = { message: '', status: 200 };
     // Llamada a la función almacenada en PostgreSQL
     const { data, error } = await supabase
         .rpc('create_project_with_creator', {
@@ -26,10 +28,16 @@ async function create(nombre, descripcion, userId) {
 
     if (error) {
         console.error('Error al crear el proyecto:', error);
-        return { data: null, error };
+        errorObject.message = `INTERNAL DATABASE ERROR CODE: ${error.code}. Message: ${error.message}`;
+        errorObject.status = 500;
+        return { data: null, error: errorObject };
+    }
+    else {
+        console.log('Proyecto creado:', data[0]);
+        project = data[0];
     }
 
-    return { data, error: null };
+    return { data: project, error: null };
 }
 
 

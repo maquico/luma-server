@@ -401,7 +401,7 @@
         }
       }
     },
-    "/api/projects/{id}": {
+    "/api/projects/id/{id}": {
       "get": {
         "tags": [
           "Projects"
@@ -426,7 +426,7 @@
         }
       }
     },
-    "/api/projects/{userId}": {
+    "/api/projects/user/{userId}": {
       "get": {
         "tags": [
           "Projects"
@@ -890,7 +890,7 @@
         }
       }
     },
-    "/api/rewards/{userId}/{projectId}": {
+    "/api/rewardsuser/{userId}/project/{projectId}": {
       "get": {
         "tags": [
           "Custom Rewards"
@@ -922,7 +922,7 @@
         }
       }
     },
-    "/api/rewards/{id}": {
+    "/api/rewardsuser/{id}": {
       "get": {
         "tags": [
           "Custom Rewards"
@@ -947,7 +947,7 @@
         }
       }
     },
-    "/api/rewards/{projectId}": {
+    "/api/rewardsproject/{projectId}": {
       "get": {
         "tags": [
           "Custom Rewards"
@@ -985,6 +985,47 @@
             "required": true,
             "type": "string",
             "description": "Id del usuario"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/rewards/predefined/": {
+      "post": {
+        "tags": [
+          "Predefined Rewards"
+        ],
+        "description": "Endpoint comprar una recompensa predefinida.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos de la compra",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rewardId": {
+                  "type": "number",
+                  "example": 123456
+                },
+                "userId": {
+                  "type": "string",
+                  "example": "abc123"
+                },
+                "rewardType": {
+                  "type": "string",
+                  "example": "font || theme"
+                }
+              }
+            }
           }
         ],
         "responses": {
