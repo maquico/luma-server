@@ -151,7 +151,7 @@ const getByProject = async (req, res) => {
 
 const getByUserShop = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
-       #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.'
+       #swagger.description = 'Endpoint para obtener todas las recompensas para un usuario en la tienda.'
             #swagger.parameters['userId'] = {
                 in: 'path',
                 description: 'Id del usuario',
