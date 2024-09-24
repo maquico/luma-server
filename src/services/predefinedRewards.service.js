@@ -187,27 +187,29 @@ async function buyPredefinedReward(userId, rewardId, rewardType) {
     }
 
     // ON A TRANSACTION:
-
-    const { data, error } = await supabase
-    .rpc('buy_with_coins_transaction',
-        { 
-          userId,
-          rewardId,
-          rewardType 
-        });
-    
-    if(error) {
-        console.log(`Error buying reward: ${error.message}`);
-        errorObject.message = error.message;
-        errorObject.status = 500;
-    } else {
-        content = {
-            message: 'Reward bought successfully',
-            function_data: data
-        };
-        errorObject = null;
+    console.log(userId, rewardId, rewardType);
+    if (continueFunction) {
+        const { data, error } = await supabase
+        .rpc('buy_with_coins_transaction',
+            { 
+              "p_user_id": userId,
+              "p_reward_id": rewardId,
+              "p_reward_type": rewardType 
+            });
+        
+        if(error) {
+            console.log(`Error buying reward: ${error.message}`);
+            errorObject.message = error.message;
+            errorObject.status = 500;
+        } else {
+            content = {
+                message: 'Reward bought successfully',
+                function_data: data
+            };
+            errorObject = null;
+        }
     }
-
+    
     return {
         data: content,
         error: errorObject

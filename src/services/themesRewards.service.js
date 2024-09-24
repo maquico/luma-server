@@ -43,9 +43,18 @@ async function get() {
     return { data, error };
 }
 
+async function getById(id) {
+    const { data, error } = await supabase
+        .from('Temas')
+        .select('*')
+        .eq('Tema_ID', id)
+    return { data, error };
+}
+
 export default {
     create,
     eliminate,
     update,
     get,
+    getById,
 };

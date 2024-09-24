@@ -24,6 +24,35 @@ async function getByUserId(req, res) {
    }
 }
 
+async function buyPredefinedReward(req, res) {
+    /* #swagger.tags = ['Predefined Rewards']
+       #swagger.description = 'Endpoint comprar una recompensa predefinida.'
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos de la compra',
+           required: true,
+           schema: {
+               rewardId: 123456,
+               userId: 'abc123',
+               rewardType: 'font || theme'
+           }
+       }
+    */
+    try {
+        const { rewardId, userId, rewardType } = req.body;
+        const { data, error } = await predefinedReward.buyPredefinedReward(userId, rewardId, rewardType);
+        if (error) {
+            const errorStatusCode = parseInt(error.status, 10)
+            console.log(errorStatusCode);
+            return res.status(errorStatusCode).send(error.message);
+          }
+          return res.status(200).send(data);
+       } catch (error) {
+         return res.status(500).send(error.message);
+       }
+} 
+
 export default {
     getByUserId,
+    buyPredefinedReward,
 };

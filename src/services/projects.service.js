@@ -36,7 +36,7 @@ async function create(nombre, descripcion, userId) {
         console.log('Proyecto creado:', data[0]);
         project = data[0];
     }
-
+    console.log('Proyecto:', project);
     return { data: project, error: null };
 }
 
