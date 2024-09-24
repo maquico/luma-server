@@ -106,11 +106,12 @@ async function getByUserId(userId) {
     };
 }
 
-async function buyReward(userId, rewardId, rewardType) {
+async function buyPredefinedReward(userId, rewardId, rewardType) {
     let errorObject = { message: '', status: 200 };
     let continueFunction = true;
     let reward = null;
     let rewardHistory = null;
+    let content = null;
 
     // get the reward
     if (rewardType === "font") {
@@ -135,20 +136,22 @@ async function buyReward(userId, rewardId, rewardType) {
     }
 
     // check if the user has enough coins
-    const { data: user, error: userError } = await userService.getById(userId);
-    if(userError) {
-        console.log(`Error getting user: ${userError.message}`);
-        errorObject.message = userError.message;
-        errorObject.status = userError.status;
-        continueFunction = false;
+    if (continueFunction){
+        const { data: user, error: userError } = await userService.getById(userId);
+        if(userError) {
+            console.log(`Error getting user: ${userError.message}`);
+            errorObject.message = userError.message;
+            errorObject.status = userError.status;
+            continueFunction = false;
+        }
+        else if(user.monedas < reward.precio) {
+            console.log(`User does not have enough coins to buy the reward`);
+            errorObject.message = `User does not have enough coins to buy the reward`;
+            errorObject.status = 400;
+            continueFunction = false;
+        }
     }
-    else if(user.monedas < reward.precio) {
-        console.log(`User does not have enough coins to buy the reward`);
-        errorObject.message = `User does not have enough coins to buy the reward`;
-        errorObject.status = 400;
-        continueFunction = false;
-    }
-
+    
     // check if the reward is hasnt been boughy by that user
     if (rewardType === "font" && continueFunction) {
         const { data: fontHistory, error: fontHistoryError } = await fontsHistoryService.getByUserId(userId);
@@ -184,10 +187,34 @@ async function buyReward(userId, rewardId, rewardType) {
     }
 
     // ON A TRANSACTION:
-    // add to the appropriate history table
-    // reduce users coins
+
+    const { data, error } = await supabase
+    .rpc('buy_with_coins_transaction',
+        { 
+          userId,
+          rewardId,
+          rewardType 
+        });
+    
+    if(error) {
+        console.log(`Error buying reward: ${error.message}`);
+        errorObject.message = error.message;
+        errorObject.status = 500;
+    } else {
+        content = {
+            message: 'Reward bought successfully',
+            function_data: data
+        };
+        errorObject = null;
+    }
+
+    return {
+        data: content,
+        error: errorObject
+    };
 }
 
 export default {
     getByUserId,
+    buyPredefinedReward,
 };
