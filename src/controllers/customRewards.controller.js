@@ -149,15 +149,9 @@ const getByProject = async (req, res) => {
     }
 };
 
-const getByUserAndProject = async (req, res) => {
+const getByUserShop = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.'
-            #swagger.parameters['projectId'] = {
-                in: 'path',
-                description: 'Id del proyecto',
-                required: true,
-                type: 'integer'
-            }
             #swagger.parameters['userId'] = {
                 in: 'path',
                 description: 'Id del usuario',
@@ -167,7 +161,7 @@ const getByUserAndProject = async (req, res) => {
     */
     try {
         const { projectId, userId } = req.params;
-        const { data, error } = await rewards.getByUserAndProject(userId, projectId);
+        const { data, error } = await rewards.getByUserShop(userId, projectId);
         if (error) {
             return res.status(500).send(error.message);
         }
@@ -185,5 +179,5 @@ export default {
     getRecompensas,
     getById,
     getByProject,
-    getByUserAndProject,
+    getByUserShop,
 };

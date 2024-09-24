@@ -2,32 +2,26 @@ import supabaseConfig from "../configs/supabase.js";
 
 const { supabase } = supabaseConfig;
 
-async function getByUserAndProject(userId, projectId) {
+async function getByUser(userId) {
     const { data, error } = await supabase
         .from('Historial_Recompensas')
-        .select("*, Recompensas(*)")
-        .eq('Usuario_ID', userId)
-        .eq('Recompensas.Proyecto_ID', projectId);
+        .select("cantidadComprada, Recompensas(Recompensa_ID, Proyecto_ID, Icono_ID, nombre, descripcion, precio, cantidad, limite, totalCompras)")
+        .eq('Usuario_ID', userId);
 
     if (error) {
         console.log(error);
+        return { data: null, error };
     } else {
-        console.log(`Bought custom rewards found for user ID ${userId} and project ID ${projectId}: ${data.length}`);
-        // delete the elements with Recompensas = null and merge Recompensas attributes
-        for (let i = 0; i < data.length; i++) {
-            if (data[i].Recompensas == null) {
-                data.splice(i, 1);
-                i--;
-            } else {
-                // Merge Recompensas attributes into the parent object
-                data[i] = { ...data[i], ...data[i].Recompensas };
-                delete data[i].Recompensas;
-            }
-        }
+        console.log(`Bought custom rewards found for user ID ${userId}: ${data.length}`);
+        // Flatten the nested Recompensas objects and merge with cantidadComprada
+        const flattenedData = data.map(item => ({
+            ...item.Recompensas,
+            cantidadComprada: item.cantidadComprada
+        }));
+        return { data: flattenedData, error: null };
     }
-    return { data, error };
 }
 
 export default {
-    getByUserAndProject,
+    getByUser,
 };
