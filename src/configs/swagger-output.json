@@ -172,12 +172,44 @@
         }
       }
     },
+    "/api/user/admin/{id}": {
+      "get": {
+        "tags": [
+          "Admin/User"
+        ],
+        "description": "Endpoint para obtener un usuario por su ID (para admins).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del usuario"
+          },
+          {
+            "name": "columns",
+            "description": "Comma-separated list of columns to select (optional)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/user/{id}": {
       "get": {
         "tags": [
           "User"
         ],
-        "description": "Endpoint para obtener un usuario por su ID.",
+        "description": "Endpoint para obtener un usuario por su ID (para el cliente).",
         "parameters": [
           {
             "name": "id",

@@ -109,9 +109,40 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+const getByIdAdmin = async (req, res) => {
+  /* #swagger.tags = ['Admin / User']
+     #swagger.description = 'Endpoint para obtener un usuario por su ID (para admins).'
+     #swagger.parameters['id'] = { 
+         description: 'ID del usuario',
+         type: 'string',
+         required: true
+     }
+     #swagger.parameters['columns'] = {
+         description: 'Comma-separated list of columns to select (optional)',
+         type: 'string',
+         required: false
+     }
+  */
+  try {
+    const { id } = req.params;
+    const { columns } = req.query; // Extract columns from the query parameters
+
+    const { data, error } = await user.getById(id, columns || '*'); // Pass columns if available, otherwise default to '*'
+    
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 const getById = async (req, res) => {
   /* #swagger.tags = ['User']
-     #swagger.description = 'Endpoint para obtener un usuario por su ID.'
+     #swagger.description = 'Endpoint para obtener un usuario por su ID (para el cliente).'
      #swagger.parameters['id'] = { 
          description: 'ID del usuario',
          type: 'string',
@@ -120,21 +151,26 @@ const getById = async (req, res) => {
   */
   try {
     const { id } = req.params;
-    const { data, error } = await user.getById(id);
+    const columns = "Usuario_ID,nombre,apellido,correo,nivel,monedas,foto,Idioma_ID,ultimoInicioSesion,eliminado"
+    const { data, error } = await user.getById(id, columns); 
+    
     if (error) {
-                  const statusCode = error.status ? parseInt(error.status) : 500;
-            return res.status(statusCode).send(error.message);
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
+
     return res.status(200).send(data);
   } catch (error) {
     return res.status(500).send(error.message);
   }
 }
 
+
 export default {
   create,
   resetPassword,
   sendOtp,
   verifyOtp,
+  getByIdAdmin,
   getById,
 };
