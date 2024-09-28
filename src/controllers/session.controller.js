@@ -18,8 +18,7 @@ const create = async (req, res) => {
         const { email, password } = req.body;
         const { data, error } = await session.create(email, password);
         if (error) {
-            let statusCode;
-            error.status ? statusCode = parseInt(error.status) : 500;
+            const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);

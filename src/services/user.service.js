@@ -25,14 +25,16 @@ async function getByEmail(email) {
     return { data, error };
 }
 
-async function getById(id) {
+async function getById(id, columns = '*') {
     const { data, error } = await supabase
         .from('Usuarios')
-        .select()
-        .eq('Usuario_ID', id)
-    error ? console.log(error) : console.log(`User found: ${data[0].correo}`)
+        .select(columns)  
+        .eq('Usuario_ID', id);
+
+    error ? console.log(error) : console.log('User found: ${data[0].correo}')
     return { data, error };
 }
+
 
 async function sendOtp(email){
     const { data, error } = await supabase.auth.signInWithOtp({

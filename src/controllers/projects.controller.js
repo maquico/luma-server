@@ -84,8 +84,7 @@ const getByUser = async (req, res) => {
         const { userId } = req.params;
         const { Proyectos, error } = await project.getByUser(userId);
         if (error) {
-            let statusCode;
-            error.status ? statusCode = parseInt(error.status) : 500;
+            const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(Proyectos);

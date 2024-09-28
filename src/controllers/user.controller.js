@@ -20,8 +20,7 @@ const create = async (req, res) => {
     const { email, password, first_name, last_name } = req.body;
     const { data, error } = await user.create(email, password, first_name, last_name);
     if (error) {
-      let statusCode;
-      error.status ? statusCode = parseInt(error.status) : 500;
+      const statusCode = error.status ? parseInt(error.status) : 500;
       return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
@@ -48,9 +47,8 @@ const resetPassword = async (req, res) => {
     const { userId, newPassword } = req.body;
     const { data, error } = await user.resetPassword(userId, newPassword);
     if (error) {
-      let statusCode;
-      error.status ? statusCode = parseInt(error.status) : 500;
-      return res.status(statusCode).send(error.message);
+                  const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -75,9 +73,8 @@ const sendOtp = async (req, res) => {
     const { email } = req.body;
     const { data, error } = await user.sendOtp(email);
     if (error) {
-      let statusCode;
-      error.status ? statusCode = parseInt(error.status) : 500;
-      return res.status(statusCode).send(error.message);
+                  const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -103,9 +100,8 @@ const verifyOtp = async (req, res) => {
     const { email, token } = req.body;
     const { data, error } = await user.verifyOtp(email, token);
     if (error) {
-      let statusCode;
-      error.status ? statusCode = parseInt(error.status) : 500;
-      return res.status(statusCode).send(error.message);
+                  const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -126,9 +122,8 @@ const getById = async (req, res) => {
     const { id } = req.params;
     const { data, error } = await user.getById(id);
     if (error) {
-      let statusCode;
-      error.status ? statusCode = parseInt(error.status) : 500;
-      return res.status(statusCode).send(error.message);
+                  const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {

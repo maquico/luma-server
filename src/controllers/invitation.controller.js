@@ -19,8 +19,7 @@ const sendEmail = async (req, res) => {
         const { email, projectId } = req.body;
         const { data, error } = await invitation.sendEmail(email, projectId);
         if (error) {
-            let statusCode;
-            error.status ? statusCode = parseInt(error.status) : 500;
+            const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
@@ -43,8 +42,7 @@ const getInvitationRoute = async (req, res) => {
         const { token } = req.params;
         const { data, error } = await invitation.getInvitationRoute(token);
         if (error) {
-            let statusCode;
-            error.status ? statusCode = parseInt(error.status) : 500;
+            const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
@@ -71,8 +69,7 @@ const validate = async (req, res) => {
         const { token, userId } = req.body;
         const { data, error} = await invitation.validate(token, userId);
         if (error) {
-            let statusCode;
-            error.status ? statusCode = parseInt(error.status) : 500;
+            const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
@@ -99,8 +96,7 @@ const create = async (req, res) => {
         const { email, projectId } = req.body;
         const { data, error } = await invitation.create(email, projectId);
         if (error) {
-            let statusCode;
-            error.status ? statusCode = parseInt(error.status) : 500;
+            const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
