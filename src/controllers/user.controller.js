@@ -20,9 +20,9 @@ const create = async (req, res) => {
     const { email, password, first_name, last_name } = req.body;
     const { data, error } = await user.create(email, password, first_name, last_name);
     if (error) {
-      const errorStatusCode = parseInt(error.status, 10)
-      console.log(errorStatusCode);
-      return res.status(errorStatusCode).send(error.message);
+      let statusCode;
+      error.status ? statusCode = parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -48,9 +48,9 @@ const resetPassword = async (req, res) => {
     const { userId, newPassword } = req.body;
     const { data, error } = await user.resetPassword(userId, newPassword);
     if (error) {
-      const errorStatusCode = parseInt(error.status, 10)
-      console.log(errorStatusCode);
-      return res.status(errorStatusCode).send(error.message);
+      let statusCode;
+      error.status ? statusCode = parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -75,9 +75,9 @@ const sendOtp = async (req, res) => {
     const { email } = req.body;
     const { data, error } = await user.sendOtp(email);
     if (error) {
-      const errorStatusCode = parseInt(error.status, 10)
-      console.log(errorStatusCode);
-      return res.status(errorStatusCode).send(error.message);
+      let statusCode;
+      error.status ? statusCode = parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -103,9 +103,9 @@ const verifyOtp = async (req, res) => {
     const { email, token } = req.body;
     const { data, error } = await user.verifyOtp(email, token);
     if (error) {
-      const errorStatusCode = parseInt(error.status, 10)
-      console.log(errorStatusCode);
-      return res.status(errorStatusCode).send(error.message);
+      let statusCode;
+      error.status ? statusCode = parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -113,9 +113,33 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+const getById = async (req, res) => {
+  /* #swagger.tags = ['User']
+     #swagger.description = 'Endpoint para obtener un usuario por su ID.'
+     #swagger.parameters['id'] = { 
+         description: 'ID del usuario',
+         type: 'string',
+         required: true
+     }
+  */
+  try {
+    const { id } = req.params;
+    const { data, error } = await user.getById(id);
+    if (error) {
+      let statusCode;
+      error.status ? statusCode = parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 export default {
   create,
   resetPassword,
   sendOtp,
   verifyOtp,
+  getById,
 };

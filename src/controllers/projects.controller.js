@@ -19,9 +19,8 @@ const create = async (req, res) => {
         const { nombre, descripcion, userId } = req.body;
         const { data, error } = await project.create(nombre, descripcion, userId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            console.log("Supabase error code: ", error.code);
+            return res.status(500).send(error.message);
         }
         return res.status(201).send(data);
     } catch (error) {
@@ -37,9 +36,8 @@ const getProyectos = async (req, res) => {
     try {
         const { data, error } = await project.getProyectos();
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            console.log("Supabase error code: ", error.code);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -62,9 +60,8 @@ const getById = async (req, res) => {
         const { id } = req.params;
         const { data, error } = await project.getById(id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            console.log("Supabase error code: ", error.code);
+            return res.status(500).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -87,9 +84,9 @@ const getByUser = async (req, res) => {
         const { userId } = req.params;
         const { Proyectos, error } = await project.getByUser(userId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(Proyectos);
     } catch (error) {

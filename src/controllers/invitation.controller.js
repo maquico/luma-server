@@ -19,9 +19,9 @@ const sendEmail = async (req, res) => {
         const { email, projectId } = req.body;
         const { data, error } = await invitation.sendEmail(email, projectId);
         if (error) {
-          const errorStatusCode = parseInt(error.status, 10)
-          console.log(errorStatusCode);
-          return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -43,10 +43,9 @@ const getInvitationRoute = async (req, res) => {
         const { token } = req.params;
         const { data, error } = await invitation.getInvitationRoute(token);
         if (error) {
-          const errorStatusCode = parseInt(error.status, 10)
-          console.log("Error code: ", errorStatusCode);
-          console.log("Error message: ", error.message);
-          return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -72,9 +71,9 @@ const validate = async (req, res) => {
         const { token, userId } = req.body;
         const { data, error} = await invitation.validate(token, userId);
         if (error) {
-          const errorStatusCode = parseInt(error.status, 10)
-          console.log(errorStatusCode);
-          return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -100,9 +99,9 @@ const create = async (req, res) => {
         const { email, projectId } = req.body;
         const { data, error } = await invitation.create(email, projectId);
         if (error) {
-          const errorStatusCode = parseInt(error.status, 10)
-          console.log(errorStatusCode);
-          return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {

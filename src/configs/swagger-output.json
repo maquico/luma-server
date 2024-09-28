@@ -172,6 +172,31 @@
         }
       }
     },
+    "/api/user/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para obtener un usuario por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del usuario"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/session/": {
       "post": {
         "tags": [
@@ -894,7 +919,7 @@
         "tags": [
           "Custom Rewards"
         ],
-        "description": "Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.",
+        "description": "Endpoint para obtener todas las recompensas para un usuario en la tienda.",
         "parameters": [
           {
             "name": "userId",

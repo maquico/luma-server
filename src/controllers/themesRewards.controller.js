@@ -23,9 +23,9 @@ const create = async (req, res) => {
         const { nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex } = req.body;
         const { data, error } = await themes.create(nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -50,9 +50,9 @@ const eliminate = async (req, res) => {
         const { id } = req.body;
         const { error } = await themes.eliminate(id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send('Tema eliminado');
     } catch (error) {
@@ -84,9 +84,9 @@ const update = async (req, res) => {
         const { nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex, id } = req.body;
         const { data, error } = await themes.update(nombre, precio, accentHex, primaryHex, secondaryHex, backgroundHex, textHex, id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -102,9 +102,9 @@ const get = async (req, res) => {
     try {
         const { data, error } = await themes.get();
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {

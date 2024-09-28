@@ -18,9 +18,9 @@ const create = async (req, res) => {
         const { nombre, precio } = req.body;
         const { data, error } = await fonts.create(nombre, precio);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -45,9 +45,9 @@ const eliminate = async (req, res) => {
         const { id } = req.body;
         const { error } = await fonts.eliminate(id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send('Fuente eliminada');
     } catch (error) {
@@ -74,9 +74,9 @@ const update = async (req, res) => {
         const { nombre, precio, id } = req.body;
         const { data, error } = await fonts.update(nombre, precio, id);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -92,9 +92,9 @@ const get = async (req, res) => {
     try {
         const { data, error } = await fonts.get();
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            let statusCode;
+            error.status ? statusCode = parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
