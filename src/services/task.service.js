@@ -1,4 +1,5 @@
-import supabaseConfig from "../configs/supabase.js"; 
+import supabaseConfig from "../configs/supabase.js";
+import currenciesAndPoints from "../utils/currenciesAndPoints.js";
 
 const { supabase } = supabaseConfig; 
 
@@ -10,22 +11,21 @@ async function create(taskObj) {
             {
                 // requerido
                 Proyecto_ID: taskObj.projectId,
-                nombre: taskObj.nombre,
-                prioridad: taskObj.prioridad,
-                tiempo: taskObj.tiempo,
+                nombre: taskObj.name,
+                prioridad: taskObj.priority,
+                tiempo: taskObj.time,
                 // automatico
-                fueReclamada: taskObj.fueReclamada,
-                valorGemas: taskObj.valorGemas,
-                Estado_Tarea_ID: taskObj.estadoTareaId, 
+                valorGemas: currenciesAndPoints.calculateGemPrice(taskObj.priority, taskObj.time),
+                puntosExperiencia: currenciesAndPoints.calculateExperiencePoints(taskObj.priority, taskObj.time),
                 // opcional
-                fechaInicio: taskObj.fechaInicio,
-                fechaFin: taskObj.fechaFin,
-                Usuario_ID: taskObj.usuarioId,
-                esCritica: taskObj.esCritica,
-                gasto: taskObj.gasto,
-                presupuesto: taskObj.presupuesto,
-                descripcion: taskObj.descripcion,
-                etiquetas: taskObj.etiquetas,
+                fechaInicio: taskObj.startDate,
+                fechaFin: taskObj.endDate,
+                Usuario_ID: taskObj.userId,
+                esCritica: taskObj.isCritical,
+                gastos: taskObj.cost,
+                presupuesto: taskObj.budget,
+                descripcion: taskObj.description,
+                etiquetas: taskObj.tags,
             },
         ])
         .select()

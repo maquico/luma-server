@@ -1204,6 +1204,83 @@
           }
         }
       }
+    },
+    "/api/task/": {
+      "post": {
+        "tags": [
+          "Task"
+        ],
+        "description": "Endpoint para registrar una tarea.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos de la tarea",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "projectId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Task"
+                },
+                "priority": {
+                  "type": "number",
+                  "example": 1
+                },
+                "time": {
+                  "type": "number",
+                  "example": 120
+                },
+                "startDate": {
+                  "type": "string",
+                  "example": "2021-09-01"
+                },
+                "endDate": {
+                  "type": "string",
+                  "example": "2021-09-02"
+                },
+                "userId": {
+                  "type": "string",
+                  "example": "UUID"
+                },
+                "isCritical": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "cost": {
+                  "type": "number",
+                  "example": 100
+                },
+                "budget": {
+                  "type": "number",
+                  "example": 200
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Task description"
+                },
+                "tags": {
+                  "type": "string",
+                  "example": "tag1,tag2"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   }
 }
