@@ -9,6 +9,7 @@ import fontsRouter from './src/routes/fontsRewards.router.js';
 import themesRouter from './src/routes/themesRewards.router.js';
 import rewardsRouter from './src/routes/customRewards.router.js';
 import predefinedRewardsRouter from './src/routes/predefinedRewards.router.js';
+import taskRouter from './src/routes/task.router.js';
 import { serve, setup } from 'swagger-ui-express';
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
@@ -38,6 +39,7 @@ app.use('/api/fonts', fontsRouter);
 app.use('/api/themes', themesRouter);
 app.use('/api/rewards', rewardsRouter);
 app.use('/api/rewards/predefined', predefinedRewardsRouter);
+app.use('/api/task', taskRouter);
 
 // Start server
 app.listen(port, () => {

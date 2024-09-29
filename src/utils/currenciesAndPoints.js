@@ -1,9 +1,9 @@
 function calculateGemPrice(priority, time) {
-  return (10 * time) / priority;
+  return Math.floor((10 * time) / priority);
 }
 
 function calculateExperiencePoints(priority, time) {
-  return (100 * time) / priority;
+  return Math.floor((100 * time) / priority);
 }
 
 export default {
