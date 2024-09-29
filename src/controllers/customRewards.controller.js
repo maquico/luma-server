@@ -23,7 +23,8 @@ const create = async (req, res) => {
         const { projectId, iconoId, nombre, descripcion, precio, cantidad, limite } = req.body;
         const { data, error } = await rewards.create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite);
         if (error) {
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -48,7 +49,8 @@ const eliminate = async (req, res) => {
         const { id } = req.body;
         const { error } = await rewards.eliminate(id);
         if (error) {
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send('Recompensa eliminada');
     } catch (error) {
@@ -79,7 +81,8 @@ const update = async (req, res) => {
         const { iconoId, nombre, descripcion, precio, cantidad, limite, id } = req.body;
         const { data, error } = await rewards.update(iconoId, nombre, descripcion, precio, cantidad, limite, id);
         if (error) {
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -95,7 +98,8 @@ const getRecompensas = async (req, res) => {
     try {
         const { data, error } = await rewards.getRecompensas();
         if (error) {
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -118,7 +122,8 @@ const getById = async (req, res) => {
         const { id } = req.params;
         const { data, error } = await rewards.getById(id);
         if (error) {
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -141,7 +146,8 @@ const getByProject = async (req, res) => {
         const { projectId } = req.params;
         const { data, error } = await rewards.getByProject(projectId);
         if (error) {
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -151,7 +157,7 @@ const getByProject = async (req, res) => {
 
 const getByUserShop = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
-       #swagger.description = 'Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.'
+       #swagger.description = 'Endpoint para obtener todas las recompensas para un usuario en la tienda.'
             #swagger.parameters['userId'] = {
                 in: 'path',
                 description: 'Id del usuario',
@@ -163,7 +169,8 @@ const getByUserShop = async (req, res) => {
         const { projectId, userId } = req.params;
         const { data, error } = await rewards.getByUserShop(userId, projectId);
         if (error) {
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {

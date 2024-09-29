@@ -7,6 +7,10 @@ router.post('/', userController.create);
 router.post('/otp/send', userController.sendOtp);
 router.post('/otp/verify', userController.verifyOtp);
 router.put('/password/reset', userController.resetPassword);
-
+router.get('/admin/:id', userController.getByIdAdmin);
+router.get('/:id', userController.getById);
+router.get('/admin', userController.get);
+router.put('/admin/:id', userController.update);
+router.put('/email/reset', userController.resetEmail);
 
 export default router;
