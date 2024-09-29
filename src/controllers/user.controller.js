@@ -45,10 +45,10 @@ const resetPassword = async (req, res) => {
   */
   try {
     const { userId, newPassword } = req.body;
-    const { data, error } = await user.resetPassword(userId, newPassword);
+    const { data, error } = await user.updateAuth(userId, newPassword);
     if (error) {
-                  const statusCode = error.status ? parseInt(error.status) : 500;
-            return res.status(statusCode).send(error.message);
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -165,6 +165,89 @@ const getById = async (req, res) => {
   }
 }
 
+const get = async (_req, res) => {
+  /* #swagger.tags = ['Admin / User']
+     #swagger.description = 'Endpoint para obtener todos los usuarios.'
+  */
+  try {
+    const { data, error } = await user.get();
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+const update = async (req, res) => {
+  /* #swagger.tags = ['Admin / User']
+     #swagger.description = 'Endpoint para actualizar los datos de un usuario.'
+     #swagger.parameters['obj'] = {
+         in: 'body',
+         description: 'Datos para actualizar el usuario',
+         required: true,
+         schema: {
+            nombre: 'NuevoNombre',
+            apellido: 'NuevoApellido',
+            correo: 'nuevoemail@gmail.com',
+            nivel: 2,
+            monedas: 100,
+            foto: 'ruta foto',
+            Idioma_ID: 1,
+            eliminado: false
+         }
+     }
+  */
+  try {
+    const { id } = req.params; // Extract user ID from URL
+    const updateFields = req.body; // Extract fields to update from request body
+
+    const { data, error } = await user.update(id, updateFields); // Use service function to update user data
+
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
+const resetEmail = async (req, res) => {
+  /* #swagger.tags = ['User']
+     #swagger.description = 'Endpoint para actualizar el correo de un usuario.'
+     #swagger.parameters['obj'] = {
+         in: 'body',
+         description: 'Datos para actualizar el correo del usuario',
+         required: true,
+         schema: {
+             userId: 'abc123',
+             newEmail: 'nuevoemail@gmail.com'
+         }
+     }
+  */
+  try {
+    const { userId, newEmail } = req.body;
+
+    const { data, error } = await user.updateAuth(userId, null, newEmail);
+
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
+      
+
 
 export default {
   create,
@@ -173,4 +256,7 @@ export default {
   verifyOtp,
   getByIdAdmin,
   getById,
+  get,
+  update,
+  resetEmail,
 };

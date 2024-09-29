@@ -175,7 +175,7 @@
     "/api/user/admin/{id}": {
       "get": {
         "tags": [
-          "Admin/User"
+          "Admin / User"
         ],
         "description": "Endpoint para obtener un usuario por su ID (para admins).",
         "parameters": [
@@ -202,6 +202,71 @@
             "description": "Internal Server Error"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Admin / User"
+        ],
+        "description": "Endpoint para actualizar los datos de un usuario.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos para actualizar el usuario",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string",
+                  "example": "NuevoNombre"
+                },
+                "apellido": {
+                  "type": "string",
+                  "example": "NuevoApellido"
+                },
+                "correo": {
+                  "type": "string",
+                  "example": "nuevoemail@gmail.com"
+                },
+                "nivel": {
+                  "type": "number",
+                  "example": 2
+                },
+                "monedas": {
+                  "type": "number",
+                  "example": 100
+                },
+                "foto": {
+                  "type": "string",
+                  "example": "ruta foto"
+                },
+                "Idioma_ID": {
+                  "type": "number",
+                  "example": 1
+                },
+                "eliminado": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/api/user/{id}": {
@@ -217,6 +282,59 @@
             "required": true,
             "type": "string",
             "description": "ID del usuario"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/admin": {
+      "get": {
+        "tags": [
+          "Admin / User"
+        ],
+        "description": "Endpoint para obtener todos los usuarios.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/email/reset": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para actualizar el correo de un usuario.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos para actualizar el correo del usuario",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "example": "abc123"
+                },
+                "newEmail": {
+                  "type": "string",
+                  "example": "nuevoemail@gmail.com"
+                }
+              }
+            }
           }
         ],
         "responses": {
