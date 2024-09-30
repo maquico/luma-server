@@ -246,8 +246,27 @@ const resetEmail = async (req, res) => {
   }
 };
 
-      
-
+const deleteById = async (req, res) => {
+  /* #swagger.tags = ['Admin / User']
+     #swagger.description = 'Endpoint para eliminar un usuario.'
+     #swagger.parameters['id'] = { 
+         description: 'ID del usuario',
+         type: 'string',
+         required: true
+     }
+  */
+  try {
+    const { id } = req.params;
+    const { data, error } = await user.deleteById(id);
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
 
 export default {
   create,
@@ -259,4 +278,5 @@ export default {
   get,
   update,
   resetEmail,
+  deleteById,
 };

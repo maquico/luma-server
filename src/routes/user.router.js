@@ -12,5 +12,6 @@ router.get('/:id', userController.getById);
 router.get('/admin', userController.get);
 router.put('/admin/:id', userController.update);
 router.put('/email/reset', userController.resetEmail);
+router.delete('/:id', userController.deleteById);
 
 export default router;

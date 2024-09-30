@@ -137,6 +137,23 @@ async function get() {
     return { data, error };
 }
 
+async function deleteById(userId) {
+    let returnData = {message: "", data: {}};
+    const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
+        userId,
+        true // enables soft delete 
+    );
+    
+    if (error) {
+        console.log("Error deleting user on supabase: ", error);
+    } else {
+        returnData.message = `User with id ${userId} deleted`;
+        returnData.data.userId = userId;
+    }
+
+    return { data: returnData, error };
+}
+
 export default {
     create,
     getByEmail,
@@ -146,6 +163,7 @@ export default {
     updateAuth,
     update,
     get,
+    deleteById,
 };
 
 
