@@ -40,6 +40,27 @@ async function create(nombre, descripcion, userId) {
     return { data: project, error: null };
 }
 
+async function update(nombre, descripcion, id) {
+    const { data, error } = await supabase
+        .from('Proyectos')
+        .update({
+            nombre: nombre,
+            descripcion: descripcion,
+        })
+        .eq('Proyecto_ID', id)
+        .select()
+    return { data, error };
+}
+
+async function eliminate(id) {
+    const { data, error } = await supabase
+        .from('Proyectos')
+        .update({
+            eliminado: true
+        })
+        .eq('Proyecto_ID', id)
+    return { data, error };
+}
 
 async function getProyectos() {
     const { data, error } = await supabase
@@ -53,6 +74,7 @@ async function getById(id) {
         .from('Proyectos')
         .select('*')
         .eq('Proyecto_ID', id)
+        .eq('eliminado', false);
     return { data, error };
 }
 
@@ -65,7 +87,7 @@ async function getByUser(userId) {
 
     if (errorIds) {
         console.error('Error al obtener IDs de proyectos:', errorIds);
-        
+
         return { Proyectos: null, error: errorIds };
     }
 
@@ -81,7 +103,8 @@ async function getByUser(userId) {
     const { data: Proyectos, error: errorProyectos } = await supabase
         .from('Proyectos')
         .select('Proyecto_ID, nombre, descripcion, fechaRegistro, Usuario_ID')  // Incluimos Usuario_ID pero no lo devolveremos
-        .in('Proyecto_ID', ids);
+        .in('Proyecto_ID', ids)
+        .eq('eliminado', false);
 
     if (errorProyectos) {
         console.error('Error al obtener proyectos:', errorProyectos);
@@ -182,4 +205,6 @@ export default {
     getProyectos,
     getById,
     getByUser,
+    update,
+    eliminate,
 }

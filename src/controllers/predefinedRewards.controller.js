@@ -14,9 +14,9 @@ async function getByUserId(req, res) {
    try {
     const { data, error } = await predefinedReward.getByUserId(req.params.userId)
     if (error) {
-        const errorStatusCode = parseInt(error.status, 10)
-        console.log(errorStatusCode);
-        return res.status(errorStatusCode).send(error.message);
+        let statusCode;
+        error.status ? statusCode = parseInt(error.status) : 500;
+        return res.status(statusCode).send(error.message);
       }
       return res.status(200).send(data);
    } catch (error) {
@@ -42,9 +42,8 @@ async function buyPredefinedReward(req, res) {
         const { rewardId, userId, rewardType } = req.body;
         const { data, error } = await predefinedReward.buyPredefinedReward(userId, rewardId, rewardType);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
           }
           return res.status(200).send(data);
        } catch (error) {

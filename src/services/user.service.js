@@ -25,12 +25,13 @@ async function getByEmail(email) {
     return { data, error };
 }
 
-async function getById(id) {
+async function getById(id, columns = '*') {
     const { data, error } = await supabase
         .from('Usuarios')
-        .select()
-        .eq('Usuario_ID', id)
-    error ? console.log(error) : console.log(`User found: ${data[0].correo}`)
+        .select(columns)  
+        .eq('Usuario_ID', id);
+
+    error ? console.log(error) : console.log('User found: ${data[0].correo}')
     return { data, error };
 }
 
@@ -56,23 +57,84 @@ async function verifyOtp(email, token){
     return { data, error };
 }
 
-async function resetPassword(userId, newPassword) {
+async function updateAuth(userId, newPassword=null, newEmail=null) {
     let returnData = null;
+    let updateString = "Fields: ";
+    
+    // Create update object based on what parameters are null and what are passed
+    const updateObject = {};
+    if (newPassword) {
+        updateObject.password = newPassword;
+        updateString += " password ";
+
+    }
+    if (newEmail) {
+        updateObject.email = newEmail;
+        updateString += " email ";
+    }
+
+    // Check if updateObject is empty
+    if (Object.keys(updateObject).length === 0) {
+        return { data: null, error: "No valid fields to update" };
+    }
+
     const { data: user, error } = await supabaseAdmin.auth.admin.updateUserById(
         userId,
-        { password: newPassword }
-    )
+        updateObject
+    );
+
     if (error) {
-        console.log(error)
-    }
-    else {
-        console.log("Password reset for user: ", user.user.email)
+        console.log(error);
+    } else {
+        console.log("Updated user: ", user.user.email, ". ", updateString);
         returnData = {
             email: user.user.email,
-            aud: user.user.aud,
-        }  
+        };
     }
     return { data: returnData, error };
+}
+
+async function update(userId, updateFields) {
+    let returnData = {message: "", data: {}};
+
+    // Create update object based on provided fields
+    const updateObject = {};
+    for (const [key, value] of Object.entries(updateFields)) {
+        if (value !== null && value !== undefined) {
+            updateObject[key] = value;
+        }
+    }
+
+    // Check if updateObject is empty
+    if (Object.keys(updateObject).length === 0) {
+        return { data: null, error: "No valid fields to update" };
+    }
+
+    console.log("Updating user: ", userId, ". ", updateObject);
+    // Update user in the Usuarios table
+    const { data, error } = await supabase
+        .from('Usuarios')
+        .update(updateObject)
+        .eq('Usuario_ID', userId);
+    console.log( data, error);
+    if (error) {
+        console.log("Error updating on supabase: ", error);
+    } else {
+        returnData.message = `User with id ${userId} updated`;
+        returnData.data.userId = userId;
+        returnData.data.updateFields = updateObject;
+    }
+
+    return { data: returnData, error };
+}
+
+
+async function get() {
+    const { data, error } = await supabase
+        .from('Usuarios')
+        .select()
+    error ? console.log(error) : console.log('Users found')
+    return { data, error };
 }
 
 export default {
@@ -81,7 +143,9 @@ export default {
     getById,
     sendOtp,
     verifyOtp,
-    resetPassword,
+    updateAuth,
+    update,
+    get,
 };
 
 
