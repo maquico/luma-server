@@ -60,14 +60,13 @@ const update = async (req, res) => {
 //controller using eliminate service with try catch for error handling
 const eliminate = async (req, res) => {
     /* #swagger.tags = ['Projects']
-         #swagger.description = 'Endpoint para eliminar un proyecto.'
-            #swagger.parameters['obj'] = {
+       #swagger.description = 'Endpoint para eliminar un proyecto.'
+       #swagger.parameters['id'] = {
                 in: 'path',
                 description: 'Id del proyecto',
                 required: true,
-                type: integer
-                }
-            }
+                type: 'integer'
+        }      
     */
     try {
         const { id } = req.params;
