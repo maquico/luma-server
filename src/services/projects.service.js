@@ -16,6 +16,8 @@ const { supabase } = supabaseConfig;
 // }
 
 async function create(nombre, descripcion, userId) {
+    let project = null;
+    let errorObject = { message: '', status: 200 };
     // Llamada a la función almacenada en PostgreSQL
     const { data, error } = await supabase
         .rpc('create_project_with_creator', {
@@ -26,10 +28,16 @@ async function create(nombre, descripcion, userId) {
 
     if (error) {
         console.error('Error al crear el proyecto:', error);
-        return { data: null, error };
+        errorObject.message = `INTERNAL DATABASE ERROR CODE: ${error.code}. Message: ${error.message}`;
+        errorObject.status = 500;
+        return { data: null, error: errorObject };
     }
-
-    return { data, error: null };
+    else {
+        console.log('Proyecto creado:', data[0]);
+        project = data[0];
+    }
+    console.log('Proyecto:', project);
+    return { data: project, error: null };
 }
 
 
@@ -57,6 +65,7 @@ async function getByUser(userId) {
 
     if (errorIds) {
         console.error('Error al obtener IDs de proyectos:', errorIds);
+        
         return { Proyectos: null, error: errorIds };
     }
 
@@ -132,14 +141,6 @@ async function getByUser(userId) {
     // Devolvemos los proyectos con miembros y creador, pero sin Usuario_ID
     return { Proyectos, error: null };
 }
-
-
-
-
-
-
-
-
 
 // async function getByUser(userId) {
 //     // Primero, obtenemos los IDs de los proyectos en los que el usuario está involucrado

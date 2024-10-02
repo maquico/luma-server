@@ -7,8 +7,7 @@
   },
   "basePath": "/",
   "schemes": [
-    "http",
-    "https"
+    "http"
   ],
   "paths": {
     "/": {
@@ -158,6 +157,181 @@
                 "newPassword": {
                   "type": "string",
                   "example": "password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/admin/{id}": {
+      "get": {
+        "tags": [
+          "Admin / User"
+        ],
+        "description": "Endpoint para obtener un usuario por su ID (para admins).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del usuario"
+          },
+          {
+            "name": "columns",
+            "description": "Comma-separated list of columns to select (optional)",
+            "type": "string",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin / User"
+        ],
+        "description": "Endpoint para actualizar los datos de un usuario.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos para actualizar el usuario",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string",
+                  "example": "NuevoNombre"
+                },
+                "apellido": {
+                  "type": "string",
+                  "example": "NuevoApellido"
+                },
+                "correo": {
+                  "type": "string",
+                  "example": "nuevoemail@gmail.com"
+                },
+                "nivel": {
+                  "type": "number",
+                  "example": 2
+                },
+                "monedas": {
+                  "type": "number",
+                  "example": 100
+                },
+                "foto": {
+                  "type": "string",
+                  "example": "ruta foto"
+                },
+                "Idioma_ID": {
+                  "type": "number",
+                  "example": 1
+                },
+                "eliminado": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/{id}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para obtener un usuario por su ID (para el cliente).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del usuario"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/admin": {
+      "get": {
+        "tags": [
+          "Admin / User"
+        ],
+        "description": "Endpoint para obtener todos los usuarios.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/user/email/reset": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "Endpoint para actualizar el correo de un usuario.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos para actualizar el correo del usuario",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string",
+                  "example": "abc123"
+                },
+                "newEmail": {
+                  "type": "string",
+                  "example": "nuevoemail@gmail.com"
                 }
               }
             }
@@ -401,7 +575,7 @@
         }
       }
     },
-    "/api/projects/{id}": {
+    "/api/projects/id/{id}": {
       "get": {
         "tags": [
           "Projects"
@@ -426,7 +600,7 @@
         }
       }
     },
-    "/api/projects/{userId}": {
+    "/api/projects/user/{userId}": {
       "get": {
         "tags": [
           "Projects"
@@ -890,12 +1064,12 @@
         }
       }
     },
-    "/api/rewards/{userId}/{projectId}": {
+    "/api/rewards/user/{userId}/": {
       "get": {
         "tags": [
           "Custom Rewards"
         ],
-        "description": "Endpoint para obtener todas las recompensas de un proyecto para un usuario en la tienda.",
+        "description": "Endpoint para obtener todas las recompensas para un usuario en la tienda.",
         "parameters": [
           {
             "name": "userId",
@@ -903,13 +1077,6 @@
             "required": true,
             "type": "string",
             "description": "Id del usuario"
-          },
-          {
-            "name": "projectId",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "description": "Id del proyecto"
           }
         ],
         "responses": {
@@ -947,7 +1114,7 @@
         }
       }
     },
-    "/api/rewards/{projectId}": {
+    "/api/rewards/project/{projectId}": {
       "get": {
         "tags": [
           "Custom Rewards"
@@ -985,6 +1152,124 @@
             "required": true,
             "type": "string",
             "description": "Id del usuario"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/rewards/predefined/": {
+      "post": {
+        "tags": [
+          "Predefined Rewards"
+        ],
+        "description": "Endpoint comprar una recompensa predefinida.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos de la compra",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rewardId": {
+                  "type": "number",
+                  "example": 123456
+                },
+                "userId": {
+                  "type": "string",
+                  "example": "abc123"
+                },
+                "rewardType": {
+                  "type": "string",
+                  "example": "font || theme"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/task/": {
+      "post": {
+        "tags": [
+          "Task"
+        ],
+        "description": "Endpoint para registrar una tarea.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Datos de la tarea",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "projectId": {
+                  "type": "number",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Task"
+                },
+                "priority": {
+                  "type": "number",
+                  "example": 1
+                },
+                "time": {
+                  "type": "number",
+                  "example": 120
+                },
+                "startDate": {
+                  "type": "string",
+                  "example": "2021-09-01"
+                },
+                "endDate": {
+                  "type": "string",
+                  "example": "2021-09-02"
+                },
+                "userId": {
+                  "type": "string",
+                  "example": "UUID"
+                },
+                "isCritical": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "cost": {
+                  "type": "number",
+                  "example": 100
+                },
+                "budget": {
+                  "type": "number",
+                  "example": 200
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Task description"
+                },
+                "tags": {
+                  "type": "string",
+                  "example": "tag1,tag2"
+                }
+              }
+            }
           }
         ],
         "responses": {
