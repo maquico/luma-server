@@ -1,7 +1,5 @@
 import supabaseConfig from "../configs/supabase.js"; 
-import fontsRewardsService from "./fontsRewards.service.js";
 import themesRewardsService from "./themesRewards.service.js";
-import fontsHistoryService from "./fontsHistory.service.js";
 import themesHistoryService from "./themesHistory.service.js";
 import userService from "./user.service.js";
 
@@ -13,33 +11,17 @@ async function getByUserId(userId) {
     let rewards = [];
 
     const [
-        { data: fontsHistory, error: fontsHistoryError },
         { data: themesHistory, error: themesHistoryError },
-        { data: fontsRewards, error: fontsRewardsError },
         { data: themesRewards, error: themesRewardsError }
       ] = await Promise.all([
-        fontsHistoryService.getByUserId(userId),
         themesHistoryService.getByUserId(userId),
-        fontsRewardsService.get(),
         themesRewardsService.get()
       ]);
 
-    if(fontsHistoryError) {
-        console.log(`Error getting fonts history: ${fontsHistoryError.message}`);
-        errorObject.message = fontsHistoryError.message;
-        errorObject.status = fontsHistoryError.status;
-        continueFunction = false;
-    }
-    else if(themesHistoryError) {
+    if(themesHistoryError) {
         console.log(`Error getting themes history: ${themesHistoryError.message}`);
         errorObject.message = themesHistoryError.message;
         errorObject.status = themesHistoryError.status;
-        continueFunction = false;
-    }
-    else if(fontsRewardsError) {
-        console.log(`Error getting fonts rewards: ${fontsRewardsError.message}`);
-        errorObject.message = fontsRewardsError.message;
-        errorObject.status = fontsRewardsError.status;
         continueFunction = false;
     }
     else if(themesRewardsError) {
@@ -50,25 +32,6 @@ async function getByUserId(userId) {
     }
 
     if(continueFunction) {
-        // map the fonts rewards
-        const fontsRewardsMap = fontsRewards.map(font => {
-            const fontHistory = fontsHistory.find(fontHistory => fontHistory.Fuente_ID === font.Fuente_ID);
-            const fontBought = fontHistory ? fontHistory.cantidadComprada : 0;
-            const fontAvailable = fontBought == 1 ? false : true;
-
-            return {
-                type: 'font',
-                id: font.Fuente_ID,
-                name: font.nombre,
-                price: font.precio,
-                available: fontAvailable,
-                totalAvailable: 1,
-                totalBought: fontBought,
-                totalCapacity: 1,
-                metadata: {},
-            }
-        });
-
         // map the themes rewards
         const themesRewardsMap = themesRewards.map(theme => {
             const themeHistory = themesHistory.find(themeHistory => themeHistory.Tema_ID === theme.Tema_ID);
@@ -85,6 +48,7 @@ async function getByUserId(userId) {
                 totalBought: themeBought,
                 totalCapacity: 1,
                 metadata: {
+                    font: theme.fuente,
                     accentHex: theme.accentHex,
                     primaryHex: theme.primaryHex,
                     secondaryHex: theme.secondaryHex,
@@ -95,7 +59,7 @@ async function getByUserId(userId) {
         });
 
         // Merge rewards on a single list
-        rewards = [...fontsRewardsMap, ...themesRewardsMap];
+        rewards = [...themesRewardsMap];
         console.log(`Rewards found: ${JSON.stringify(rewards, null, 2)}`);
         errorObject = null;
     }
@@ -114,17 +78,7 @@ async function buyPredefinedReward(userId, rewardId, rewardType) {
     let content = null;
 
     // get the reward
-    if (rewardType === "font") {
-        const { data: fontReward, error: fontRewardError } = await fontsRewardsService.getById(rewardId);
-        reward = fontReward;
-        if(fontRewardError) {
-            console.log(`Error getting font reward: ${fontRewardError.message}`);
-            errorObject.message = fontRewardError.message;
-            errorObject.status = fontRewardError.status;
-            continueFunction = false;
-        }
-    }
-    else if (rewardType === "theme") {
+    if (rewardType === "theme") {
         const { data: themeReward, error: themeRewardError } = await themesRewardsService.getById(rewardId);
         reward = themeReward;
         if(themeRewardError) {
@@ -152,24 +106,7 @@ async function buyPredefinedReward(userId, rewardId, rewardType) {
         }
     }
     
-    // check if the reward is hasnt been boughy by that user
-    if (rewardType === "font" && continueFunction) {
-        const { data: fontHistory, error: fontHistoryError } = await fontsHistoryService.getByUserId(userId);
-        rewardHistory = fontHistory.find(font => font.Fuente_ID === rewardId);
-        if(fontHistoryError) {
-            console.log(`Error getting font history: ${fontHistoryError.message}`);
-            errorObject.message = fontHistoryError.message;
-            errorObject.status = fontHistoryError.status;
-            continueFunction = false;
-        }
-        else if(rewardHistory) {
-            console.log(`User already bought the font`);
-            errorObject.message = `User already bought the font`;
-            errorObject.status = 400;
-            continueFunction = false;
-        }
-    }
-    else if (rewardType === "theme" && continueFunction) {
+    if (rewardType === "theme" && continueFunction) {
         const { data: themeHistory, error: themeHistoryError } = await themesHistoryService.getByUserId(userId);
         rewardHistory = themeHistory.find(theme => theme.Tema_ID === rewardId);
         if(themeHistoryError) {
