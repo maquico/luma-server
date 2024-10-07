@@ -3,5 +3,10 @@ import taskController from '../controllers/task.controller.js';
 
 const router = Router();
 router.post('/', taskController.create);
+router.get('/', taskController.get);
+router.get('/:id', taskController.getById);
+router.get('/project/:id', taskController.getByProjectId);
+router.put('/:id', taskController.update);
+router.delete('/:id', taskController.deleteById);
 
 export default router;

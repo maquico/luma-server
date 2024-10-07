@@ -1,5 +1,5 @@
 import supabaseConfig from "../configs/supabase.js"; 
-import generateToken from "../utils/invitation-token.js";
+import generateToken from "../utils/invitationToken.js";
 import projectMemberService from "./projectMember.service.js";
 import userService from "./user.service.js";
 import moment from 'moment-timezone';
