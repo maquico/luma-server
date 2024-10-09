@@ -161,6 +161,30 @@ const getByUserId = async (req, res) => {
     }
 }
 
+const getProjectsIdsByUserId = async (req, res) => {
+    /* #swagger.tags = ['Project Members']
+         #swagger.description = 'Endpoint para obtener todos los proyectos de un usuario por id de usuario.'
+            #swagger.parameters['userId'] = {
+                in: 'path',
+                description: 'ID del usuario',
+                required: true,
+                type: 'string'
+            }
+    */
+    try {
+        const { userId } = req.params;
+        const { data, error } = await member.getProjectsIdsByUserId(userId);
+        if (error) {
+            const errorStatusCode = parseInt(error.status, 10)
+            console.log(errorStatusCode);
+            return res.status(errorStatusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 // Controller using getByProjectId service with try catch for error handling
 const getByProjectId = async (req, res) => {
     /* #swagger.tags = ['Project Members']
@@ -194,4 +218,5 @@ export default {
     getByUserProject,
     getByUserId,
     getByProjectId,
+    getProjectsIdsByUserId
 }
