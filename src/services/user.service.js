@@ -57,20 +57,15 @@ async function verifyOtp(email, token){
     return { data, error };
 }
 
-async function updateAuth(userId, newPassword=null, newEmail=null) {
+async function updateAuth(userId, updateFields) {
     let returnData = null;
-    let updateString = "Fields: ";
-    
-    // Create update object based on what parameters are null and what are passed
-    const updateObject = {};
-    if (newPassword) {
-        updateObject.password = newPassword;
-        updateString += " password ";
 
-    }
-    if (newEmail) {
-        updateObject.email = newEmail;
-        updateString += " email ";
+    // Create update object based on provided fields
+    const updateObject = {};
+    for (const [key, value] of Object.entries(updateFields)) {
+        if (value !== null && value !== undefined) {
+            updateObject[key] = value;
+        }
     }
 
     // Check if updateObject is empty
@@ -86,7 +81,7 @@ async function updateAuth(userId, newPassword=null, newEmail=null) {
     if (error) {
         console.log(error);
     } else {
-        console.log("Updated user: ", user.user.email, ". ", updateString);
+        console.log("Updated user: ", user.user.email, ". ", updateObject);
         returnData = {
             email: user.user.email,
         };
@@ -137,6 +132,23 @@ async function get() {
     return { data, error };
 }
 
+async function deleteById(userId) {
+    let returnData = {message: "", data: {}};
+    const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
+        userId,
+        true // enables soft delete 
+    );
+    
+    if (error) {
+        console.log("Error deleting user on supabase: ", error);
+    } else {
+        returnData.message = `User with id ${userId} deleted`;
+        returnData.data.userId = userId;
+    }
+
+    return { data: returnData, error };
+}
+
 export default {
     create,
     getByEmail,
@@ -146,6 +158,7 @@ export default {
     updateAuth,
     update,
     get,
+    deleteById,
 };
 
 

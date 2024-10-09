@@ -9,5 +9,6 @@ router.get("/", projectMemberController.getMiembros);
 router.get("/user/:userId/project/:projectId", projectMemberController.getByUserProject);
 router.get("/user/:userId", projectMemberController.getByUserId);
 router.get("/project/:projectId", projectMemberController.getByProjectId);
+router.get("/projects/ids/:userId", projectMemberController.getProjectsIdsByUserId);
 
 export default router;

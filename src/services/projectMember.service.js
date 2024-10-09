@@ -60,15 +60,26 @@ async function getByUserProject(userId, projectId) {
 }
 
 // Función para obtener miembros por userId con el nombre del rol
-async function getByUserId(userId) {
+async function getByUserId(userId, columns='*,Roles (nombre)') {
   const { data, error } = await supabase
     .from('Miembro_Proyecto')
-    .select('*,Roles (nombre)')
+    .select(columns)
     .eq('Usuario_ID', userId);
 
   return { data, error };
 }
 
+async function getProjectsIdsByUserId(userId) {
+  const { data, error } = await getByUserId(userId, 'Proyecto_ID');
+
+  if (error) {
+    return { data: null, error };
+  }
+  // transform data to array of project ids
+  const projectsIds = data.map((project) => project.Proyecto_ID);
+  return { data: projectsIds, error };
+
+}
 // Función para obtener miembros por projectId con el nombre del rol
 async function getByProjectId(projectId) {
   const { data, error } = await supabase
@@ -87,4 +98,5 @@ export default {
   getByUserProject,
   getByUserId,
   getByProjectId,
+  getProjectsIdsByUserId,
 };

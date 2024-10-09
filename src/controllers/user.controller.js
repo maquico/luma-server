@@ -45,7 +45,8 @@ const resetPassword = async (req, res) => {
   */
   try {
     const { userId, newPassword } = req.body;
-    const { data, error } = await user.updateAuth(userId, newPassword);
+    const fields = { password: newPassword };
+    const { data, error } = await user.updateAuth(userId, fields);
     if (error) {
       const statusCode = error.status ? parseInt(error.status) : 500;
       return res.status(statusCode).send(error.message);
@@ -181,19 +182,23 @@ const get = async (_req, res) => {
   }
 }
 
-const update = async (req, res) => {
+const updateCustomUser = async (req, res) => {
   /* #swagger.tags = ['Admin / User']
-     #swagger.description = 'Endpoint para actualizar los datos de un usuario.'
+     #swagger.description = 'Endpoint para actualizar los datos personalizados del sistema para un usuario.'
      #swagger.parameters['obj'] = {
          in: 'body',
          description: 'Datos para actualizar el usuario',
          required: true,
          schema: {
-            nombre: 'NuevoNombre',
-            apellido: 'NuevoApellido',
-            correo: 'nuevoemail@gmail.com',
+            nombre: 'Juan',
+            apellido: 'Perez',
+            experiencia: 100,
             nivel: 2,
             monedas: 100,
+            totalGemas: 100,
+            tareasAprobadas: 10,
+            proyectosCreados: 5,
+            esAdmin: false,
             foto: 'ruta foto',
             Idioma_ID: 1,
             eliminado: false
@@ -202,7 +207,13 @@ const update = async (req, res) => {
   */
   try {
     const { id } = req.params; // Extract user ID from URL
-    const updateFields = req.body; // Extract fields to update from request body
+    let updateFields = { ...req.body }; 
+
+    // Prevent the following fields from being updated
+    const restrictedFields = ['correo', 'contraseña'];
+    restrictedFields.forEach(field => {
+      delete updateFields[field];
+    });
 
     const { data, error } = await user.update(id, updateFields); // Use service function to update user data
 
@@ -216,6 +227,37 @@ const update = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+
+const updateAuthUser = async (req, res) => {
+  /* #swagger.tags = ['Admin / User']
+     #swagger.description = 'Endpoint para actualizar los datos de autenticación de un usuario.'
+     #swagger.parameters['obj'] = {
+         in: 'body',
+         description: 'Datos para actualizar el usuario',
+         required: true,
+         schema: {
+            email: 'example@gmail.com',
+            password: 'abc123',
+          }
+      }
+  */
+  try {
+    const { id } = req.params; // Extract user ID from URL
+    const updateFields = req.body; // Extract fields to update from request body
+
+    const { data, error } = await user.updateAuth(id, updateFields); // Use service function to update user data
+
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+  
+    return res.status(200).send(data);
+  } catch (error) {
+    return
+  }
+};
+  
 
 const resetEmail = async (req, res) => {
   /* #swagger.tags = ['User']
@@ -232,8 +274,9 @@ const resetEmail = async (req, res) => {
   */
   try {
     const { userId, newEmail } = req.body;
+    const fields = { email: newEmail };
 
-    const { data, error } = await user.updateAuth(userId, null, newEmail);
+    const { data, error } = await user.updateAuth(userId, fields);
 
     if (error) {
       const statusCode = error.status ? parseInt(error.status) : 500;
@@ -246,8 +289,27 @@ const resetEmail = async (req, res) => {
   }
 };
 
-      
-
+const deleteById = async (req, res) => {
+  /* #swagger.tags = ['Admin / User']
+     #swagger.description = 'Endpoint para eliminar un usuario.'
+     #swagger.parameters['id'] = { 
+         description: 'ID del usuario',
+         type: 'string',
+         required: true
+     }
+  */
+  try {
+    const { id } = req.params;
+    const { data, error } = await user.deleteById(id);
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
 
 export default {
   create,
@@ -257,6 +319,8 @@ export default {
   getByIdAdmin,
   getById,
   get,
-  update,
+  updateCustomUser,
+  updateAuthUser,
   resetEmail,
+  deleteById,
 };
