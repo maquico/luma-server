@@ -31,7 +31,7 @@ const sendEmail = async (req, res) => {
 const getInvitationRoute = async (req, res) => {
     /* #swagger.tags = ['Invitation']
        #swagger.description = 'Endpoint para obtener validar si redirigir al signup o al login.'
-         #swagger.parameters['token'] = {
+       #swagger.parameters['token'] = {
                 in: 'path',
                 description: 'Token de la invitación',
                 required: true,
@@ -41,6 +41,7 @@ const getInvitationRoute = async (req, res) => {
     try {
         const { token } = req.params;
         const { data, error } = await invitation.getInvitationRoute(token);
+        console.log(data);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);

@@ -227,7 +227,7 @@ async function sendEmail(email, projectId) {
 async function getInvitationRoute(token) { 
     console.log("Checking proper invitation route: ", token);
     let continueValidation = true;
-    let sign_up_required = false;
+    let sign_up_required = null;
     let errorObject = { message: '', status: 200 };
     let invitation = null;
     let userData = null;
@@ -241,10 +241,35 @@ async function getInvitationRoute(token) {
         errorObject.status = invitationError.status;
         continueValidation = false;
     }
+    else if (invitationData === undefined || invitationData === null || invitationData.length === 0) {
+        errorObject.message = 'Invitation not found';
+        errorObject.status = 400;
+        continueValidation = false;
+    }
+    
+    // Validate if the invitation was used
+    if (continueValidation) {
+        invitation = invitationData[0];
+        if (invitation.fueUsado) {
+            errorObject.message = 'Invitation already used';
+            errorObject.status = 400;
+            continueValidation = false;
+        }
+    }
+    // Validate if the invitation expired
+    if (continueValidation) {
+        const expirationDate = moment(invitation.fechaExpiracion).utc(); 
+        const currentDate = moment().utc(); 
+        if (currentDate.isAfter(expirationDate)) {
+            errorObject.message = 'Invitation expired';
+            errorObject.status = 400;
+            continueValidation = false;
+        }
+    }
 
     // Validate if the user exists
     if (continueValidation && invitationData) {
-        invitation = invitationData[0];
+        console.log("Invitation found: ", invitation);
         const email = invitation.correo;
         const { data: userDataResponse, error: userError } = await userService.getByEmail(email);
         userData = userDataResponse;
@@ -253,15 +278,19 @@ async function getInvitationRoute(token) {
             errorObject.message = 'Error finding user by email: ' + userError.message;
             errorObject.status = userError.status;
             continueValidation = false;
-        } else if (userData === undefined || userData.length === 0) {
+        } else if (userData === undefined || userData.length === 0 || userData === null) {
             sign_up_required = true;
+            errorObject = null;
+        }
+        else {
+            sign_up_required = false
             errorObject = null;
         }
     }
 
     return {
         error: errorObject,
-        data: sign_up_required,
+        data: { "signUpRequired": sign_up_required },
     };
 }
     
