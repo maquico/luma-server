@@ -5,6 +5,7 @@ import projectsService from "./src/services/projects.service.js"
 import customRewardsService from "./src/services/customRewards.service.js"
 // import taskService from "./src/services/task.service.js"
 import validateTags from "./src/utils/tagsUtils.js"
+import projectMemberService from "./src/services/projectMember.service.js"
 
 //const {data, error} = await user.sendOtp("angelgmorenor@gmail.com")
 
@@ -29,5 +30,9 @@ import validateTags from "./src/utils/tagsUtils.js"
 
 
 // test validate tags
-const data = validateTags("tag0,,tag2")
-console.log(data)
+// const data = validateTags("tag0,,tag2")
+// console.log(data)
+
+// test check member role
+const {data, error} = await projectMemberService.checkMemberRole("37d3b652-d314-4124-9685-add5f0c6fc19", 1, "Creador")
+console.log(data, error)
