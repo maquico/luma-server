@@ -21,7 +21,7 @@ async function getByEmail(email) {
         .from('Usuarios')
         .select()
         .eq('correo', email)
-    error ? console.log(error) : console.log(`User found: ${data[0].correo}`)
+    error ? console.log(error) : console.log(`User found: ${data}`)
     return { data, error };
 }
 
