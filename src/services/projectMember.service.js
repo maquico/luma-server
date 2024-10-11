@@ -90,6 +90,17 @@ async function getByProjectId(projectId) {
   return { data, error };
 }
 
+async function checkMemberRole(userId, projectId, roleName) {
+  const { data, error } = await getByUserProject(userId, projectId);
+  if (error) {
+    return { data: null, error };
+  }
+  // check if the user has the role
+  const hasRole = data.some((member) => member.Roles.nombre === roleName);
+  
+  return { data: hasRole, error: null };
+}
+
 export default {
   create,
   update,
@@ -99,4 +110,5 @@ export default {
   getByUserId,
   getByProjectId,
   getProjectsIdsByUserId,
+  checkMemberRole,
 };

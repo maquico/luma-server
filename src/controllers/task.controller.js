@@ -145,6 +145,26 @@ const update = async (req, res) => {
     }
 };
 
+const updateTaskStatus = async (req, res) => {
+    /* #swagger.tags = ['Admin / Task']
+       #swagger.description = 'Endpoint para actualizar el estado de una tarea.'
+       #swagger.parameters['id'] = { description: 'ID de la tarea', required: true }
+       #swagger.parameters['status'] = { description: 'Estado de la tarea', required: true }
+    */
+    try {
+        const taskId = req.params.id;
+        const taskStatus = req.body.status;
+        const { data, error } = await task.updateTaskStatus(taskId, taskStatus);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 const deleteById = async (req, res) => {
     /* #swagger.tags = ['Admin / Task']
        #swagger.description = 'Endpoint para eliminar una tarea.'
