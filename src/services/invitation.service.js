@@ -273,6 +273,7 @@ async function getInvitationRoute(token) {
         const email = invitation.correo;
         const { data: userDataResponse, error: userError } = await userService.getByEmail(email);
         userData = userDataResponse;
+        console.log("User data: ", userData);
         if (userError) {
             console.log(userError);
             errorObject.message = 'Error finding user by email: ' + userError.message;
