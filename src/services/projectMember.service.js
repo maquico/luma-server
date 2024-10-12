@@ -49,13 +49,12 @@ async function getMiembros() {
 }
 
 // Función para obtener un miembro por userId y projectId con el nombre del rol
-async function getByUserProject(userId, projectId) {
+async function getByUserProject(userId, projectId, columns='*, Roles (nombre)') {
   const { data, error } = await supabase
     .from('Miembro_Proyecto')
-    .select('*, Roles (nombre)')
+    .select(columns)
     .eq('Usuario_ID', userId)
     .eq('Proyecto_ID', projectId);
-
   return { data, error };
 }
 
