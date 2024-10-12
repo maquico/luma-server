@@ -139,7 +139,7 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
     let returnData = {message: "", data: {}};
     let task = null;
 
-    const { data: taskData, error: taskError } = await getById(taskId, 'Tarea_ID, Estado_ID, fueReclamada');
+    const { data: taskData, error: taskError } = await getById(taskId, 'Tarea_ID, Estado_ID, Usuario_ID, fueReclamada');
     if (taskError) {
         console.log("Error getting task on supabase: ", taskError);
         return { data: null, error: taskError };
@@ -148,6 +148,10 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
 
     // Validate user role if status id is 4 (approved)
     if (newStatusId === 4) {
+        // Check if task has a user associated
+        if (!task.Usuario_ID) {
+            return { data: null, error: {message: "Task has no user associated", status: 400} };
+        }
         // Check if user has permission to approve tasks
         const { data: userData, error: userError } = await projectMemberService
           .getByUserProject(userId, projectId, 'Usuario_ID, Proyecto_ID, Rol_ID, Roles (nombre)');
