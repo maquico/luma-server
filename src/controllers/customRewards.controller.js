@@ -176,8 +176,35 @@ const getByUserShop = async (req, res) => {
     } catch (error) {
         return res.status(500).send(error.message);
     }
-}
+};
 
+
+// Controller using buyCustomReward service with try catch for error handling
+const buyCustomReward = async (req, res) => {
+    /* #swagger.tags = ['Custom Rewards']
+       #swagger.description = 'Endpoint para comprar una recompensa.'
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos de la compra',
+           required: true,
+           schema: {
+               userId: 'u12ms2i919al',
+               rewardId: 123456
+           }
+       }
+    */
+    try {
+        const { userId, rewardId } = req.body;
+        const { data, error } = await rewards.buyCustomReward(userId, rewardId);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
 
 export default {
     create,
@@ -187,4 +214,5 @@ export default {
     getById,
     getByProject,
     getByUserShop,
+    buyCustomReward,
 };
