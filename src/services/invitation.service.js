@@ -104,7 +104,7 @@ async function validate(token, userId) {
             
             const currentDate = moment().utc();
             const diff = currentDate.diff(lastLogin, 'minutes');
-            if (diff > 5) {
+            if (diff > 120) {
                 errorObject.message = 'User not logged in recently';
                 errorObject.status = 400;
                 continueValidation = false;
