@@ -31,7 +31,7 @@ async function getById(id, columns = '*') {
         .select(columns)  
         .eq('Usuario_ID', id);
 
-    error ? console.log(error) : console.log('User found: ${data[0].correo}')
+    error ? console.log(error) : console.log(`User found: ${data[0].correo}`)
     return { data, error };
 }
 
