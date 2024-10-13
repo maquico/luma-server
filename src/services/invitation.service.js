@@ -140,7 +140,7 @@ async function validate(token, userId) {
             errorObject.message = 'Error finding project member: ' + memberError.message;
             errorObject.status = memberError.status;
             continueValidation = false;
-        } else if (memberData.length > 5) {
+        } else if (memberData.length === 1) {
             errorObject.message = 'User already in project';
             errorObject.status = 400;
             continueValidation = false;
