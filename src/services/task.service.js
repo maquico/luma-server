@@ -161,7 +161,7 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
             console.log("Error getting user role on supabase: ", userError);
             return { data: null, error: userError };
         }
-        if (userData[0].Roles.nombre !== 'Lider' && userData[0].Roles.nombre !== 'Creador') {
+        if (userData[0].Roles.nombre !== 'Lider' && userData[0].Rol_ID !== 2) {
             return { data: null, error: {message: "User does not have permission to approve tasks", status: 400} };
         }
 
@@ -178,6 +178,9 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
             returnData.data.taskId = taskId;
             returnData.data.newStatusId = newStatusId;
         }
+    }
+    else {
+        return { data: null, error: {message: "Task already has the new status", status: 400} };
     }
 
     return { data: returnData, error: error};
