@@ -134,7 +134,7 @@ async function validate(token, userId) {
     if (continueValidation) {
         const { data: memberData,
                 error: memberError
-              } = await projectMemberService.getByUserId(userData[0].Usuario_ID);
+              } = await projectMemberService.getByUserProject(userData[0].Usuario_ID, invitation.Proyecto_ID);
         if (memberError) {
             console.log(memberError);
             errorObject.message = 'Error finding project member: ' + memberError.message;
