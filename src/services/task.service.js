@@ -1,6 +1,7 @@
 import supabaseConfig from "../configs/supabase.js";
 import currenciesAndPoints from "../utils/currenciesAndPoints.js";
 import tagsUtils from "../utils/tagsUtils.js";
+import projectMemberService from "./projectMember.service.js";
 
 const { supabase } = supabaseConfig;
 
@@ -134,6 +135,57 @@ async function deleteById(taskId) {
     return { data: returnData, error };
 }
 
+async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
+    let returnData = {message: "", data: {}};
+    let task = null;
+
+    const { data: taskData, error: taskError } = await getById(taskId, 'Tarea_ID, Estado_ID, Usuario_ID, fueReclamada');
+    if (taskError) {
+        console.log("Error getting task on supabase: ", taskError);
+        return { data: null, error: taskError };
+    }
+    task = taskData[0];
+
+    // Validate user role if status id is 4 (approved)
+    if (newStatusId === 4) {
+        // Check if task has a user associated
+        if (!task.Usuario_ID) {
+            return { data: null, error: {message: "Task has no user associated", status: 400} };
+        }
+        // Check if user has permission to approve tasks
+        const { data: userData, error: userError } = await projectMemberService
+          .getByUserProject(userId, projectId, 'Usuario_ID, Proyecto_ID, Rol_ID, Roles (nombre)');
+        console.log(userData);
+
+        if (userError) {
+            console.log("Error getting user role on supabase: ", userError);
+            return { data: null, error: userError };
+        }
+        if (userData[0].Roles.nombre !== 'Lider' && userData[0].Rol_ID !== 2) {
+            return { data: null, error: {message: "User does not have permission to approve tasks", status: 400} };
+        }
+
+        // Call procedure to update task status
+
+    }
+    else if (newStatusId !== task.Estado_ID) {
+        const { data, error } = await update(taskId, {Estado_ID: statusId});
+
+        if (error) {
+            console.log("Error updating task status on supabase: ", error);
+        } else {
+            returnData.message = `Task with id ${taskId} updated with status ${newStatusId}: ${JSON.stringify(data, null, 2)}`;
+            returnData.data.taskId = taskId;
+            returnData.data.newStatusId = newStatusId;
+        }
+    }
+    else {
+        return { data: null, error: {message: "Task already has the new status", status: 400} };
+    }
+
+    return { data: returnData, error: error};
+}
+
 export default {
     create,
     get,
@@ -142,4 +194,5 @@ export default {
     getTagsByProjectId,
     update,
     deleteById,
+    updateTaskStatus,
 };

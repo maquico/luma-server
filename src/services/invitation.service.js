@@ -104,7 +104,7 @@ async function validate(token, userId) {
             
             const currentDate = moment().utc();
             const diff = currentDate.diff(lastLogin, 'minutes');
-            if (diff > 5) {
+            if (diff > 120) {
                 errorObject.message = 'User not logged in recently';
                 errorObject.status = 400;
                 continueValidation = false;
@@ -134,13 +134,13 @@ async function validate(token, userId) {
     if (continueValidation) {
         const { data: memberData,
                 error: memberError
-              } = await projectMemberService.getByUserId(userData[0].Usuario_ID);
+              } = await projectMemberService.getByUserProject(userData[0].Usuario_ID, invitation.Proyecto_ID);
         if (memberError) {
             console.log(memberError);
             errorObject.message = 'Error finding project member: ' + memberError.message;
             errorObject.status = memberError.status;
             continueValidation = false;
-        } else if (memberData.length > 5) {
+        } else if (memberData.length === 1) {
             errorObject.message = 'User already in project';
             errorObject.status = 400;
             continueValidation = false;

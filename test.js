@@ -3,7 +3,7 @@ import predefinedReward from "./src/services/predefinedRewards.service.js"
 import customRewardsHistoryService from "./src/services/customRewardsHistory.service.js"
 import projectsService from "./src/services/projects.service.js"
 import customRewardsService from "./src/services/customRewards.service.js"
-// import taskService from "./src/services/task.service.js"
+import taskService from "./src/services/task.service.js"
 import validateTags from "./src/utils/tagsUtils.js"
 import projectMemberService from "./src/services/projectMember.service.js"
 
@@ -34,5 +34,8 @@ import projectMemberService from "./src/services/projectMember.service.js"
 // console.log(data)
 
 // test check member role
-const {data, error} = await projectMemberService.checkMemberRole("37d3b652-d314-4124-9685-add5f0c6fc19", 1, "Creador")
-console.log(data, error)
+//const {data, error} = await projectMemberService.checkMemberRole("37d3b652-d314-4124-9685-add5f0c6fc19", 1, "Creador")
+//console.log(data, error)
+
+// test update task status
+const {data, error} = await taskService.updateTaskStatus(1, 1, 4, "37d3b652-d314-4124-9685-add5f0c6fc19")
