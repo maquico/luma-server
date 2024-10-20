@@ -124,12 +124,22 @@ async function update(userId, updateFields) {
 }
 
 
-async function get() {
-    const { data, error } = await supabase
-        .from('Usuarios')
-        .select()
-    error ? console.log(error) : console.log('Users found')
-    return { data, error };
+async function get(columns = '*', getDeleted = true) {
+    console.log("Getting users from supabase");
+    if (getDeleted) {
+        const { data, error } = await supabase
+            .from('Usuarios')
+            .select(columns)
+        error ? console.log(error) : console.log('Users found')
+        return { data, error };
+    } else {
+        const { data, error } = await supabase
+            .from('Usuarios')
+            .select(columns)
+            .eq('eliminado', false)
+        error ? console.log(error) : console.log('Users found')
+        return { data, error };
+    }
 }
 
 async function deleteById(userId) {
