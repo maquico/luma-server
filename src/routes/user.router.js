@@ -9,9 +9,9 @@ router.post('/otp/verify', userController.verifyOtp);
 router.put('/password/reset', userController.resetPassword);
 router.get('/admin/:id', userController.getByIdAdmin);
 router.get('/:id', userController.getById);
-router.get('/admin', userController.get);
-router.put('/admin/custom/:id', userController.updateCustomUser);
-router.put('/admin/auth/:id', userController.updateAuthUser);
+router.get('/', userController.get);
+router.put('/custom/:id', userController.updateCustomUser);
+router.put('/auth/:id', userController.updateAuthUser);
 router.put('/email/reset', userController.resetEmail);
 router.delete('/:id', userController.deleteById);
 

@@ -146,7 +146,7 @@ const update = async (req, res) => {
 };
 
 const updateTaskStatus = async (req, res) => {
-    /* #swagger.tags = ['Admin / Task']
+    /* #swagger.tags = ['Task']
        #swagger.description = 'Endpoint para actualizar el estado de una tarea.'
        #swagger.parameters['id'] = { description: 'ID de la tarea', required: true }
        #swagger.parameters['status'] = { description: 'Estado de la tarea', required: true }
@@ -190,5 +190,6 @@ export default {
     getByProjectId,
     getTagsByProjectId,
     update,
+    updateTaskStatus,
     deleteById,
 };
