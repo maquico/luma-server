@@ -40,11 +40,45 @@ async function getByToken(token) {
   return { data, error };
 }
 
-async function update(invitationId) {
+async function update(invitationId, updateObject) {
     const { data, error } = await supabase
         .from('Invitaciones')
-        .update({ fueUsado: true })
+        .update(updateObject)
         .eq('Invitacion_ID', invitationId)
+        .select()
+    
+        if (error) {
+            console.log("Error updating invitation on supabase: ", error);
+        } else {
+            console.log("Invitation updated: ", data);
+        }
+    return { data, error };
+}
+
+async function get() {
+    const { data, error } = await supabase
+        .from('Invitaciones')
+        .select()
+    error ? console.log(error) : console.log('Invitations found')
+    return { data, error };
+}
+
+async function deleteById(invitationId) {
+    const { data, error } = await supabase
+        .from('Invitaciones')
+        .delete()
+        .eq('Invitacion_ID', invitationId)
+        .select()
+    error ? console.log(error) : console.log('Invitation deleted', data)
+    return { data, error };
+}
+
+async function getById(invitationId) {
+    const { data, error } = await supabase
+        .from('Invitaciones')
+        .select()
+        .eq('Invitacion_ID', invitationId)
+    error ? console.log(error) : console.log('Invitation found', data)
     return { data, error };
 }
 
@@ -297,6 +331,11 @@ async function getInvitationRoute(token) {
     
 export default {
     create,
+    getByToken,
+    getById,
+    get,
+    update,
+    deleteById,
     validate,
     sendEmail,
     getInvitationRoute,

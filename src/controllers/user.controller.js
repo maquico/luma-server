@@ -166,12 +166,29 @@ const getById = async (req, res) => {
   }
 }
 
-const get = async (_req, res) => {
+const getAdmin = async (req, res) => {
   /* #swagger.tags = ['Admin / User']
      #swagger.description = 'Endpoint para obtener todos los usuarios.'
   */
   try {
     const { data, error } = await user.get();
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+const getClient = async (_req, res) => {
+  /* #swagger.tags = ['User']
+     #swagger.description = 'Endpoint para obtener todos los usuarios (para el cliente).'
+  */
+  try {
+    const columns = "Usuario_ID,nombre,apellido,correo";
+    const { data, error } = await user.get(columns, false);
     if (error) {
       const statusCode = error.status ? parseInt(error.status) : 500;
       return res.status(statusCode).send(error.message);
@@ -318,7 +335,8 @@ export default {
   verifyOtp,
   getByIdAdmin,
   getById,
-  get,
+  getAdmin,
+  getClient,
   updateCustomUser,
   updateAuthUser,
   resetEmail,
