@@ -9,8 +9,8 @@ const create = async (req, res) => {
            description: 'Datos de la categoría de insignia',
            required: true,
            schema: {
-               nombre: 'Badge Category',
-               campoComparativo: 'experiencePoints',
+               name: 'Badge Category',
+               comparativeField: 'experiencePoints',
            }
        }
     */
