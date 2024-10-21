@@ -12,6 +12,7 @@ import predefinedRewardsRouter from './src/routes/predefinedRewards.router.js';
 import projectMemberRouter from './src/routes/projectMember.router.js';
 import taskRouter from './src/routes/task.router.js';
 import badgeCategoryRouter from './src/routes/badgeCategory.router.js';
+import badgeRouter from './src/routes/badge.router.js';
 import { serve, setup } from 'swagger-ui-express';
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
@@ -44,6 +45,7 @@ app.use('/api/rewards/predefined', predefinedRewardsRouter);
 app.use('/api/member', projectMemberRouter);
 app.use('/api/task', taskRouter);
 app.use('/api/badge/category', badgeCategoryRouter);
+app.use('/api/badge', badgeRouter);
 
 // Start server
 app.listen(port, () => {
