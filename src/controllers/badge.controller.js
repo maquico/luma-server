@@ -73,11 +73,11 @@ const update = async (req, res) => {
            description: 'Datos de la insignia',
            required: true,
            schema: {
-               name: 'Badge',
-               description: 'Insignia de plata',
-               categoryId: 2,
+               nombre: 'Badge',
+               descripcion: 'Insignia de plata',
+               Insignia_Cat_ID: 2,
                meta: 200,
-               image: 'https://example.com/image.jpg'
+               foto: 'https://example.com/image.jpg'
               }
             }
     */
