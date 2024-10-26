@@ -30,15 +30,33 @@ async function get(columns = '*') {
     return { data, error };
 }
 
-async function getByUser(id, columns = '*') {
+async function getByUser(id, columns = 'Insignias(Insignia_ID, nombre, descripcion, foto), Usuarios(Usuario_ID, nombre, apellido)') {
     const { data, error } = await supabase
         .from('Insignia_Conseguida')
         .select(columns)
         .eq('Usuario_ID', id)
     
-    error ? console.log(error) : console.log(`Badge found: ${JSON.stringify(data)}`)
+    if (error) {
+        console.log(error);
+        return { data: null, error };
+    }
+
+    console.log(`Badge found: ${JSON.stringify(data)}`)
+
+    const responseObj = {
+        userId: data[0].Usuarios.Usuario_ID,
+        userFullName: `${data[0].Usuarios.nombre} ${data[0].Usuarios.apellido}`,
+        badges: data.map(badge => {
+            return {
+                badgeId: badge.Insignia_ID,
+                badgeName: badge.Insignias.nombre,
+                badgeDescription: badge.Insignias.descripcion,
+                badgeImage: badge.Insignias.foto
+            }
+        })
+    }
     
-    return { data, error };
+    return { data:responseObj, error };
 }
 
 async function getByBadge(id, columns = '*') {
