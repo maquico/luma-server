@@ -5,6 +5,14 @@ import uploadFile from '../utils/uploadFiles.js';
 const create = async (req, res) => {
     /* #swagger.tags = ['Badge']
        #swagger.description = 'Endpoint para registrar una insignia.'
+       #swagger.consumes = ['multipart/form-data']
+       #swagger.parameters['image'] = {
+           in: 'formData',
+           type: 'file',
+           required: true,
+           description: 'Imagen de la insignia',
+           name: 'image'
+       }
        #swagger.parameters['obj'] = {
            in: 'body',
            description: 'Datos de la insignia',
@@ -132,15 +140,26 @@ const uploadBadgeImage = async (req, res) => {
             return res.status(400).send({ message: 'No file uploaded' });
         }
 
-        // Process the badgeImage here, e.g., save it to a storage service
-        
-        // Extract file name
-        const fileName = badgeImage.originalname;
-        // Extract file type
-        const fileType = badgeImage.mimetype;
-        const imageUrl = await uploadFile(badgeImage, fileName, fileType, 'icons/', 'luma-assets'); // Assuming uploadFile returns the URL of the uploaded file
+        // Log the file details for debugging
+        console.log('File received:', badgeImage);
 
-        return res.status(200).send({ message: 'Image uploaded successfully', imageUrl });
+        // Extract file name and type
+        const fileName = badgeImage.originalname;
+        const mimeType = badgeImage.mimetype;
+        const fileBuffer = badgeImage.buffer.toString('base64'); // Convert buffer to base64 string
+
+        // Define the file path and bucket name
+        const filePath = 'icons/';
+        const bucketName = 'luma-assets';
+
+        // Upload the file using the uploadFile function
+        const { signedUrl, success, error } = await uploadFile(fileBuffer, fileName, mimeType, filePath, bucketName);
+
+        if (!success) {
+            return res.status(500).send({ message: 'Error uploading file', error });
+        }
+
+        return res.status(200).send({ message: 'Image uploaded successfully', imageUrl: signedUrl });
     } catch (error) {
         return res.status(500).send(error.message);
     }
