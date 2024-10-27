@@ -1,33 +1,80 @@
 import badge from '../services/badge.service.js';
 import uploadFile from '../utils/uploadFiles.js';
 
-// Controller using create service with try catch for error handling
 const create = async (req, res) => {
-    /* #swagger.tags = ['Badge']
+    /* #swagger.autoBody = false
+       #swagger.tags = ['Badge']
        #swagger.description = 'Endpoint para registrar una insignia.'
        #swagger.consumes = ['multipart/form-data']
        #swagger.parameters['image'] = {
            in: 'formData',
            type: 'file',
-           required: true,
+           required: false,
            description: 'Imagen de la insignia',
            name: 'image'
        }
-       #swagger.parameters['obj'] = {
-           in: 'body',
-           description: 'Datos de la insignia',
+       #swagger.parameters['name'] = {
+           in: 'formData',
+           type: 'string',
            required: true,
-           schema: {
-               name: 'Badge',
-               description: 'Insignia de bronce',
-               categoryId: 1,
-               meta: 100,
-               image: 'https://example.com/image.jpg'
-              }
-         }
+           description: 'Nombre de la insignia'
+       }
+       #swagger.parameters['description'] = {
+           in: 'formData',
+           type: 'string',
+           required: true,
+           description: 'Descripción de la insignia'
+       }
+       #swagger.parameters['categoryId'] = {
+           in: 'formData',
+           type: 'integer',
+           required: true,
+           description: 'ID de la categoría'
+       }
+       #swagger.parameters['meta'] = {
+           in: 'formData',
+           type: 'integer',
+           required: true,
+           description: 'Meta de la insignia'
+       }
     */
     try {
-        const badgeObj = req.body;
+        let imageSignedUrl = null;
+        const badgeImage = req.file; // Use req.file for file uploads
+        if (badgeImage) {
+            // Log the file details for debugging
+            console.log('File received:', badgeImage);
+
+            // Extract file name and type
+            const fileName = badgeImage.originalname;
+            const mimeType = badgeImage.mimetype;
+            const fileBuffer = badgeImage.buffer.toString('base64'); 
+
+            // Define the file path and bucket name
+            const filePath = 'badges/';
+            const bucketName = 'luma-assets';
+
+            // Upload the file using the uploadFile function
+            const { signedUrl, success, error: uploadError } = await uploadFile(fileBuffer, fileName, mimeType, filePath, bucketName);
+
+            if (!success) {
+                return res.status(500).send({ message: 'Error uploading file', uploadError });
+            }
+            imageSignedUrl = signedUrl;
+        }
+
+        // Extract other form data from req.body
+        const { name, description, categoryId, meta } = req.body;
+
+        // Create the badge object
+        const badgeObj = {
+            name,
+            description,
+            categoryId: parseInt(categoryId, 10),
+            meta: parseInt(meta, 10),
+            image: imageSignedUrl
+        };
+
         const { data, error } = await badge.create(badgeObj);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
