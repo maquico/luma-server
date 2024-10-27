@@ -1,20 +1,6 @@
 import supabaseConfig from "../configs/supabase.js";
 const { supabase } = supabaseConfig;
 
-// async function create(nombre, descripcion, userId) {
-//     const { data, error } = await supabase
-//         .from('Proyectos')
-//         .insert([
-//             {
-//                 nombre: nombre,
-//                 descripcion: descripcion,
-//                 Usuario_ID: userId
-//             },
-//         ])
-//         .select()
-//     return { data, error };
-// }
-
 async function create(nombre, descripcion, userId) {
     let project = null;
     let errorObject = { message: '', status: 200 };

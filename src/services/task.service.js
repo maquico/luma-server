@@ -82,15 +82,58 @@ async function getById(taskId, columns = '*') {
     return { data, error };
 }
 
-async function getByProjectId(projectId, columns = '*') {
+// Función para transformar las tareas en el formato necesario
+async function getByProjectId(projectId, columns = '*, Proyectos(nombre)') {
     const { data, error } = await supabase
         .from('Tareas')
         .select(columns)
         .eq('Proyecto_ID', projectId);
-    
-    error ? console.log(error) : console.log(`Tasks found for project with ID ${projectId}: ${JSON.stringify(data, null, 2)}`);
-    return { data, error };
+
+    if (error) {
+        console.log(error);
+        return { data: null, error };
+    }
+
+    console.log(`Tasks found for project with ID ${projectId}: ${JSON.stringify(data, null, 2)}`);
+
+    // Mapear los estados de las tareas a categorías
+    const estadosMap = {
+        1: { id: 1, name: "TODO", items: [] },
+        2: { id: 2, name: "DOING", items: [] },
+        3: { id: 3, name: "DONE", items: [] },
+        4: { id: 4, name: "APPROVED", items: [] }
+    };
+
+    // Transformar cada tarea en el formato adecuado
+    data.forEach(tarea => {
+        const estado = estadosMap[tarea.Estado_Tarea_ID];
+
+        // Preparar las etiquetas (tags)
+        const tags = tarea.etiquetas ? tarea.etiquetas.split(',') : [];
+
+        // Formato final de cada ítem
+        const item = {
+            id: tarea.Tarea_ID,
+            name: tarea.nombre,
+            description: tarea.descripcion || "Sin descripción",
+            projectName: `${tarea.Proyectos.nombre}`,
+            tags: tags,
+            endDate: tarea.fechaFin 
+                ? new Date(tarea.fechaFin).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) 
+                : "Sin fecha"
+        };
+
+        // Agregar el ítem a la categoría correspondiente
+        estado.items.push(item);
+    });
+
+    // Convertir los estados en un array
+    const result = Object.values(estadosMap);
+
+    console.log(`Transformed Data: ${JSON.stringify(result, null, 2)}`);
+    return { data: result, error: null };
 }
+
 
 async function getTagsByProjectId(projectId) {
     const { data, error } = await getByProjectId(projectId, 'etiquetas');
