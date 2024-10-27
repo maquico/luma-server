@@ -1,4 +1,5 @@
 import badge from '../services/badge.service.js';
+import uploadFile from '../utils/uploadFiles.js';
 
 // Controller using create service with try catch for error handling
 const create = async (req, res) => {
@@ -113,10 +114,43 @@ const deleteById = async (req, res) => {
     }
 }
 
+const uploadBadgeImage = async (req, res) => {
+    /* #swagger.tags = ['Badge']
+       #swagger.description = 'Endpoint para subir una imagen de insignia.'
+       #swagger.consumes = ['multipart/form-data']
+       #swagger.parameters['image'] = {
+           in: 'formData',
+           type: 'file',
+           required: true,
+           description: 'Imagen de la insignia',
+           name: 'image'
+       }
+    */
+    try {
+        const badgeImage = req.file; // Use req.file for file uploads
+        if (!badgeImage) {
+            return res.status(400).send({ message: 'No file uploaded' });
+        }
+
+        // Process the badgeImage here, e.g., save it to a storage service
+        
+        // Extract file name
+        const fileName = badgeImage.originalname;
+        // Extract file type
+        const fileType = badgeImage.mimetype;
+        const imageUrl = await uploadFile(badgeImage, fileName, fileType, 'icons/', 'luma-assets'); // Assuming uploadFile returns the URL of the uploaded file
+
+        return res.status(200).send({ message: 'Image uploaded successfully', imageUrl });
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 export default {
     create,
     get,
     getById,
     update,
-    deleteById
+    deleteById,
+    uploadBadgeImage,
 }
