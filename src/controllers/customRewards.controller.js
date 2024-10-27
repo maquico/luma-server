@@ -1,7 +1,7 @@
 import rewards from '../services/customRewards.service.js'
 
-// Controller using create service with try catch for error handling
-const create = async (req, res) => {
+// Controller using createAdmin service with try catch for error handling
+const createAdmin = async (req, res) => {
     /* #swagger.tags = ['Custom Rewards']
        #swagger.description = 'Endpoint para registrar una recompensa.'
        #swagger.parameters['obj'] = {
@@ -22,6 +22,39 @@ const create = async (req, res) => {
     try {
         const { projectId, iconoId, nombre, descripcion, precio, cantidad, limite } = req.body;
         const { data, error } = await rewards.create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
+
+// Controller using create service with try catch for error handling
+const create = async (req, res) => {
+    /* #swagger.tags = ['Custom Rewards']
+         #swagger.description = 'Endpoint para registrar una recompensa.'
+            #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos de la recompensa',
+                required: true,
+                schema: {
+                    projectId: 123456,
+                    iconoId: 123456,
+                    nombre: 'Recompensa',
+                    descripcion: 'Descripción de la recompensa',
+                    precio: 100,
+                    cantidad: 10,
+                    limite: 5
+                }
+            }
+    */
+    try {
+        const { projectId, iconoId, nombre, descripcion, precio, cantidad, limite, userId } = req.body;
+        const { data, error } = await rewards.create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite, userId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
@@ -207,6 +240,7 @@ const buyCustomReward = async (req, res) => {
 };
 
 export default {
+    createAdmin,
     create,
     eliminate,
     update,
