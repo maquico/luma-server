@@ -1,4 +1,5 @@
 import user from '../services/user.service.js';
+import uploadFile from '../utils/uploadFiles.js';
 
 // Controller using sign up service with try catch for error handling
 const create = async (req, res) => {
@@ -216,7 +217,6 @@ const updateCustomUser = async (req, res) => {
             tareasAprobadas: 10,
             proyectosCreados: 5,
             esAdmin: false,
-            foto: 'ruta foto',
             Idioma_ID: 1,
             eliminado: false
          }
@@ -227,7 +227,7 @@ const updateCustomUser = async (req, res) => {
     let updateFields = { ...req.body }; 
 
     // Prevent the following fields from being updated
-    const restrictedFields = ['correo', 'contraseña'];
+    const restrictedFields = ['correo', 'contraseña', 'Usuario_ID', 'foto', 'ultimoInicioSesion'];
     restrictedFields.forEach(field => {
       delete updateFields[field];
     });
@@ -328,6 +328,86 @@ const deleteById = async (req, res) => {
   }
 }
 
+const update = async (req, res) => {
+  /* 
+     #swagger.autoBody = false
+     #swagger.tags = ['User']
+     #swagger.description = 'Endpoint para actualizar un usuario (para el cliente).'
+     #swagger.consumes = ['multipart/form-data']
+     #swagger.parameters['id'] = {
+         in: 'formData',
+         type: 'string',
+         required: true,
+         description: 'ID del usuario',
+         name: 'id'
+     }
+     #swagger.parameters['image'] = {
+         in: 'formData',
+         type: 'file',
+         required: false,
+         description: 'Foto de perfil del usuario',
+         name: 'image'
+     }
+     #swagger.parameters['firstName'] = {
+         in: 'formData',
+         type: 'string',
+         required: false,
+         description: 'Nombre del usuario'
+     }
+     #swagger.parameters['lastName'] = {
+         in: 'formData',
+         type: 'string',
+         required: false,
+         description: 'Apellido del usuario'
+     }
+  */
+  try {
+    let imageSignedUrl = null;
+    let objFirstName = null;
+    let objLastName = null;
+    const userImage = req.file; // Use req.file for file uploads
+    if (userImage) {
+        // Log the file details for debugging
+        console.log('File received:', userImage)
+        // Extract file name and type
+        const fileName = userImage.originalname;
+        const mimeType = userImage.mimetype;
+        const fileBuffer = userImage.buffer.toString('base64');
+        // Define the file path and bucket name
+        const filePath = 'avatars/';
+        const bucketName = 'luma-assets'
+        // Upload the file using the uploadFile function
+        const { signedUrl, success, error: uploadError } = await uploadFile(fileBuffer, fileName, mimeType, filePath, bucketName)
+        if (!success) {
+            return res.status(500).send({ message: 'Error uploading file', uploadError });
+        }
+        imageSignedUrl = signedUrl;
+    }
+    if (req.body.firstName) {
+        objFirstName = req.body.firstName;
+    }
+    if (req.body.lastName) {
+        objLastName = req.body.lastName;
+    }
+    const { id } = req.body;
+    const updateFields = {
+      nombre: objFirstName,
+      apellido: objLastName,
+      foto: imageSignedUrl
+    };
+    const { data, error } = await user.update(id, updateFields);
+
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 export default {
   create,
   resetPassword,
@@ -341,4 +421,5 @@ export default {
   updateAuthUser,
   resetEmail,
   deleteById,
+  update,
 };
