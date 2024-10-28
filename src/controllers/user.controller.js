@@ -365,12 +365,13 @@ const update = async (req, res) => {
     let imageSignedUrl = null;
     let objFirstName = null;
     let objLastName = null;
+    const { id } = req.body;
     const userImage = req.file; // Use req.file for file uploads
     if (userImage) {
         // Log the file details for debugging
         console.log('File received:', userImage)
         // Extract file name and type
-        const fileName = userImage.originalname;
+        const fileName = `${id}-${userImage.originalname}`;
         const mimeType = userImage.mimetype;
         const fileBuffer = userImage.buffer.toString('base64');
         // Define the file path and bucket name
@@ -389,7 +390,6 @@ const update = async (req, res) => {
     if (req.body.lastName) {
         objLastName = req.body.lastName;
     }
-    const { id } = req.body;
     const updateFields = {
       nombre: objFirstName,
       apellido: objLastName,
