@@ -49,14 +49,14 @@ const getByUser = async (req, res) => {
     /* #swagger.tags = ['Badge Obtained']
        #swagger.description = 'Endpoint para obtener todas las insignias obtenidas por un usuario.'
             #swagger.parameters['userId'] = {
-                in: 'path',
+                in: 'query',
                 description: 'Id del usuario',
                 required: true,
                 type: 'string'
             }
     */
     try {
-        const userId = req.params.userId;
+        const { userId } = req.query;
         const { data, error } = await badgeObtained.getByUser(userId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
@@ -73,14 +73,14 @@ const getByBadge = async (req, res) => {
     /* #swagger.tags = ['Badge Obtained']
        #swagger.description = 'Endpoint para obtener todas las insignias obtenidas por una insignia.'
             #swagger.parameters['badgeId'] = {
-                in: 'path',
+                in: 'query',
                 description: 'Id de la insignia',
                 required: true,
                 type: 'string'
             }
     */
     try {
-        const badgeId = req.params.badgeId;
+        const { badgeId } = req.query;
         const { data, error } = await badgeObtained.getByBadge(badgeId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
@@ -94,24 +94,26 @@ const getByBadge = async (req, res) => {
 
 // Controller using getByUserAndBadge service with try catch for error handling
 const getByUserAndBadge = async (req, res) => {
-    /* #swagger.tags = ['Badge Obtained']
+    /* 
+       #swagger.autoQuery = false
+       #swagger.tags = ['Badge Obtained']
        #swagger.description = 'Endpoint para obtener una insignia obtenida por usuario e insignia.'
             #swagger.parameters['userId'] = {
-                in: 'path',
+                in: 'query',
                 description: 'Id del usuario',
                 required: true,
                 type: 'string'
             }
             #swagger.parameters['badgeId'] = {
-                in: 'path',
+                in: 'query',
                 description: 'Id de la insignia',
                 required: true,
                 type: 'string'
             }
     */
     try {
-        const userId = req.params.userId;
-        const badgeId = req.params.badgeId;
+        // Extract from query parameters
+        const { userId, badgeId } = req.query;
         const { data, error } = await badgeObtained.getByUserAndBadge(userId, badgeId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;

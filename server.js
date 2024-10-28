@@ -42,12 +42,12 @@ app.use('/api/projects', projectsRouter);
 app.use('/api/fonts', fontsRouter);
 app.use('/api/themes', themesRouter);
 app.use('/api/rewards', rewardsRouter);
-app.use('/api/rewards/predefined', predefinedRewardsRouter);
+app.use('/api/rewards-predefined', predefinedRewardsRouter);
 app.use('/api/member', projectMemberRouter);
 app.use('/api/task', taskRouter);
-app.use('/api/badge/category', badgeCategoryRouter);
+app.use('/api/badge-category', badgeCategoryRouter);
 app.use('/api/badge', badgeRouter);
-app.use('/api/badge/obtained', badgeObtainedRouter);
+app.use('/api/badge-obtained', badgeObtainedRouter);
 
 // Start server
 app.listen(port, () => {

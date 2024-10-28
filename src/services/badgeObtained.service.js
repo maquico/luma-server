@@ -43,6 +43,9 @@ async function getByUser(id, columns = 'Insignias(Insignia_ID, nombre, descripci
 
     console.log(`Badge found: ${JSON.stringify(data)}`)
 
+    if (!data.length) {
+        return { data: data, error: null };
+    }
     const responseObj = {
         userId: data[0].Usuarios.Usuario_ID,
         userFullName: `${data[0].Usuarios.nombre} ${data[0].Usuarios.apellido}`,

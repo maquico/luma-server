@@ -6,6 +6,7 @@ import customRewardsService from "./src/services/customRewards.service.js"
 import taskService from "./src/services/task.service.js"
 import validateTags from "./src/utils/tagsUtils.js"
 import projectMemberService from "./src/services/projectMember.service.js"
+import badgeObtained from "./src/services/badgeObtained.service.js"
 
 //const {data, error} = await user.sendOtp("angelgmorenor@gmail.com")
 
@@ -38,4 +39,7 @@ import projectMemberService from "./src/services/projectMember.service.js"
 //console.log(data, error)
 
 // test update task status
-const {data, error} = await taskService.updateTaskStatus(1, 1, 4, "37d3b652-d314-4124-9685-add5f0c6fc19")
+// const {data, error} = await taskService.updateTaskStatus(1, 1, 4, "37d3b652-d314-4124-9685-add5f0c6fc19")
+
+// test get all obtained badges
+const {data, error} = await badgeObtained.get()
