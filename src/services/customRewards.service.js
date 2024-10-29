@@ -3,7 +3,7 @@ import customRewardsHistoryService from "./customRewardsHistory.service.js";
 import projectMemberService from "./projectMember.service.js";
 const { supabase } = supabaseConfig;
 
-async function create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite) {
+async function createAdmin(projectId, iconoId, nombre, descripcion, precio, cantidad, limite) {
     const { data, error } = await supabase
         .from('Recompensas')
         .insert([
@@ -20,6 +20,41 @@ async function create(projectId, iconoId, nombre, descripcion, precio, cantidad,
         .select()
     return { data, error };
 }
+
+
+async function create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite, userId) {
+    // Verificar si el usuario tiene el rol de líder
+    const { data: userRoleData, error: userRoleError } = await supabase
+        .from('Miembro_Proyecto')
+        .select('Rol_ID')
+        .eq('Proyecto_ID', projectId)
+        .eq('Usuario_ID', userId)
+        .single();
+
+    if (userRoleError || userRoleData?.Rol_ID !== 2) {
+        return { error: userRoleError || 'El usuario no tiene permisos de líder para crear recompensas.' };
+    }
+
+    // Insertar la recompensa si el usuario es líder
+    const { data, error } = await supabase
+        .from('Recompensas')
+        .insert([
+            {
+                Proyecto_ID: projectId,
+                Icono_ID: iconoId,
+                nombre: nombre,
+                descripcion: descripcion,
+                precio: precio,
+                cantidad: cantidad,
+                limite: limite,
+            },
+        ])
+        .select();
+
+    return { data, error };
+}
+
+
 
 async function eliminate(id) {
     const { error } = await supabase
@@ -242,6 +277,7 @@ async function buyCustomReward(userId, rewardId) {
 }
 
 export default {
+    createAdmin,
     create,
     eliminate,
     update,

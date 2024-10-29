@@ -2,6 +2,7 @@ import { Router } from 'express';
 import customRewardsController from '../controllers/customRewards.controller.js';
 
 const router = Router();
+router.post("/create", customRewardsController.createAdmin);
 router.post("/", customRewardsController.create);
 router.post("/buy", customRewardsController.buyCustomReward);
 router.delete("/", customRewardsController.eliminate);
