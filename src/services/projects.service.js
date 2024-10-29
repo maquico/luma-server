@@ -56,13 +56,73 @@ async function getProyectos() {
 }
 
 async function getById(id) {
-    const { data, error } = await supabase
+    // Obtener la información básica del proyecto
+    const { data: proyectoData, error: proyectoError } = await supabase
         .from('Proyectos')
         .select('*')
         .eq('Proyecto_ID', id)
-        .eq('eliminado', false);
-    return { data, error };
+        .eq('eliminado', false)
+        .single();
+
+    if (proyectoError) {
+        console.error('Error al obtener proyecto:', proyectoError);
+        return { data: null, error: proyectoError };
+    }
+
+    // Obtener los miembros del proyecto
+    const { data: miembrosProyecto, error: miembrosError } = await supabase
+        .from('Miembro_Proyecto')
+        .select('Usuario_ID')
+        .eq('Proyecto_ID', id);
+
+    if (miembrosError) {
+        console.error('Error al obtener miembros del proyecto:', miembrosError);
+        return { data: null, error: miembrosError };
+    }
+
+    // Obtener los IDs de los miembros
+    const usuarioIds = miembrosProyecto.map(m => m.Usuario_ID);
+
+    // Obtener los detalles de los usuarios (nombre y apellido)
+    const { data: usuarios, error: usuariosError } = await supabase
+        .from('Usuarios')
+        .select('Usuario_ID, nombre, apellido')
+        .in('Usuario_ID', usuarioIds);
+
+    if (usuariosError) {
+        console.error('Error al obtener detalles de usuarios:', usuariosError);
+        return { data: null, error: usuariosError };
+    }
+
+    // Obtener el total de tareas y las tareas aprobadas del proyecto
+    const { data: tareas, error: tareasError } = await supabase
+        .from('Tareas')
+        .select('Estado_Tarea_ID')
+        .eq('Proyecto_ID', id);
+
+    if (tareasError) {
+        console.error('Error al obtener tareas:', tareasError);
+        return { data: null, error: tareasError };
+    }
+
+    // Calcular el total de tareas y las aprobadas
+    const totalTareas = tareas.length;
+    const tareasAprobadas = tareas.filter(t => t.Estado_Tarea_ID === 4).length;
+
+    // Crear el array de nombres completos de los miembros
+    const miembros = usuarios.map(u => `${u.nombre} ${u.apellido}`);
+
+    // Construir el objeto final del proyecto con todos los detalles adicionales
+    const proyecto = {
+        ...proyectoData,
+        miembros,
+        totalTareas,
+        tareasAprobadas,
+    };
+
+    return { data: proyecto, error: null };
 }
+
 
 async function getByUser(userId) {
     // Primero, obtenemos los IDs de los proyectos en los que el usuario está involucrado
