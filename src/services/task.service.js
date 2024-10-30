@@ -82,20 +82,7 @@ async function getById(taskId, columns = '*') {
     return { data, error };
 }
 
-// Función para transformar las tareas en el formato necesario
-async function getByProjectId(projectId, columns = '*, Proyectos(nombre)') {
-    const { data, error } = await supabase
-        .from('Tareas')
-        .select(columns)
-        .eq('Proyecto_ID', projectId);
-
-    if (error) {
-        console.log(error);
-        return { data: null, error };
-    }
-
-    console.log(`Tasks found for project with ID ${projectId}: ${JSON.stringify(data, null, 2)}`);
-
+function formatTasks(data) {
     // Mapear los estados de las tareas a categorías
     const estadosMap = {
         1: { id: 1, name: "TODO", items: [] },
@@ -131,9 +118,29 @@ async function getByProjectId(projectId, columns = '*, Proyectos(nombre)') {
     const result = Object.values(estadosMap);
 
     console.log(`Transformed Data: ${JSON.stringify(result, null, 2)}`);
-    return { data: result, error: null };
+    return result;
 }
 
+// Función para transformar las tareas en el formato necesario
+async function getByProjectId(projectId, columns = '*, Proyectos(nombre)', format = false) {
+    const { data, error } = await supabase
+        .from('Tareas')
+        .select(columns)
+        .eq('Proyecto_ID', projectId);
+
+    if (error) {
+        console.log(error);
+        return { data: null, error };
+    }
+
+    console.log(`Tasks found for project with ID ${projectId}: ${JSON.stringify(data, null, 2)}`);
+
+    let result = data;
+    if (format) {
+        result = formatTasks(data);
+    }
+    return { data: result, error: null };
+}
 
 async function getTagsByProjectId(projectId) {
     const { data, error } = await getByProjectId(projectId, 'etiquetas');
@@ -144,6 +151,7 @@ async function getTagsByProjectId(projectId) {
     } else {
         // Extract and process tags
         const tags = data
+            .filter(item => item.etiquetas !== null) // Filter out items with no tags
             .map(item => item.etiquetas.split(',')) // Split tags by comma
             .flat() // Flatten the array
             .map(tag => tag.trim()) // Trim whitespace

@@ -78,7 +78,7 @@ const getByProjectId = async (req, res) => {
     */
     try {
         const projectId = req.params.id;
-        const { data, error } = await task.getByProjectId(projectId);
+        const { data, error } = await task.getByProjectId(projectId, '*, Proyectos(nombre)', true);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
@@ -98,6 +98,7 @@ const getTagsByProjectId = async (req, res) => {
         const projectId = req.params.id;
         const { data, error } = await task.getTagsByProjectId(projectId);
         if (error) {
+            console.log("Error getting tags by project ID: ");
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
