@@ -2,6 +2,7 @@ import supabaseConfig from "../configs/supabase.js";
 import currenciesAndPoints from "../utils/currenciesAndPoints.js";
 import tagsUtils from "../utils/tagsUtils.js";
 import projectMemberService from "./projectMember.service.js";
+import userService from "./user.service.js";
 
 const { supabase } = supabaseConfig;
 
@@ -82,7 +83,7 @@ async function getById(taskId, columns = '*') {
     return { data, error };
 }
 
-function formatTasks(data) {
+async function formatTasks(data) {
     // Mapear los estados de las tareas a categorías
     const estadosMap = {
         1: { id: 1, name: "TODO", items: [] },
@@ -91,22 +92,32 @@ function formatTasks(data) {
         4: { id: 4, name: "APPROVED", items: [] }
     };
 
+    const usersIds = data.map(task => task.Usuario_ID).filter(userId => userId !== null);
+    
+    const { data: usersData, error: usersError } = await userService.getByIds(usersIds, 'Usuario_ID, nombre, apellido');
+
+    if (usersError) {
+        console.log(usersError);
+        return { data: null, error: usersError };
+    }
+
     // Transformar cada tarea en el formato adecuado
-    data.forEach(tarea => {
-        const estado = estadosMap[tarea.Estado_Tarea_ID];
+    data.forEach(task => {
+        const estado = estadosMap[task.Estado_Tarea_ID];
 
         // Preparar las etiquetas (tags)
-        const tags = tarea.etiquetas ? tarea.etiquetas.split(',') : [];
+        const tags = task.etiquetas ? task.etiquetas.split(',') : [];
 
         // Formato final de cada ítem
         const item = {
-            id: tarea.Tarea_ID,
-            name: tarea.nombre,
-            description: tarea.descripcion || "Sin descripción",
-            projectName: `${tarea.Proyectos.nombre}`,
+            id: task.Tarea_ID,
+            name: task.nombre,
+            assignedUser: task.Usuario_ID ? `${usersData.find(user => user.Usuario_ID === task.Usuario_ID).nombre} ${usersData.find(user => user.Usuario_ID === task.Usuario_ID).apellido}` : null,
+            description: task.descripcion || "Sin descripción",
+            projectName: `${task.Proyectos.nombre}`,
             tags: tags,
-            endDate: tarea.fechaFin 
-                ? new Date(tarea.fechaFin).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) 
+            endDate: task.fechaFin 
+                ? new Date(task.fechaFin).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) 
                 : "Sin fecha"
         };
 
@@ -136,8 +147,9 @@ async function getByProjectId(projectId, columns = '*, Proyectos(nombre)', forma
     console.log(`Tasks found for project with ID ${projectId}: ${JSON.stringify(data, null, 2)}`);
 
     let result = data;
-    if (format) {
-        result = formatTasks(data);
+    if (format === true) {
+        console.log("Formatting tasks...");
+        result = await formatTasks(data);
     }
     return { data: result, error: null };
 }
