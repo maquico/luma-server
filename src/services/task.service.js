@@ -190,7 +190,8 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
     let returnData = {message: "", data: {}};
     let task = null;
 
-    const { data: taskData, error: taskError } = await getById(taskId, 'Tarea_ID, Estado_ID, Usuario_ID, fueReclamada');
+    const taskColumns = 'Tarea_ID, Estado_Tarea_ID, Usuario_ID, fueReclamada, puntosExperiencia, valorGemas';
+    const { data: taskData, error: taskError } = await getById(taskId, taskColumns);
     if (taskError) {
         console.log("Error getting task on supabase: ", taskError);
         return { data: null, error: taskError };
@@ -217,15 +218,32 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
         }
 
         // Call procedure to update task status
+        const { data: procedureData, error: procedureError } = await supabase.rpc('approve_task', {
+            p_experience: task.puntosExperiencia,
+            p_gems: task.valorGemas,
+            p_new_status_id: newStatusId,
+            p_project_id: projectId,
+            p_task_claimed: task.fueReclamada,
+            p_task_id: taskId,
+            p_user_id: task.Usuario_ID
+        });
+
+        if (procedureError) {
+            console.log("Error executing procedure on supabase: ", procedureError);
+            return { data: null, error: procedureError };
+        }
+        returnData.message = `Task with id ${taskId} approved and status updated to ${newStatusId}`;
+        returnData.data = procedureData;
 
     }
-    else if (newStatusId !== task.Estado_ID) {
-        const { data, error } = await update(taskId, {Estado_ID: statusId});
+    else if (newStatusId !== task.Estado_Tarea_ID) {
+        const { data, error: updateError } = await update(taskId, {Estado_Tarea_ID: newStatusId});
 
-        if (error) {
-            console.log("Error updating task status on supabase: ", error);
+        if (updateError) {
+            console.log("Error updating task status on supabase: ", updateError);
+            return { data: null, error: updateError };
         } else {
-            returnData.message = `Task with id ${taskId} updated with status ${newStatusId}: ${JSON.stringify(data, null, 2)}`;
+            returnData.message = `Task with id ${taskId} updated with status ${newStatusId}`;
             returnData.data.taskId = taskId;
             returnData.data.newStatusId = newStatusId;
         }
@@ -234,7 +252,7 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
         return { data: null, error: {message: "Task already has the new status", status: 400} };
     }
 
-    return { data: returnData, error: error};
+    return { data: returnData, error: null};
 }
 
 export default {

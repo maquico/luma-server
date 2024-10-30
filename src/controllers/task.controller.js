@@ -148,23 +148,40 @@ const update = async (req, res) => {
 
 const updateTaskStatus = async (req, res) => {
     /* #swagger.tags = ['Task']
-       #swagger.description = 'Endpoint para actualizar el estado de una tarea.'
-       #swagger.parameters['id'] = { description: 'ID de la tarea', required: true }
-       #swagger.parameters['status'] = { description: 'Estado de la tarea', required: true }
+       #swagger.description = 'Endpoint to update the status of a task.'
+       #swagger.parameters['id'] = {
+           in: 'path',
+           type: 'integer',
+           required: true,
+           description: 'ID of the task'
+       }
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos de la tarea',
+           required: true,
+           schema: {
+                projectId: 1,
+                newStatusId: 1,
+                userId: 'UUID'
+           }
+       }
     */
     try {
-        const taskId = req.params.id;
-        const taskStatus = req.body.status;
-        const { data, error } = await task.updateTaskStatus(taskId, taskStatus);
+        const { id } = req.params;
+        const taskId = id;
+        const { projectId, newStatusId, userId } = req.body;
+
+        const { data, error } = await task.updateTaskStatus(taskId, projectId, newStatusId, userId);
+
         if (error) {
-            const statusCode = error.status ? parseInt(error.status) : 500;
-            return res.status(statusCode).send(error.message);
+            return res.status(error.status || 500).send(error.message);
         }
+
         return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send(error.message);
     }
-}
+};
 
 const deleteById = async (req, res) => {
     /* #swagger.tags = ['Admin / Task']
