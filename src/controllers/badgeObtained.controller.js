@@ -2,7 +2,7 @@ import badgeObtained from '../services/badgeObtained.service.js';
 
 // Controller using create service with try catch for error handling
 const create = async (req, res) => {
-    /* #swagger.tags = ['Badge Obtained']
+    /* #swagger.tags = ['Admin / Badge Obtained']
        #swagger.description = 'Endpoint para registrar una insignia obtenida.'
        #swagger.parameters['obj'] = {
            in: 'body',
@@ -29,7 +29,7 @@ const create = async (req, res) => {
 
 // Controller using get service with try catch for error handling
 const get = async (req, res) => {
-    /* #swagger.tags = ['Badge Obtained']
+    /* #swagger.tags = ['Admin / Badge Obtained']
        #swagger.description = 'Endpoint para obtener todas las insignias obtenidas.'
     */
     try {
@@ -46,14 +46,14 @@ const get = async (req, res) => {
 
 // Controller using getByUserId service with try catch for error handling
 const getByUser = async (req, res) => {
-    /* #swagger.tags = ['Badge Obtained']
+    /* #swagger.tags = ['Admin / Badge Obtained']
        #swagger.description = 'Endpoint para obtener todas las insignias obtenidas por un usuario.'
-            #swagger.parameters['userId'] = {
-                in: 'query',
-                description: 'Id del usuario',
-                required: true,
-                type: 'string'
-            }
+       #swagger.parameters['userId'] = {
+           in: 'query',
+           description: 'Id del usuario',
+           required: true,
+           type: 'string'
+       }
     */
     try {
         const { userId } = req.query;
@@ -68,9 +68,33 @@ const getByUser = async (req, res) => {
     }
 };
 
+const getByUserClient = async (req, res) => {
+    /* #swagger.tags = ['Badge Obtained']
+       #swagger.description = 'Endpoint para obtener todas las insignias obtenidas por un usuario.'
+       #swagger.parameters['userId'] = {
+           in: 'query',
+           description: 'Id del usuario',
+           required: true,
+           type: 'string'
+       }   
+    */
+    try {
+        const userId = req.query.userId;
+        const { data, error } = await badgeObtained.getByUserClient(userId);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
+
 // Controller using getByBadgeId service with try catch for error handling
 const getByBadge = async (req, res) => {
-    /* #swagger.tags = ['Badge Obtained']
+    /* #swagger.tags = ['Admin / Badge Obtained']
        #swagger.description = 'Endpoint para obtener todas las insignias obtenidas por una insignia.'
             #swagger.parameters['badgeId'] = {
                 in: 'query',
@@ -96,7 +120,7 @@ const getByBadge = async (req, res) => {
 const getByUserAndBadge = async (req, res) => {
     /* 
        #swagger.autoQuery = false
-       #swagger.tags = ['Badge Obtained']
+       #swagger.tags = ['Admin / Badge Obtained']
        #swagger.description = 'Endpoint para obtener una insignia obtenida por usuario e insignia.'
             #swagger.parameters['userId'] = {
                 in: 'query',
@@ -127,7 +151,7 @@ const getByUserAndBadge = async (req, res) => {
 
 // Delete by user id and badge id
 const deleteByUserAndBadge = async (req, res) => {
-    /* #swagger.tags = ['Badge Obtained']
+    /* #swagger.tags = ['Admin / Badge Obtained']
        #swagger.description = 'Endpoint para eliminar una insignia obtenida por usuario e insignia.'
             #swagger.parameters['userId'] = {
                 in: 'path',
@@ -160,7 +184,8 @@ const deleteByUserAndBadge = async (req, res) => {
 export default { 
     create,
     get,
-    getByUser, 
+    getByUser,
+    getByUserClient,
     getByBadge, 
     getByUserAndBadge,
     deleteByUserAndBadge,

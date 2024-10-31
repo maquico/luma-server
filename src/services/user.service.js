@@ -159,6 +159,16 @@ async function deleteById(userId) {
     return { data: returnData, error };
 }
 
+async function getByIds(userIds, columns = '*') {
+    const { data, error } = await supabase
+        .from('Usuarios')
+        .select(columns)
+        .in('Usuario_ID', userIds);
+
+    error ? console.log(error) : console.log(`Users found: ${JSON.stringify(data)}`)
+    return { data, error };
+}   
+
 export default {
     create,
     getByEmail,
@@ -169,6 +179,7 @@ export default {
     update,
     get,
     deleteById,
+    getByIds,
 };
 
 

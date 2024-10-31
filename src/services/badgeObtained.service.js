@@ -1,4 +1,6 @@
 import supabaseConfig from "../configs/supabase.js";
+import badgeService from "./badge.service.js";
+import userService from "./user.service.js";
 
 const { supabase } = supabaseConfig;
 
@@ -30,7 +32,7 @@ async function get(columns = '*') {
     return { data, error };
 }
 
-async function getByUser(id, columns = 'Insignias(Insignia_ID, nombre, descripcion, foto), Usuarios(Usuario_ID, nombre, apellido)') {
+async function getByUser(id, columns = 'Insignias(Insignia_ID, nombre, descripcion, foto)') {
     const { data, error } = await supabase
         .from('Insignia_Conseguida')
         .select(columns)
@@ -43,23 +45,52 @@ async function getByUser(id, columns = 'Insignias(Insignia_ID, nombre, descripci
 
     console.log(`Badge found: ${JSON.stringify(data)}`)
 
-    if (!data.length) {
-        return { data: data, error: null };
+    return { data, error };
+}
+
+async function getByUserClient(id){
+    const { data: userData, error: userError } = await userService.getById(id, 'Usuario_ID, nombre, apellido, correo');
+
+    if (userError) {
+        console.log(userError);
+        return { data: null, error: userError };
     }
-    const responseObj = {
-        userId: data[0].Usuarios.Usuario_ID,
-        userFullName: `${data[0].Usuarios.nombre} ${data[0].Usuarios.apellido}`,
-        badges: data.map(badge => {
-            return {
-                badgeId: badge.Insignia_ID,
-                badgeName: badge.Insignias.nombre,
-                badgeDescription: badge.Insignias.descripcion,
-                badgeImage: badge.Insignias.foto
-            }
-        })
-    }
+
+    const { data: obtainedBadges, error: obtainedBadgesError } = await getByUser(id, 'Insignia_ID');
     
-    return { data:responseObj, error };
+    if (obtainedBadgesError) {
+        console.log(obtainedBadgesError);
+        return { data: null, error: obtainedBadgesError };
+    }
+
+    const { data: badges, error: badgeError } = await badgeService.get('Insignia_ID, nombre, descripcion, foto')
+    if (badgeError) {
+        console.log(badgeError);
+        return { data: null, error: badgeError };
+    }
+
+    const userFullName = `${userData[0].nombre} ${userData[0].apellido}`;
+    const userEmail = userData[0].correo;
+    const userId = userData[0].Usuario_ID;
+
+    const obtainedBadgeIds = obtainedBadges.map(badge => badge.Insignia_ID);
+    console.log(`Obtained badge IDs: ${obtainedBadgeIds}`);
+
+    const responseObj = {
+        userId: userId,
+        userFullName: userFullName,
+        userEmail: userEmail,
+        badges: badges.map(badge => {
+            return {
+                title: badge.nombre,
+                description: badge.descripcion,
+                unlocked: obtainedBadgeIds.includes(badge.Insignia_ID),
+                icon: badge.foto
+            };
+        })
+    };
+    
+    return { data:responseObj, error: null };
 }
 
 async function getByBadge(id, columns = '*') {
@@ -102,6 +133,7 @@ export default {
     create,
     get,
     getByUser,
+    getByUserClient,
     getByBadge,
     getByUserAndBadge,
     deleteByUserAndBadge,

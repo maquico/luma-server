@@ -6,6 +6,7 @@ router.post('/', taskController.create);
 router.get('/', taskController.get);
 router.get('/:id', taskController.getById);
 router.get('/project/:id', taskController.getByProjectId);
+router.get('/project-client/:id', taskController.getByProjectIdClient);
 router.get('/tags/:id', taskController.getTagsByProjectId);
 router.put('/:id', taskController.update);
 router.delete('/:id', taskController.deleteById);

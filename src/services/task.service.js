@@ -2,6 +2,7 @@ import supabaseConfig from "../configs/supabase.js";
 import currenciesAndPoints from "../utils/currenciesAndPoints.js";
 import tagsUtils from "../utils/tagsUtils.js";
 import projectMemberService from "./projectMember.service.js";
+import userService from "./user.service.js";
 
 const { supabase } = supabaseConfig;
 
@@ -82,8 +83,57 @@ async function getById(taskId, columns = '*') {
     return { data, error };
 }
 
+async function formatTasks(data) {
+    // Mapear los estados de las tareas a categorías
+    const estadosMap = {
+        1: { id: 1, name: "TODO", items: [] },
+        2: { id: 2, name: "DOING", items: [] },
+        3: { id: 3, name: "DONE", items: [] },
+        4: { id: 4, name: "APPROVED", items: [] }
+    };
+
+    const usersIds = data.map(task => task.Usuario_ID).filter(userId => userId !== null);
+    
+    const { data: usersData, error: usersError } = await userService.getByIds(usersIds, 'Usuario_ID, nombre, apellido');
+
+    if (usersError) {
+        console.log(usersError);
+        return { data: null, error: usersError };
+    }
+
+    // Transformar cada tarea en el formato adecuado
+    data.forEach(task => {
+        const estado = estadosMap[task.Estado_Tarea_ID];
+
+        // Preparar las etiquetas (tags)
+        const tags = task.etiquetas ? task.etiquetas.split(',') : [];
+
+        // Formato final de cada ítem
+        const item = {
+            id: task.Tarea_ID,
+            name: task.nombre,
+            assignedUser: task.Usuario_ID ? `${usersData.find(user => user.Usuario_ID === task.Usuario_ID).nombre} ${usersData.find(user => user.Usuario_ID === task.Usuario_ID).apellido}` : null,
+            description: task.descripcion || "Sin descripción",
+            projectName: `${task.Proyectos.nombre}`,
+            tags: tags,
+            endDate: task.fechaFin 
+                ? new Date(task.fechaFin).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) 
+                : "Sin fecha"
+        };
+
+        // Agregar el ítem a la categoría correspondiente
+        estado.items.push(item);
+    });
+
+    // Convertir los estados en un array
+    const result = Object.values(estadosMap);
+
+    console.log(`Transformed Data: ${JSON.stringify(result, null, 2)}`);
+    return result;
+}
+
 // Función para transformar las tareas en el formato necesario
-async function getByProjectId(projectId, columns = '*, Proyectos(nombre)') {
+async function getByProjectId(projectId, columns = '*, Proyectos(nombre)', format = false) {
     const { data, error } = await supabase
         .from('Tareas')
         .select(columns)
@@ -96,44 +146,13 @@ async function getByProjectId(projectId, columns = '*, Proyectos(nombre)') {
 
     console.log(`Tasks found for project with ID ${projectId}: ${JSON.stringify(data, null, 2)}`);
 
-    // Mapear los estados de las tareas a categorías
-    const estadosMap = {
-        1: { id: 1, name: "TODO", items: [] },
-        2: { id: 2, name: "DOING", items: [] },
-        3: { id: 3, name: "DONE", items: [] },
-        4: { id: 4, name: "APPROVED", items: [] }
-    };
-
-    // Transformar cada tarea en el formato adecuado
-    data.forEach(tarea => {
-        const estado = estadosMap[tarea.Estado_Tarea_ID];
-
-        // Preparar las etiquetas (tags)
-        const tags = tarea.etiquetas ? tarea.etiquetas.split(',') : [];
-
-        // Formato final de cada ítem
-        const item = {
-            id: tarea.Tarea_ID,
-            name: tarea.nombre,
-            description: tarea.descripcion || "Sin descripción",
-            projectName: `${tarea.Proyectos.nombre}`,
-            tags: tags,
-            endDate: tarea.fechaFin 
-                ? new Date(tarea.fechaFin).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) 
-                : "Sin fecha"
-        };
-
-        // Agregar el ítem a la categoría correspondiente
-        estado.items.push(item);
-    });
-
-    // Convertir los estados en un array
-    const result = Object.values(estadosMap);
-
-    console.log(`Transformed Data: ${JSON.stringify(result, null, 2)}`);
+    let result = data;
+    if (format === true) {
+        console.log("Formatting tasks...");
+        result = await formatTasks(data);
+    }
     return { data: result, error: null };
 }
-
 
 async function getTagsByProjectId(projectId) {
     const { data, error } = await getByProjectId(projectId, 'etiquetas');
@@ -144,6 +163,7 @@ async function getTagsByProjectId(projectId) {
     } else {
         // Extract and process tags
         const tags = data
+            .filter(item => item.etiquetas !== null) // Filter out items with no tags
             .map(item => item.etiquetas.split(',')) // Split tags by comma
             .flat() // Flatten the array
             .map(tag => tag.trim()) // Trim whitespace
@@ -182,7 +202,8 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
     let returnData = {message: "", data: {}};
     let task = null;
 
-    const { data: taskData, error: taskError } = await getById(taskId, 'Tarea_ID, Estado_ID, Usuario_ID, fueReclamada');
+    const taskColumns = 'Tarea_ID, Estado_Tarea_ID, Usuario_ID, fueReclamada, puntosExperiencia, valorGemas';
+    const { data: taskData, error: taskError } = await getById(taskId, taskColumns);
     if (taskError) {
         console.log("Error getting task on supabase: ", taskError);
         return { data: null, error: taskError };
@@ -209,15 +230,32 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
         }
 
         // Call procedure to update task status
+        const { data: procedureData, error: procedureError } = await supabase.rpc('approve_task', {
+            p_experience: task.puntosExperiencia,
+            p_gems: task.valorGemas,
+            p_new_status_id: newStatusId,
+            p_project_id: projectId,
+            p_task_claimed: task.fueReclamada,
+            p_task_id: taskId,
+            p_user_id: task.Usuario_ID
+        });
+
+        if (procedureError) {
+            console.log("Error executing procedure on supabase: ", procedureError);
+            return { data: null, error: procedureError };
+        }
+        returnData.message = `Task with id ${taskId} approved and status updated to ${newStatusId}`;
+        returnData.data = procedureData;
 
     }
-    else if (newStatusId !== task.Estado_ID) {
-        const { data, error } = await update(taskId, {Estado_ID: statusId});
+    else if (newStatusId !== task.Estado_Tarea_ID) {
+        const { data, error: updateError } = await update(taskId, {Estado_Tarea_ID: newStatusId});
 
-        if (error) {
-            console.log("Error updating task status on supabase: ", error);
+        if (updateError) {
+            console.log("Error updating task status on supabase: ", updateError);
+            return { data: null, error: updateError };
         } else {
-            returnData.message = `Task with id ${taskId} updated with status ${newStatusId}: ${JSON.stringify(data, null, 2)}`;
+            returnData.message = `Task with id ${taskId} updated with status ${newStatusId}`;
             returnData.data.taskId = taskId;
             returnData.data.newStatusId = newStatusId;
         }
@@ -226,7 +264,7 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
         return { data: null, error: {message: "Task already has the new status", status: 400} };
     }
 
-    return { data: returnData, error: error};
+    return { data: returnData, error: null};
 }
 
 export default {
