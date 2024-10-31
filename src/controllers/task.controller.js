@@ -71,7 +71,7 @@ const getById = async (req, res) => {
     }
 };
 
-const getByProjectId = async (req, res) => {
+const getByProjectIdClient = async (req, res) => {
     /* #swagger.tags = ['Task']
        #swagger.description = 'Endpoint para obtener todas las tareas de un proyecto.'
        #swagger.parameters['id'] = { description: 'ID del proyecto', required: true }
@@ -79,6 +79,24 @@ const getByProjectId = async (req, res) => {
     try {
         const projectId = req.params.id;
         const { data, error } = await task.getByProjectId(projectId, '*, Proyectos(nombre)', true);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
+const getByProjectId = async (req, res) => {
+    /* #swagger.tags = ['Admin / Task']
+       #swagger.description = 'Endpoint para obtener todas las tareas de un proyecto.'
+       #swagger.parameters['id'] = { description: 'ID del proyecto', required: true }
+    */
+    try {
+        const projectId = req.params.id;
+        const { data, error } = await task.getByProjectId(projectId, '*, Proyectos(nombre)', false);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
@@ -205,6 +223,7 @@ export default {
     create,
     get,
     getById,
+    getByProjectIdClient,
     getByProjectId,
     getTagsByProjectId,
     update,
