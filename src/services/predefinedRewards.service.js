@@ -71,86 +71,77 @@ async function getByUserId(userId) {
 }
 
 async function buyPredefinedReward(userId, rewardId, rewardType) {
-    let errorObject = { message: '', status: 200 };
-    let continueFunction = true;
+    //let errorObject = { message: '', status: 200 };
+    //let continueFunction = true;
     let reward = null;
     let rewardHistory = null;
     let content = null;
+    let user = null;
 
     // get the reward
     if (rewardType === "theme") {
         const { data: themeReward, error: themeRewardError } = await themesRewardsService.getById(rewardId);
-        reward = themeReward;
+        console.log(themeReward);
+        reward = themeReward[0];
         if(themeRewardError) {
             console.log(`Error getting theme reward: ${themeRewardError.message}`);
-            errorObject.message = themeRewardError.message;
-            errorObject.status = themeRewardError.status;
-            continueFunction = false;
+            return { data: null, error: themeRewardError };
         }
     }
 
     // check if the user has enough coins
-    if (continueFunction){
-        const { data: user, error: userError } = await userService.getById(userId);
-        if(userError) {
-            console.log(`Error getting user: ${userError.message}`);
-            errorObject.message = userError.message;
-            errorObject.status = userError.status;
-            continueFunction = false;
-        }
-        else if(user.monedas < reward.precio) {
+    const { data: userData, error: userError } = await userService.getById(userId);
+    if(userError) {
+        console.log(`Error getting user: ${userError.message}`);
+        return { data: null, error: userError };
+    }
+    else {
+        console.log(userData);
+        user = userData[0];
+        console.log(user.monedas, reward.precio);
+        if(user.monedas < reward.precio) {
             console.log(`User does not have enough coins to buy the reward`);
-            errorObject.message = `User does not have enough coins to buy the reward`;
-            errorObject.status = 400;
-            continueFunction = false;
+            return { data: null, error: { message: 'User does not have enough coins to buy the reward', status: 400 } };
         }
     }
     
-    if (rewardType === "theme" && continueFunction) {
+    if (rewardType === "theme") {
         const { data: themeHistory, error: themeHistoryError } = await themesHistoryService.getByUserId(userId);
         rewardHistory = themeHistory.find(theme => theme.Tema_ID === rewardId);
         if(themeHistoryError) {
             console.log(`Error getting theme history: ${themeHistoryError.message}`);
-            errorObject.message = themeHistoryError.message;
-            errorObject.status = themeHistoryError.status;
-            continueFunction = false;
+            return { data: null, error: themeHistoryError };
         }
         else if(rewardHistory) {
             console.log(`User already bought the theme`);
-            errorObject.message = `User already bought the theme`;
-            errorObject.status = 400;
-            continueFunction = false;
+            return { data: null, error: { message: 'User already bought the theme', status: 400 } };
         }
     }
 
     // ON A TRANSACTION:
     console.log(userId, rewardId, rewardType);
-    if (continueFunction) {
-        const { data, error } = await supabase
-        .rpc('buy_with_coins_transaction',
-            { 
-              "p_user_id": userId,
-              "p_reward_id": rewardId,
-              "p_reward_type": rewardType 
-            });
-        
-        if(error) {
-            console.log(`Error buying reward: ${error.message}`);
-            errorObject.message = error.message;
-            errorObject.status = 500;
-        } else {
-            content = {
-                message: 'Reward bought successfully',
-                function_data: data
-            };
-            errorObject = null;
-        }
-    }
+   
+    const { data, error } = await supabase
+    .rpc('buy_with_coins_transaction',
+        { 
+          "p_user_id": userId,
+          "p_reward_id": rewardId,
+          "p_reward_type": rewardType 
+        });
     
-    return {
-        data: content,
-        error: errorObject
-    };
+    if(error) {
+        console.log(`Error buying reward: ${error.message}`);
+        return { data: null, error: error };
+    } else {
+        content = {
+            message: 'Reward bought successfully',
+            function_data: data
+        };
+        return {
+            data: content,
+            error: null
+        };
+    }
 }
 
 export default {
