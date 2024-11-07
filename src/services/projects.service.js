@@ -102,7 +102,7 @@ async function getByUser(userId) {
         // Obtener los miembros del proyecto
         const { data: miembrosProyecto, error: errorMiembros } = await supabase
             .from('Miembro_Proyecto')
-            .select('Usuario_ID')
+            .select('Usuario_ID, gemas')
             .eq('Proyecto_ID', proyecto.Proyecto_ID);
 
         if (errorMiembros) {
@@ -112,6 +112,7 @@ async function getByUser(userId) {
 
         // Obtener los IDs de todos los miembros (incluido el creador si es parte de Miembro_Proyecto)
         let usuarioIds = miembrosProyecto.map(m => m.Usuario_ID);
+        const currentUserGems = miembrosProyecto.find(m => m.Usuario_ID === userId)?.gemas;
 
         // Agregar Usuario_ID del creador si no está ya en la lista de miembros
         if (proyecto.Usuario_ID && !usuarioIds.includes(proyecto.Usuario_ID)) {
@@ -142,6 +143,8 @@ async function getByUser(userId) {
         // Agregar los miembros y el creador al proyecto
         proyecto.members = miembros;
         proyecto.creator = creador;
+        proyecto.currentUserGems = currentUserGems;
+        proyecto.queryingUserId = userId;
 
         // Eliminar Usuario_ID del objeto proyecto antes de devolverlo
         delete proyecto.Usuario_ID;
