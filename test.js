@@ -24,7 +24,8 @@ import badgeObtained from "./src/services/badgeObtained.service.js"
 
 // test custom rewards get by user shop
 // const {data, error} = await customRewardsHistoryService.getByUser("37d3b652-d314-4124-9685-add5f0c6fc19")
-// const {data, error} = await customRewardsService.getByUserShop("37d3b652-d314-4124-9685-add5f0c6fc19")
+const {data, error} = await customRewardsService.getByUserShop("37d3b652-d314-4124-9685-add5f0c6fc19")
+console.log(data, error)
 
 // test get tags from tasks by project id
 // const {data, error} = await taskService.getTagsByProjectId(1)
@@ -42,4 +43,4 @@ import badgeObtained from "./src/services/badgeObtained.service.js"
 // const {data, error} = await taskService.updateTaskStatus(1, 1, 4, "37d3b652-d314-4124-9685-add5f0c6fc19")
 
 // test get all obtained badges
-const {data, error} = await badgeObtained.get()
+// const {data, error} = await badgeObtained.get()
