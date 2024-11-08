@@ -15,6 +15,7 @@ import badgeCategoryRouter from './src/routes/badgeCategory.router.js';
 import badgeRouter from './src/routes/badge.router.js';
 import badgeObtainedRouter from './src/routes/badgeObtained.router.js';
 import rolesRouter from './src/routes/roles.router.js';
+import commentsRouter from './src/routes/comments.router.js';
 import { serve, setup } from 'swagger-ui-express';
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
@@ -50,6 +51,8 @@ app.use('/api/badge-category', badgeCategoryRouter);
 app.use('/api/badge', badgeRouter);
 app.use('/api/badge-obtained', badgeObtainedRouter);
 app.use('/api/roles', rolesRouter);
+app.use('/api/comments', commentsRouter);
+
 // Start server
 app.listen(port, () => {
   console.log(`Luma API listening on port ${port}`);
