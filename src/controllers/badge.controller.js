@@ -120,6 +120,26 @@ const getById = async (req, res) => {
     }
 }
 
+const getByIdClient = async (req, res) => {
+    /* #swagger.tags = ['Badge']
+       #swagger.description = 'Endpoint para obtener una insignia por ID para el cliente (frontend).'
+       #swagger.parameters['id'] = { description: 'ID de la insignia', required: true }
+    */
+    try {
+        const id = req.params.id;
+        const columns = 'Insignia_ID, nombre, descripcion, foto';
+        const { data, error } = await badge.getById(id, columns);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+
 const update = async (req, res) => {
     /* #swagger.tags = ['Badge']
        #swagger.description = 'Endpoint para actualizar una insignia.'
@@ -216,6 +236,7 @@ export default {
     create,
     get,
     getById,
+    getByIdClient,
     update,
     deleteById,
     uploadBadgeImage,
