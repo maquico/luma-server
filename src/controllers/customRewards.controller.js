@@ -21,7 +21,7 @@ const createAdmin = async (req, res) => {
     */
     try {
         const { projectId, iconoId, nombre, descripcion, precio, cantidad, limite } = req.body;
-        const { data, error } = await rewards.create(projectId, iconoId, nombre, descripcion, precio, cantidad, limite);
+        const { data, error } = await rewards.createAdmin(projectId, iconoId, nombre, descripcion, precio, cantidad, limite);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
