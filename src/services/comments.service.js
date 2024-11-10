@@ -52,6 +52,39 @@ async function getByTask (taskId, columns = '*') {
     return { data, error };
 }
 
+async function getByTaskClient (taskId, columns = 'Comentario_ID, Tarea_ID, Usuario_ID, contenido, Usuarios(nombre, apellido, correo, foto)') {
+    const { data, error } = await supabase
+        .from('Comentarios_Tarea')
+        .select(columns)
+        .eq('Tarea_ID', taskId)
+    
+    if (error) {
+        console.log(error);
+        return { data: null, error };
+    }
+    // Format output on a single object
+    if (data) {
+        data.forEach(comment => {
+            comment.taskId = comment.Tarea_ID;
+            comment.commentId = comment.Comentario_ID;
+            comment.content = comment.contenido;
+            comment.userId = comment.Usuario_ID;
+            comment.userFullName = `${comment.Usuarios.nombre} ${comment.Usuarios.apellido}`;
+            comment.userEmail = comment.Usuarios.correo;
+            comment.userPhoto = comment.Usuarios.foto;
+            delete comment.Comentario_ID;
+            delete comment.Tarea_ID;
+            delete comment.Usuario_ID;
+            delete comment.contenido;
+            delete comment.Usuarios;
+        });
+    }
+    
+    console.log(`Comments found: ${JSON.stringify(data)}`)
+
+    return { data, error };
+}
+
 async function getByUser (userId, columns = '*') {
     const { data, error } = await supabase
         .from('Comentarios_Tarea')
@@ -100,6 +133,7 @@ export default {
     get,
     getById,
     getByTask,
+    getByTaskClient,
     getByUser,
     update,
     deleteById

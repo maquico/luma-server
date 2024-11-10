@@ -176,11 +176,33 @@ const deleteById = async (req, res) => {
     }
 }
 
+const getByTaskClient = async (req, res) => {
+    /* #swagger.tags = ['Comment']
+       #swagger.description = 'Endpoint para obtener todos los comentarios de una tarea para el cliente (frontend).'
+       #swagger.parameters['taskId'] = { description: 'ID de la tarea', required: true }
+    */
+    try {
+        const taskId = req.params.taskId;
+        const { data, error } = await comments.getByTaskClient(taskId);
+
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+
+        return res.status(200).send(data);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
+    }
+}
+
 export default { 
     create,
     get, 
     getById, 
-    getByTask, 
+    getByTask,
+    getByTaskClient,
     getByUser, 
     update, 
     deleteById,
