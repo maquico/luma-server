@@ -132,3 +132,6 @@ dist
 
 # swagger
 swagger-output.json
+
+# admin.js
+.adminjs
