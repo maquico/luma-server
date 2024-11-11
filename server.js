@@ -3,7 +3,8 @@ import cors from 'cors';
 import * as fs from 'fs';
 import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
-import { Adapter, Resource, Database } from '@adminjs/sql'
+import { Resource, Database } from '@adminjs/sql';
+import adminConfig from './src/configs/admin.js';
 import userRouter from './src/routes/user.router.js';
 import sessionRouter from './src/routes/session.router.js';
 import invitationRouter from './src/routes/invitation.router.js';
@@ -60,27 +61,15 @@ const start = async () => {
   app.use('/api/roles', rolesRouter);
   app.use('/api/comments', commentsRouter);
 
-  const connectionString = process.env.SUPABASE_URI
-  console.log(connectionString)
-  const db = await new Adapter('postgresql', {
-    connectionString: connectionString,
-    database: 'postgres',
-  }).init();
+  const connectionString = process.env.SUPABASE_URI;
+  console.log('Connection String:', connectionString);
 
-  const admin = new AdminJS({
-    resources: [
-      {
-        resource: db.table('Usuarios'),
-        options: {},
-      },
-    ],
-    databases: [db],
-  });
+  const admin = await adminConfig.initializeAdminJS(connectionString);
 
-  admin.watch()
+  admin.watch();
 
-  const adminRouter = AdminJSExpress.buildRouter(admin)
-  app.use(admin.options.rootPath, adminRouter)
+  const adminRouter = AdminJSExpress.buildRouter(admin);
+  app.use(admin.options.rootPath, adminRouter);
 
   app.listen(PORT, () => {
     console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`)
