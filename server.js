@@ -19,11 +19,10 @@ import badgeRouter from './src/routes/badge.router.js';
 import badgeObtainedRouter from './src/routes/badgeObtained.router.js';
 import rolesRouter from './src/routes/roles.router.js';
 import commentsRouter from './src/routes/comments.router.js';
+import dashboardRouter from './src/routes/dashboard.router.js';
 import { serve, setup } from 'swagger-ui-express';
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
-
-const PORT = process.env.PORT || 3000;
 
 // Start server
 
@@ -54,6 +53,7 @@ const start = async () => {
   app.use('/api/badge-obtained', badgeObtainedRouter);
   app.use('/api/roles', rolesRouter);
   app.use('/api/comments', commentsRouter);
+  app.use('/api/dashboard', dashboardRouter);
 
   const admin = await adminConfig.initializeAdminJS();
 
