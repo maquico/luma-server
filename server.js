@@ -24,6 +24,8 @@ import { serve, setup } from 'swagger-ui-express';
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
 
+const PORT = process.env.PORT || 3000;
+
 // Start server
 
 const start = async () => {
