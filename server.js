@@ -3,7 +3,6 @@ import cors from 'cors';
 import * as fs from 'fs';
 import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
-import { Resource, Database } from '@adminjs/sql';
 import adminConfig from './src/configs/admin.js';
 import userRouter from './src/routes/user.router.js';
 import sessionRouter from './src/routes/session.router.js';
@@ -21,11 +20,6 @@ import badgeObtainedRouter from './src/routes/badgeObtained.router.js';
 import rolesRouter from './src/routes/roles.router.js';
 import commentsRouter from './src/routes/comments.router.js';
 import { serve, setup } from 'swagger-ui-express';
-
-AdminJS.registerAdapter({
-  Database,
-  Resource,
-})
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
 
@@ -61,10 +55,7 @@ const start = async () => {
   app.use('/api/roles', rolesRouter);
   app.use('/api/comments', commentsRouter);
 
-  const connectionString = process.env.SUPABASE_URI;
-  console.log('Connection String:', connectionString);
-
-  const admin = await adminConfig.initializeAdminJS(connectionString);
+  const admin = await adminConfig.initializeAdminJS();
 
   admin.watch();
 

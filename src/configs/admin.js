@@ -1,5 +1,9 @@
 import AdminJS from 'adminjs';
-import { Adapter, Resource, Database } from '@adminjs/sql';
+import { Database, Resource, getModelByName } from '@adminjs/prisma'
+import { PrismaClient } from '@prisma/client'
+
+
+const prisma = new PrismaClient()
 
 // Register the SQL adapter
 AdminJS.registerAdapter({
@@ -8,96 +12,91 @@ AdminJS.registerAdapter({
 });
 
 // Function to initialize AdminJS
-const initializeAdminJS = async (connectionString) => {
-  const db = await new Adapter('postgresql', {
-    connectionString: connectionString,
-    database: 'postgres',
-  }).init();
-
+const initializeAdminJS = async () => {
   const admin = new AdminJS({
     resources: [
       {
-        resource: db.table('Usuarios'),
+        resource: { model: getModelByName('Usuarios'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Temas'),
+        resource: { model: getModelByName('users'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Proyectos'),
+        resource: { model: getModelByName('Temas'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Fuentes'),
+        resource: { model: getModelByName('Proyectos'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Recompensas'),
+        resource: { model: getModelByName('Fuentes'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Miembro_Proyecto'),
+        resource: { model: getModelByName('Recompensas'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Tareas'),
+        resource: { model: getModelByName('Miembro_Proyecto'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Insignia_Categoria'),
+        resource: { model: getModelByName('Tareas'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Insignias'),
+        resource: { model: getModelByName('Insignia_Categoria'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Insignia_Conseguida'),
+        resource: { model: getModelByName('Insignias'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Roles'),
+        resource: { model: getModelByName('Insignia_Conseguida'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Comentarios_Tarea'),
+        resource: { model: getModelByName('Roles'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Dependencias_Tarea'),
+        resource: { model: getModelByName('Comentarios_Tarea'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Estados_Tarea'),
+        resource: { model: getModelByName('Estados_Tarea'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Historial_Fuentes'),
+        resource: { model: getModelByName('Historial_Fuentes'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Historial_Recompensas'),
+        resource: { model: getModelByName('Historial_Recompensas'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Historial_Temas'),
+        resource: { model: getModelByName('Historial_Temas'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Iconos'),
+        resource: { model: getModelByName('Iconos'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Idiomas'),
+        resource: { model: getModelByName('Idiomas'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Invitaciones'),
+        resource: { model: getModelByName('Invitaciones'), client: prisma },
         options: {},
       },
       {
-        resource: db.table('Preguntas'),
+        resource: { model: getModelByName('Preguntas'), client: prisma },
         options: {},
       }
     ],

@@ -320,7 +320,7 @@ model users {
   mfa_factors                 mfa_factors[]
   one_time_tokens             one_time_tokens[]
   sessions                    sessions[]
-  Usuarios                    Usuarios?
+  //Usuarios                    Usuarios?
 
   @@index([instance_id])
   @@index([is_anonymous])
@@ -379,7 +379,7 @@ model Historial_Fuentes {
   precioCompra     Decimal  @db.Decimal(10, 2)
   fechaRegistro    DateTime @default(now()) @db.Timestamp(6)
   Usuario_ID       String   @db.Uuid
-  HFuente_ID       BigInt   @id @unique @default(autoincrement())
+  HFuente_ID       Int   @id @unique @default(autoincrement())
   Fuentes          Fuentes  @relation(fields: [Fuente_ID], references: [Fuente_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Historial_Recompensas_Fuentes.Fuente_ID")
   Usuarios         Usuarios @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Historial_Recompensas_Fuentes.Usuario_ID")
 
@@ -392,7 +392,7 @@ model Historial_Recompensas {
   precioCompra     Decimal     @db.Decimal(10, 2)
   fechaRegistro    DateTime    @default(now()) @db.Timestamp(6)
   Usuario_ID       String      @db.Uuid
-  HRecompensa_ID   BigInt      @id @unique @default(autoincrement())
+  HRecompensa_ID   Int      @id @unique @default(autoincrement())
   Recompensas      Recompensas @relation(fields: [Recompensa_ID], references: [Recompensa_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Historial_Recompensas.Recompensa_ID")
   Usuarios         Usuarios    @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Historial_Recompensas.Usuario_ID")
 
@@ -405,7 +405,7 @@ model Historial_Temas {
   precioCompra     Decimal  @db.Decimal(10, 2)
   fechaRegistro    DateTime @default(now()) @db.Timestamp(6)
   Usuario_ID       String   @db.Uuid
-  HTema_ID         BigInt   @id @unique @default(autoincrement())
+  HTema_ID         Int   @id @unique @default(autoincrement())
   Temas            Temas    @relation(fields: [Tema_ID], references: [Tema_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Historial_Recompensas_Temas.Tema_ID")
   Usuarios         Usuarios @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Historial_Recompensas_Temas.Usuario_ID")
 
@@ -445,13 +445,14 @@ model Insignia_Categoria {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Insignia_Conseguida {
-  Insignia_ID   Int
-  fechaRegistro DateTime  @default(now()) @db.Timestamp(6)
-  Usuario_ID    String    @db.Uuid
-  Insignias     Insignias @relation(fields: [Insignia_ID], references: [Insignia_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Insignia_ID")
-  Usuarios      Usuarios  @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Usuario_ID")
+  Insignia_Conseguida_ID  Int       @id @default(autoincrement())
+  Insignia_ID             Int
+  fechaRegistro           DateTime  @default(now()) @db.Timestamp(6)
+  Usuario_ID              String    @db.Uuid
+  Insignias               Insignias @relation(fields: [Insignia_ID], references: [Insignia_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Insignia_ID")
+  Usuarios                Usuarios  @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Usuario_ID")
 
-  @@id([Insignia_ID, Usuario_ID])
+  //@@id([Insignia_ID, Usuario_ID])
   @@schema("public")
 }
 
@@ -484,6 +485,7 @@ model Invitaciones {
 }
 
 model Miembro_Proyecto {
+  Miembro_ID        Int       @id @default(autoincrement())
   Proyecto_ID       Int
   Rol_ID            Int       @default(1)
   gemas             Int       @default(0)
@@ -494,7 +496,7 @@ model Miembro_Proyecto {
   Roles             Roles     @relation(fields: [Rol_ID], references: [Rol_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Miembro_Proyecto.Rol_ID")
   Usuarios          Usuarios  @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Miembro_Proyecto.Usuario_ID")
 
-  @@id([Usuario_ID, Proyecto_ID])
+  //@@id([Usuario_ID, Proyecto_ID])
   @@schema("public")
 }
 
@@ -520,7 +522,7 @@ model Proyectos {
   eliminado         Boolean            @default(false)
   Invitaciones      Invitaciones[]
   Miembro_Proyecto  Miembro_Proyecto[]
-  Usuarios          Usuarios           @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: SetNull)
+  Usuarios          Usuarios           @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: NoAction)
   Recompensas       Recompensas[]
   Tareas            Tareas[]
 
@@ -606,6 +608,7 @@ model Temas {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Usuarios {
+  Usuario_ID            String                  @id @db.Uuid
   nombre                String                  @db.VarChar(100)
   apellido              String                  @db.VarChar(100)
   correo                String                  @db.VarChar(100)
@@ -621,7 +624,6 @@ model Usuarios {
   esAdmin               Boolean                 @default(false)
   Idioma_ID             Int?
   contrase_a            String?                 @map("contraseña") @db.VarChar(255)
-  Usuario_ID            String                  @id @db.Uuid
   confirmado            Boolean                 @default(false)
   ultimoInicioSesion    DateTime?               @db.Timestamp(6)
   eliminado             Boolean                 @default(false)
@@ -634,7 +636,7 @@ model Usuarios {
   Proyectos             Proyectos[]
   Tareas                Tareas[]
   Idiomas               Idiomas?                @relation(fields: [Idioma_ID], references: [Idioma_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Usuarios.Idioma_ID")
-  users                 users                   @relation(fields: [Usuario_ID], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  //users                 users                   @relation(fields: [Usuario_ID], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([eliminado, Usuario_ID])
   @@index([eliminado])
@@ -681,3 +683,5 @@ enum one_time_token_type {
 
   @@schema("auth")
 }
+
+
