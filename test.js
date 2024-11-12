@@ -7,6 +7,7 @@ import taskService from "./src/services/task.service.js"
 import validateTags from "./src/utils/tagsUtils.js"
 import projectMemberService from "./src/services/projectMember.service.js"
 import badgeObtained from "./src/services/badgeObtained.service.js"
+import commentsService from "./src/services/comments.service.js"
 
 //const {data, error} = await user.sendOtp("angelgmorenor@gmail.com")
 
@@ -24,8 +25,8 @@ import badgeObtained from "./src/services/badgeObtained.service.js"
 
 // test custom rewards get by user shop
 // const {data, error} = await customRewardsHistoryService.getByUser("37d3b652-d314-4124-9685-add5f0c6fc19")
-const {data, error} = await customRewardsService.getByUserShop("37d3b652-d314-4124-9685-add5f0c6fc19")
-console.log(data, error)
+// const {data, error} = await customRewardsService.getByUserShop("37d3b652-d314-4124-9685-add5f0c6fc19")
+// console.log(data, error)
 
 // test get tags from tasks by project id
 // const {data, error} = await taskService.getTagsByProjectId(1)
@@ -44,3 +45,7 @@ console.log(data, error)
 
 // test get all obtained badges
 // const {data, error} = await badgeObtained.get()
+
+// test get comments by task
+const {data, error} = await commentsService.getByTaskClient(4)
+//console.log(data, error)

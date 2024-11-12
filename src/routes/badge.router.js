@@ -17,6 +17,7 @@ router.post('/upload', upload.single('image'), badgeController.uploadBadgeImage)
 router.post('/', upload.single('image'), badgeController.create);
 router.get('/', badgeController.get);
 router.get('/:id', badgeController.getById);
+router.get('/id-client/:id', badgeController.getByIdClient);
 router.put('/:id', badgeController.update);
 router.delete('/:id', badgeController.deleteById);
 
