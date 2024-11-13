@@ -344,10 +344,11 @@ model Dependencias_Tarea {
   Tarea_ID                                         Int
   Dependencia_ID                                   Int
   fecharegistro                                    DateTime? @default(now()) @db.Timestamp(6)
+  Dependencia_Tarea_ID                             Int       @id @unique @default(autoincrement())
   Tareas_Dependencias_Tarea_Dependencia_IDToTareas Tareas    @relation("Dependencias_Tarea_Dependencia_IDToTareas", fields: [Dependencia_ID], references: [Tarea_ID], onDelete: NoAction, onUpdate: NoAction)
   Tareas_Dependencias_Tarea_Tarea_IDToTareas       Tareas    @relation("Dependencias_Tarea_Tarea_IDToTareas", fields: [Tarea_ID], references: [Tarea_ID], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([Tarea_ID, Dependencia_ID])
+  @@unique([Tarea_ID, Dependencia_ID], map: "UNIQUE_Tarea_Dependencia")
   @@schema("public")
 }
 
@@ -379,7 +380,7 @@ model Historial_Fuentes {
   precioCompra     Decimal  @db.Decimal(10, 2)
   fechaRegistro    DateTime @default(now()) @db.Timestamp(6)
   Usuario_ID       String   @db.Uuid
-  HFuente_ID       Int   @id @unique @default(autoincrement())
+  HFuente_ID       Int      @id @unique @default(autoincrement())
   Fuentes          Fuentes  @relation(fields: [Fuente_ID], references: [Fuente_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Historial_Recompensas_Fuentes.Fuente_ID")
   Usuarios         Usuarios @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Historial_Recompensas_Fuentes.Usuario_ID")
 
@@ -392,7 +393,7 @@ model Historial_Recompensas {
   precioCompra     Decimal     @db.Decimal(10, 2)
   fechaRegistro    DateTime    @default(now()) @db.Timestamp(6)
   Usuario_ID       String      @db.Uuid
-  HRecompensa_ID   Int      @id @unique @default(autoincrement())
+  HRecompensa_ID   Int         @id @unique @default(autoincrement())
   Recompensas      Recompensas @relation(fields: [Recompensa_ID], references: [Recompensa_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Historial_Recompensas.Recompensa_ID")
   Usuarios         Usuarios    @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Historial_Recompensas.Usuario_ID")
 
@@ -405,7 +406,7 @@ model Historial_Temas {
   precioCompra     Decimal  @db.Decimal(10, 2)
   fechaRegistro    DateTime @default(now()) @db.Timestamp(6)
   Usuario_ID       String   @db.Uuid
-  HTema_ID         Int   @id @unique @default(autoincrement())
+  HTema_ID         Int      @id @unique @default(autoincrement())
   Temas            Temas    @relation(fields: [Tema_ID], references: [Tema_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Historial_Recompensas_Temas.Tema_ID")
   Usuarios         Usuarios @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Historial_Recompensas_Temas.Usuario_ID")
 
@@ -445,14 +446,14 @@ model Insignia_Categoria {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Insignia_Conseguida {
-  Insignia_Conseguida_ID  Int       @id @default(autoincrement())
-  Insignia_ID             Int
-  fechaRegistro           DateTime  @default(now()) @db.Timestamp(6)
-  Usuario_ID              String    @db.Uuid
-  Insignias               Insignias @relation(fields: [Insignia_ID], references: [Insignia_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Insignia_ID")
-  Usuarios                Usuarios  @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Usuario_ID")
+  Insignia_ID            Int
+  fechaRegistro          DateTime  @default(now()) @db.Timestamp(6)
+  Usuario_ID             String    @db.Uuid
+  Insignia_Conseguida_ID Int       @id @unique @default(autoincrement())
+  Insignias              Insignias @relation(fields: [Insignia_ID], references: [Insignia_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Insignia_ID")
+  Usuarios               Usuarios  @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Insignia_Conseguida.Usuario_ID")
 
-  //@@id([Insignia_ID, Usuario_ID])
+  @@unique([Usuario_ID, Insignia_ID], map: "UNIQUE_Usuario_Insignia")
   @@schema("public")
 }
 
@@ -485,18 +486,18 @@ model Invitaciones {
 }
 
 model Miembro_Proyecto {
-  Miembro_ID        Int       @id @default(autoincrement())
   Proyecto_ID       Int
   Rol_ID            Int       @default(1)
   gemas             Int       @default(0)
   fechaRegistro     DateTime  @default(now()) @db.Timestamp(6)
   fechaModificacion DateTime? @db.Timestamp(6)
   Usuario_ID        String    @db.Uuid
+  Miembro_ID        Int       @id @unique @default(autoincrement())
   Proyectos         Proyectos @relation(fields: [Proyecto_ID], references: [Proyecto_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Miembro_Proyecto.Proyecto_ID")
   Roles             Roles     @relation(fields: [Rol_ID], references: [Rol_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Miembro_Proyecto.Rol_ID")
   Usuarios          Usuarios  @relation(fields: [Usuario_ID], references: [Usuario_ID], onDelete: Cascade, onUpdate: NoAction, map: "FK_Miembro_Proyecto.Usuario_ID")
 
-  //@@id([Usuario_ID, Proyecto_ID])
+  @@unique([Usuario_ID, Proyecto_ID], map: "UNIQUE_Usuario_Proyecto")
   @@schema("public")
 }
 
@@ -608,7 +609,7 @@ model Temas {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Usuarios {
-  Usuario_ID            String                  @id @db.Uuid
+  Usuario_ID            String                  @id @unique @db.Uuid
   nombre                String                  @db.VarChar(100)
   apellido              String                  @db.VarChar(100)
   correo                String                  @db.VarChar(100)
@@ -683,5 +684,3 @@ enum one_time_token_type {
 
   @@schema("auth")
 }
-
-

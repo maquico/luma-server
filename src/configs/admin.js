@@ -68,6 +68,10 @@ const initializeAdminJS = async () => {
         options: {},
       },
       {
+        resource: { model: getModelByName('Dependencias_Tarea'), client: prisma },
+        options: {},
+      },
+      {
         resource: { model: getModelByName('Estados_Tarea'), client: prisma },
         options: {},
       },
