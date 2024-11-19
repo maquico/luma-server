@@ -40,7 +40,7 @@ const start = async () => {
   app.use('/doc', serve, setup(swaggerFile));
   
   app.get('/', (req, res) => {
-    res.sendStatus('Luma API running! Go to /doc to see the API documentation and to /admin to access the admin panel.');
+    res.send('Luma API running! Go to /doc to see the API documentation and to /admin to access the admin panel.');
   })
   
   // API routes
