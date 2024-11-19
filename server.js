@@ -39,6 +39,10 @@ const start = async () => {
   // Swagger documentation
   app.use('/doc', serve, setup(swaggerFile));
   
+  app.get('/', (req, res) => {
+    res.sendStatus('Luma API running! Go to /doc to see the API documentation and to /admin to access the admin panel.');
+  })
+  
   // API routes
   app.use('/api/user', userRouter);
   app.use('/api/session', sessionRouter);
@@ -59,7 +63,7 @@ const start = async () => {
 
   const admin = await adminConfig.initializeAdminJS();
 
-  admin.watch();
+  //admin.watch();
 
   const adminRouter = AdminJSExpress.buildRouter(admin);
   app.use(admin.options.rootPath, adminRouter);

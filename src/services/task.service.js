@@ -267,6 +267,25 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
     return { data: returnData, error: null};
 }
 
+async function approvedTasksByProject(projectId, count = true) {
+    const { data, error } = await supabase
+        .from('Tareas')
+        .select()
+        .eq('Proyecto_ID', projectId)
+        .eq('Estado_Tarea_ID', 4);
+    
+    if (error) {
+        console.log(error);
+        return { data: null, error };
+    }
+    
+    if (data && count) {
+        return { data: { count: data.length }, error };
+    }
+
+    return { data, error };
+}
+
 export default {
     create,
     get,
@@ -276,4 +295,5 @@ export default {
     update,
     deleteById,
     updateTaskStatus,
+    approvedTasksByProject,
 };
