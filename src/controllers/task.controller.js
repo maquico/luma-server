@@ -219,6 +219,26 @@ const deleteById = async (req, res) => {
     }
 };
 
+const approvedTasksByProject = async (req, res) => {
+    /* #swagger.tags = ['Task']
+       #swagger.description = 'Endpoint to get approved tasks by project. Count or details'
+       #swagger.parameters['id'] = { description: 'ID of the project', required: true }
+       #swagger.parameters['count'] = { description: 'If true, returns just the count of the tasks', required: false, default: true }
+    */
+    try {
+        const projectId = req.params.id;
+        const count = req.query.count || true;
+        const { data, error } = await task.approvedTasksByProject(projectId, count);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 export default {
     create,
     get,
@@ -229,4 +249,5 @@ export default {
     update,
     updateTaskStatus,
     deleteById,
+    approvedTasksByProject
 };
