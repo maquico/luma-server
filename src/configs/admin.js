@@ -1,9 +1,16 @@
 import AdminJS from 'adminjs';
 import { Database, Resource, getModelByName } from '@adminjs/prisma'
 import { PrismaClient } from '@prisma/client'
-
+import Connect from 'connect-pg-simple'
+import session from 'express-session'
 
 const prisma = new PrismaClient()
+
+const ORANGE = '#FC714A';
+const PINK = '#FD7797';
+const PURPLE = '#692DD7';
+const BG_LIGHT__PURPLE = '#F5F0FF';
+const TXT_DARK__PURPLE = '#0E0024';
 
 // Register the SQL adapter
 AdminJS.registerAdapter({
@@ -104,9 +111,32 @@ const initializeAdminJS = async () => {
         options: {},
       }
     ],
+    branding: {
+      companyName: 'Luma - Backoffice', 
+      logo: '/assets/luma-logo.png',         
+      favicon: '',   
+      theme: {
+        colors: {
+          primary100: PURPLE, 
+          primary80: PURPLE,  
+          primary60: PINK,
+          accent: ORANGE,
+        },
+      },
+    },
   });
 
-  return admin;
+  const ConnectSession = Connect(session)
+  const sessionStore = new ConnectSession({
+    conObject: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production',
+    },
+    tableName: 'session',
+    createTableIfMissing: true,
+  })
+
+  return { admin, sessionStore };
 };
 
 export default { initializeAdminJS };
