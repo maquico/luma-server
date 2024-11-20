@@ -21,10 +21,26 @@ import rolesRouter from './src/routes/roles.router.js';
 import commentsRouter from './src/routes/comments.router.js';
 import dashboardRouter from './src/routes/dashboard.router.js';
 import { serve, setup } from 'swagger-ui-express';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
 
 const PORT = process.env.PORT || 3000;
+
+const protectRoute = (req, res, next) => {
+  console.log(req.session);
+  if (!req.session || !req.session.adminUser) {
+    return res.status(401).json({ message: 'Unauthorized: No session found' });
+  }
+
+  // Optionally, check for additional admin privileges
+  if (!req.session.adminUser.isAdmin) {
+    return res.status(403).json({ message: 'Forbidden: Admin access required' });
+  }
+
+  next();
+};
 
 const authenticate = async (email, password) => {
   const { data, error } = await sessionService.create(email, password);
@@ -42,7 +58,7 @@ const authenticate = async (email, password) => {
 
     if (user[0].esAdmin){
       console.log(`Admin ${user[0].correo} logged in`);
-      return { email: user[0].correo, password: user[0].contraseña };
+      return { email: user[0].correo, isAdmin: true };
     }
     else {
       console.log(`User ${user[0].correo} is not an admin`);
@@ -51,13 +67,63 @@ const authenticate = async (email, password) => {
   }
 }
 
-// Start server
 const start = async () => {
   const app = express();
-  
-  // Swagger documentation
-  app.use('/doc', serve, setup(swaggerFile));
-  
+
+  // Middleware for parsing cookies
+  app.use(cookieParser());
+
+  // Load AdminJS and session store
+  const { admin, sessionStore } = await adminConfig.initializeAdminJS();
+
+  // Configure session middleware
+  app.use(
+    session({
+      store: sessionStore,
+      resave: false,
+      saveUninitialized: false,
+      secret: 'sessionsecret', // Match with AdminJS
+      cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
+      },
+    })
+  );
+
+  // Swagger documentation (protected)
+  app.use('/doc', protectRoute, serve, setup(swaggerFile));
+
+  // AdminJS router
+  if (process.env.NODE_ENV === 'production') await admin.initialize();
+  else admin.watch();
+
+  const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
+    admin,
+    {
+      authenticate,
+      cookieName: 'adminjs',
+      cookiePassword: 'sessionsecret',
+    },
+    null,
+    {
+      store: sessionStore,
+      resave: false,
+      saveUninitialized: false,
+      secret: 'sessionsecret',
+      cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      },
+    }
+  );
+  app.use(admin.options.rootPath, adminRouter);
+
+  // Other middleware
+  app.use(cors());
+  app.use(urlencoded({ extended: true }));
+  app.use(json());
+
   // API routes
   app.use('/api/user', userRouter);
   app.use('/api/invitation', invitationRouter);
@@ -75,43 +141,13 @@ const start = async () => {
   app.use('/api/comments', commentsRouter);
   app.use('/api/dashboard', dashboardRouter);
 
-  const { admin, sessionStore } = await adminConfig.initializeAdminJS();
-
-  if (process.env.NODE_ENV === 'production') await admin.initialize();
-  else admin.watch();
-
-  const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
-    admin,
-    {
-      authenticate,
-      cookieName: 'adminjs',
-      cookiePassword: 'sessionsecret',
-    },
-    null,
-    {
-      store: sessionStore,
-      resave: true,
-      saveUninitialized: true,
-      secret: 'sessionsecret',
-      cookie: {
-        httpOnly: process.env.NODE_ENV === 'production',
-        secure: process.env.NODE_ENV === 'production',
-      },
-      name: 'adminjs',
-    }
-  )
-  app.use(admin.options.rootPath, adminRouter);
   app.get('/', (req, res) => res.redirect(admin.options.rootPath));
-  
-  // Express middlewares
-  app.use(cors());
-  app.use(urlencoded({ extended: true }));
-  app.use(json());
 
   app.listen(PORT, () => {
-    console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`)
-  })
-}
+    console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`);
+  });
+};
 
-start()
+start();
+
 
