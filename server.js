@@ -1,11 +1,11 @@
 import express, { urlencoded, json } from 'express';
 import cors from 'cors';
 import * as fs from 'fs';
-import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
 import adminConfig from './src/configs/admin.js';
+import sessionService from './src/services/session.service.js';
+import userService from './src/services/user.service.js';
 import userRouter from './src/routes/user.router.js';
-import sessionRouter from './src/routes/session.router.js';
 import invitationRouter from './src/routes/invitation.router.js';
 import projectsRouter from './src/routes/projects.router.js';
 import fontsRouter from './src/routes/fontsRewards.router.js';
@@ -26,26 +26,40 @@ const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.jso
 
 const PORT = process.env.PORT || 3000;
 
+const authenticate = async (email, password) => {
+  const { data, error } = await sessionService.create(email, password);
+  if (error) {
+    console.log("Error on admin login (auth schema table): ", error);
+    return null;
+  }
+
+  if (data) {
+    const { data: user, error: userError} = await userService.getByEmail(email);
+    if (userError) {
+      console.log("Error on admin login (public schema table): ", error);
+      return null;
+    }
+
+    if (user[0].esAdmin){
+      console.log(`Admin ${user[0].correo} logged in`);
+      return { email: user[0].correo, password: user[0].contraseña };
+    }
+    else {
+      console.log(`User ${user[0].correo} is not an admin`);
+      return null;
+    }
+  }
+}
+
 // Start server
-
 const start = async () => {
-  const app = express()
-
-  // Express middlewares
-  app.use(cors());
-  app.use(urlencoded({ extended: true }));
-  app.use(json());
+  const app = express();
   
   // Swagger documentation
   app.use('/doc', serve, setup(swaggerFile));
   
-  app.get('/', (req, res) => {
-    res.send('Luma API running! Go to /doc to see the API documentation and to /admin to access the admin panel.');
-  })
-  
   // API routes
   app.use('/api/user', userRouter);
-  app.use('/api/session', sessionRouter);
   app.use('/api/invitation', invitationRouter);
   app.use('/api/projects', projectsRouter);
   app.use('/api/fonts', fontsRouter);
@@ -61,12 +75,38 @@ const start = async () => {
   app.use('/api/comments', commentsRouter);
   app.use('/api/dashboard', dashboardRouter);
 
-  const admin = await adminConfig.initializeAdminJS();
+  const { admin, sessionStore } = await adminConfig.initializeAdminJS();
 
-  //admin.watch();
+  if (process.env.NODE_ENV === 'production') await admin.initialize();
+  else admin.watch();
 
-  const adminRouter = AdminJSExpress.buildRouter(admin);
+  const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
+    admin,
+    {
+      authenticate,
+      cookieName: 'adminjs',
+      cookiePassword: 'sessionsecret',
+    },
+    null,
+    {
+      store: sessionStore,
+      resave: true,
+      saveUninitialized: true,
+      secret: 'sessionsecret',
+      cookie: {
+        httpOnly: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production',
+      },
+      name: 'adminjs',
+    }
+  )
   app.use(admin.options.rootPath, adminRouter);
+  app.get('/', (req, res) => res.redirect(admin.options.rootPath));
+  
+  // Express middlewares
+  app.use(cors());
+  app.use(urlencoded({ extended: true }));
+  app.use(json());
 
   app.listen(PORT, () => {
     console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`)

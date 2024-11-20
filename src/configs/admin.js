@@ -1,6 +1,8 @@
 import AdminJS from 'adminjs';
 import { Database, Resource, getModelByName } from '@adminjs/prisma'
 import { PrismaClient } from '@prisma/client'
+import Connect from 'connect-pg-simple'
+import session from 'express-session'
 
 
 const prisma = new PrismaClient()
@@ -106,7 +108,17 @@ const initializeAdminJS = async () => {
     ],
   });
 
-  return admin;
+  const ConnectSession = Connect(session)
+  const sessionStore = new ConnectSession({
+    conObject: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production',
+    },
+    tableName: 'session',
+    createTableIfMissing: true,
+  })
+
+  return { admin, sessionStore };
 };
 
 export default { initializeAdminJS };
