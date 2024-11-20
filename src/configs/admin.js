@@ -4,8 +4,13 @@ import { PrismaClient } from '@prisma/client'
 import Connect from 'connect-pg-simple'
 import session from 'express-session'
 
-
 const prisma = new PrismaClient()
+
+const ORANGE = '#FC714A';
+const PINK = '#FD7797';
+const PURPLE = '#692DD7';
+const BG_LIGHT__PURPLE = '#F5F0FF';
+const TXT_DARK__PURPLE = '#0E0024';
 
 // Register the SQL adapter
 AdminJS.registerAdapter({
@@ -106,6 +111,19 @@ const initializeAdminJS = async () => {
         options: {},
       }
     ],
+    branding: {
+      companyName: 'Luma - Backoffice', 
+      logo: '/assets/luma-logo.png',         
+      favicon: '',   
+      theme: {
+        colors: {
+          primary100: PURPLE, 
+          primary80: PURPLE,  
+          primary60: PINK,
+          accent: ORANGE,
+        },
+      },
+    },
   });
 
   const ConnectSession = Connect(session)

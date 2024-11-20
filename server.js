@@ -23,6 +23,9 @@ import dashboardRouter from './src/routes/dashboard.router.js';
 import { serve, setup } from 'swagger-ui-express';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const swaggerFile = JSON.parse(fs.readFileSync('./src/configs/swagger-output.json', 'utf8'));
 
@@ -70,8 +73,10 @@ const authenticate = async (email, password) => {
 const start = async () => {
   const app = express();
 
+  app.use('/assets', express.static('./assets'));
   // Middleware for parsing cookies
   app.use(cookieParser());
+  
 
   // Load AdminJS and session store
   const { admin, sessionStore } = await adminConfig.initializeAdminJS();
