@@ -141,30 +141,85 @@ const getByIdClient = async (req, res) => {
 
 
 const update = async (req, res) => {
-    /* #swagger.tags = ['Badge']
+    /* 
+       #swagger.autoBody = false
+       #swagger.tags = ['Badge']
        #swagger.description = 'Endpoint para actualizar una insignia.'
+       #swagger.consumes = ['multipart/form-data']
        #swagger.parameters['id'] = { description: 'ID de la insignia', required: true }
-       #swagger.parameters['obj'] = {
-           in: 'body',
-           description: 'Datos de la insignia',
-           required: true,
-           schema: {
-               nombre: 'Badge',
-               descripcion: 'Insignia de plata',
-               Insignia_Cat_ID: 2,
-               meta: 200,
-               foto: 'https://example.com/image.jpg'
-              }
-            }
+       #swagger.parameters['image'] = {
+           in: 'formData',
+           type: 'file',
+           required: false,
+           description: 'Imagen de la insignia',
+           name: 'image'
+       }
+       #swagger.parameters['name'] = {
+           in: 'formData',
+           type: 'string',
+           required: false,
+           description: 'Nombre de la insignia'
+       }
+       #swagger.parameters['description'] = {
+           in: 'formData',
+           type: 'string',
+           required: false,
+           description: 'Descripción de la insignia'
+       }
+       #swagger.parameters['categoryId'] = {
+           in: 'formData',
+           type: 'integer',
+           required: false,
+           description: 'ID de la categoría'
+       }
+       #swagger.parameters['goal'] = {
+           in: 'formData',
+           type: 'integer',
+           required: false,
+           description: 'Meta de la insignia'
+       }
     */
     try {
         const badgeId = req.params.id;
-        const badgeObj = req.body;
-        const { data, error } = await badge.update(badgeId, badgeObj);
+        const badgeImage = req.file; // Use req.file for file uploads
+        let imageSignedUrl = null;
+
+        if (badgeImage) {
+            // Log the file details for debugging
+            console.log('File received:', badgeImage);
+
+            // Extract file name and type
+            const fileName = `${badgeId}-${badgeImage.originalname}`;
+            const mimeType = badgeImage.mimetype;
+            const fileBuffer = badgeImage.buffer.toString('base64');
+
+            // Define the file path and bucket name
+            const filePath = 'badges/';
+            const bucketName = 'luma-assets';
+
+            // Upload the file using the uploadFile function
+            const { signedUrl, success, error: uploadError } = await uploadFile(fileBuffer, fileName, mimeType, filePath, bucketName);
+
+            if (!success) {
+                return res.status(500).send({ message: 'Error uploading file', uploadError });
+            }
+            imageSignedUrl = signedUrl;
+        }
+
+        const updateFields = {};
+        if (req.body.name) updateFields.nombre = req.body.name;
+        if (req.body.description) updateFields.descripcion = req.body.description;
+        if (req.body.categoryId) updateFields.Insignia_Categoria_ID = req.body.categoryId;
+        if (req.body.goal) updateFields.meta = req.body.goal;
+        if (imageSignedUrl) updateFields.foto = imageSignedUrl;
+
+        const { data, error } = await badge.update(badgeId, updateFields);
+
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
+
         return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send(error.message);
