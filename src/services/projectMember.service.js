@@ -49,7 +49,7 @@ async function getMiembros() {
 }
 
 // Función para obtener un miembro por userId y projectId con el nombre del rol
-async function getByUserProject(userId, projectId, columns='*, Roles (nombre)') {
+async function getByUserProject(userId, projectId, columns = '*, Roles (nombre)') {
   const { data, error } = await supabase
     .from('Miembro_Proyecto')
     .select(columns)
@@ -59,7 +59,7 @@ async function getByUserProject(userId, projectId, columns='*, Roles (nombre)') 
 }
 
 // Función para obtener miembros por userId con el nombre del rol
-async function getByUserId(userId, columns='*,Roles (nombre)') {
+async function getByUserId(userId, columns = '*,Roles (nombre)') {
   const { data, error } = await supabase
     .from('Miembro_Proyecto')
     .select(columns)
@@ -83,11 +83,38 @@ async function getProjectsIdsByUserId(userId) {
 async function getByProjectId(projectId) {
   const { data, error } = await supabase
     .from('Miembro_Proyecto')
-    .select('*, Roles (nombre)')
+    .select(`
+      *,
+      Roles (nombre),
+      Usuarios (correo, nombre, apellido)
+    `)
     .eq('Proyecto_ID', projectId);
 
-  return { data, error };
+  if (error) {
+    console.error('Error al obtener miembros del proyecto:', error);
+    return { data: null, error };
+  }
+
+  // Modificar los datos para incluir nombreCompleto dentro de Usuarios
+  const miembros = data.map(miembro => {
+    if (miembro.Usuarios) {
+      miembro.Usuarios.nombreCompleto = `${miembro.Usuarios.nombre} ${miembro.Usuarios.apellido}`;
+    }
+    return miembro;
+  });
+
+  return { data: miembros, error: null };
 }
+
+
+// async function getByProjectId(projectId) {
+//   const { data, error } = await supabase
+//     .from('Miembro_Proyecto')
+//     .select('*, Roles (nombre)')
+//     .eq('Proyecto_ID', projectId);
+
+//   return { data, error };
+// }
 
 async function checkMemberRole(userId, projectId, roleName) {
   const { data, error } = await getByUserProject(userId, projectId);
@@ -96,7 +123,7 @@ async function checkMemberRole(userId, projectId, roleName) {
   }
   // check if the user has the role
   const hasRole = data.some((member) => member.Roles.nombre === roleName);
-  
+
   return { data: hasRole, error: null };
 }
 
