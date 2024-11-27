@@ -90,7 +90,7 @@ const start = async () => {
       secret: 'sessionsecret', // Match with AdminJS
       cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        secure: process.env.NODE_ENV === 'development', // Use secure cookies in production
         maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
       },
     })
@@ -118,7 +118,7 @@ const start = async () => {
       secret: 'sessionsecret',
       cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'development',,
       },
     }
   );
