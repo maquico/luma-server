@@ -149,7 +149,7 @@ const start = async () => {
   app.get('/', (req, res) => res.redirect(admin.options.rootPath));
 
   app.listen(PORT, () => {
-    console.log(`AdminJS started on http://localhost:${PORT}${admin.options.rootPath}`);
+    console.log(`AdminJS started on http://${process.env.HOST}:${PORT}${admin.options.rootPath}`);
   });
 };
 
