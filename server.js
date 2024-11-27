@@ -118,7 +118,7 @@ const start = async () => {
       secret: 'sessionsecret',
       cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'development',,
+        secure: process.env.NODE_ENV === 'development',
       },
     }
   );
