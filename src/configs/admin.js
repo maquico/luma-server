@@ -130,7 +130,9 @@ const initializeAdminJS = async () => {
   const sessionStore = new ConnectSession({
     conObject: {
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.NODE_ENV === 'production',
+      ssl: {
+        rejectUnauthorized: false, 
+    },
     },
     tableName: 'session',
     createTableIfMissing: true,

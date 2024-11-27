@@ -11,14 +11,11 @@ const upload = multer({
     limits: { fileSize: 6 * 1024 * 1024 } // Limit to 6MB
   });
 
-// Define the route with multer middleware
-router.post('/upload', upload.single('image'), badgeController.uploadBadgeImage);
-
 router.post('/', upload.single('image'), badgeController.create);
 router.get('/', badgeController.get);
 router.get('/:id', badgeController.getById);
 router.get('/id-client/:id', badgeController.getByIdClient);
-router.put('/:id', badgeController.update);
+router.put('/:id', upload.single('image'), badgeController.update);
 router.delete('/:id', badgeController.deleteById);
 
 export default router;
