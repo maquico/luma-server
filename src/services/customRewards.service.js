@@ -95,10 +95,10 @@ async function getById(id) {
     return { data, error };
 }
 
-async function getByProject(projectId) {
+async function getByProject(projectId, columns='*') {
     const { data, error } = await supabase
         .from('Recompensas')
-        .select('*')
+        .select(columns)
         .eq('Proyecto_ID', projectId)
     return { data, error };
 }
@@ -135,7 +135,7 @@ async function getByUserShop(userId) {
     //console.log(projectIds);
 
     // Fetch all recompensas for each project ID
-    const recompensasPromises = projectIds.map(projectId => getByProject(projectId));
+    const recompensasPromises = projectIds.map(projectId => getByProject(projectId, '*, Iconos(nombre, foto)'));
     const recompensasResults = await Promise.all(recompensasPromises);
 
     //console.log(recompensasResults);
@@ -161,7 +161,11 @@ async function getByUserShop(userId) {
             totalBought: customRewardBought,
             totalCapacity: reward.limite,
             metadata: {
-                icon: reward.Icono_ID,
+                icon: {
+                    id: reward.Icono_ID,
+                    name: reward.Iconos.nombre,
+                    image: reward.Iconos.foto,
+                },
                 description: reward.descripcion,
                 projectId: reward.Proyecto_ID,
             },
