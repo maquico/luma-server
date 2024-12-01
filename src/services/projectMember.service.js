@@ -15,13 +15,13 @@ async function create(projectId, userId, rolId) {
   return { data, error };
 }
 
-async function update(projectId, userId, rolId, gemas) {
+async function update(projectId, userId, roleId, gemas) {
   const { data, error } = await supabase
     .from('Miembro_Proyecto')
     .update({
       Proyecto_ID: projectId,
       Usuario_ID: userId,
-      Rol_ID: rolId,
+      Rol_ID: roleId,
       gemas: gemas,
     })
     .eq('Proyecto_ID', projectId)
@@ -100,9 +100,53 @@ async function checkMemberRole(userId, projectId, roleName) {
   return { data: hasRole, error: null };
 }
 
+
+// Update member role function calling the psql function
+async function updateMemberRole(projectId, userId, roleId, requestUserId){
+  const functionParams = {
+    p_project_id: projectId,
+    p_user_id: userId,
+    p_role_id: roleId,
+    p_request_user_id: requestUserId
+  };
+
+  const { data, error } = await supabase.rpc('update_member_role', functionParams);
+  if (error) {
+    console.log(error);
+    return { data: null, error };
+  } else {
+       // Check the content of the data returned by the function
+    if (data.startsWith('Error:')) {
+      const errorObject = { message: data, status: 400 };
+      return { data: null, error: errorObject };
+    } else {
+      return {
+        data: {
+          message: `User ${userId} in project ${projectId} currently has role ${roleId}`,
+          function_data: data,
+        },
+        error: null,
+      };
+    }
+  }
+}
+
+// async function checkAtLeastOneLeader(projectId) {
+//   const { data, error } = await getByProjectId(projectId);
+//   if (error) {
+//     console.error("Error verifying if at least one leader exists", error);
+//     return { data: null, error };
+//   }
+//   
+//   // check if at least one leader exists
+//   const hasLeader = data.some((member) => member.Roles.nombre === 'Lider');
+//   return { data: hasLeader, error: null };
+// }
+
 export default {
   create,
   update,
+  updateMemberRole,
   eliminate,
   getMiembros,
   getByUserProject,

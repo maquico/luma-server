@@ -59,6 +59,35 @@ const update = async (req, res) => {
     }
 }
 
+//Controller using update service with try catch for error handling
+const updateRole = async (req, res) => {
+    /* #swagger.tags = ['Project Members']
+         #swagger.description = 'Endpoint para actualizar el rol de un miembro de un proyecto.'
+            #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos del miembro',
+                required: true,
+                schema: {
+                    projectId: 1,
+                    userId: 'u12ms2i919al',
+                    roleId: 1,
+                    requestUserId: 'u12ms2i919al'
+                }
+            }
+    */
+    try {
+        const { projectId, userId, roleId, requestUserId } = req.body;
+        const { data, error } = await member.updateMemberRole(projectId, userId, roleId, requestUserId);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
 // Controller using eliminate service with try catch for error handling
 const eliminate = async (req, res) => {
     /* #swagger.tags = ['Project Members']
@@ -77,9 +106,8 @@ const eliminate = async (req, res) => {
         const { projectId, userId } = req.body;
         const { data, error } = await member.eliminate(projectId, userId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -95,9 +123,8 @@ const getMiembros = async (req, res) => {
     try {
         const { data, error } = await member.getMiembros();
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -126,9 +153,8 @@ const getByUserProject = async (req, res) => {
         const { projectId, userId } = req.params;
         const { data, error } = await member.getByUserProject(userId, projectId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -151,9 +177,8 @@ const getByUserId = async (req, res) => {
         const { userId } = req.params;
         const { data, error } = await member.getByUserId(userId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -175,9 +200,8 @@ const getProjectsIdsByUserId = async (req, res) => {
         const { userId } = req.params;
         const { data, error } = await member.getProjectsIdsByUserId(userId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -200,9 +224,8 @@ const getByProjectId = async (req, res) => {
         const { projectId } = req.params;
         const { data, error } = await member.getByProjectId(projectId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -213,6 +236,7 @@ const getByProjectId = async (req, res) => {
 export default {
     create,
     update,
+    updateRole,
     eliminate,
     getMiembros,
     getByUserProject,

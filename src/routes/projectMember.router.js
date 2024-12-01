@@ -4,6 +4,7 @@ import projectMemberController from '../controllers/projectMember.controller.js'
 const router = Router();
 router.post("/", projectMemberController.create);
 router.put("/", projectMemberController.update);
+router.put("/role", projectMemberController.updateRole);
 router.delete("/", projectMemberController.eliminate);
 router.get("/", projectMemberController.getMiembros);
 router.get("/user/:userId/project/:projectId", projectMemberController.getByUserProject);
