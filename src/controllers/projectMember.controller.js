@@ -1,4 +1,3 @@
-import { request } from 'express';
 import member from '../services/projectMember.service.js'
 
 // Controller using create service with try catch for error handling
@@ -20,9 +19,8 @@ const create = async (req, res) => {
         const { projectId, userId, rolId } = req.body;
         const { data, error } = await member.create(projectId, userId, rolId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(201).send(data);
     } catch (error) {
@@ -50,9 +48,8 @@ const update = async (req, res) => {
         const { projectId, userId, rolId, gemas } = req.body;
         const { data, error } = await member.update(projectId, userId, rolId, gemas);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {

@@ -1,4 +1,5 @@
 import supabaseConfig from "../configs/supabase.js";
+import memberService from './projectMember.service.js';
 const { supabase } = supabaseConfig;
 
 async function create(nombre, descripcion, userId) {
@@ -26,25 +27,52 @@ async function create(nombre, descripcion, userId) {
     return { data: project, error: null };
 }
 
-async function update(nombre, descripcion, id) {
+async function update(nombre, descripcion, projectId, requestUserId) {
+    const { data: isLeader, error: leaderError } = await memberService.checkMemberRole(requestUserId, projectId, "Lider");
+    if (leaderError) {
+        console.error('Error al verificar si el usuario es líder:', leaderError);
+        return { data: null, error: leaderError };
+    }
+
+    if (!isLeader) {
+        const errorObject = { message: 'El usuario no tiene permisos para editar el proyecto.', status: 403 };
+        return { data: null, error: errorObject };
+    }
+
+    const currentTimestamp = new Date().toISOString();
     const { data, error } = await supabase
         .from('Proyectos')
         .update({
             nombre: nombre,
             descripcion: descripcion,
+            fechaModificacion: currentTimestamp
         })
-        .eq('Proyecto_ID', id)
+        .eq('Proyecto_ID', projectId)
         .select()
     return { data, error };
 }
 
-async function eliminate(id) {
+async function eliminate(projectId, requestUserId) {
+
+    // Check if the user trying to delete is a leader of the project
+    const { data: isLeader, error: leaderError } = await memberService.checkMemberRole(requestUserId, projectId, "Lider");
+    if (leaderError) {
+        console.error('Error al verificar si el usuario es líder:', leaderError);
+        return { data: null, error: leaderError };
+    }
+
+    if (!isLeader) {
+        const errorObject = { message: 'El usuario no tiene permisos para eliminar el proyecto.', status: 403 };
+        return { data: null, error: errorObject };
+    }
+
     const { data, error } = await supabase
         .from('Proyectos')
         .update({
             eliminado: true
         })
-        .eq('Proyecto_ID', id)
+        .eq('Proyecto_ID', projectId)
+        .select()
     return { data, error };
 }
 
@@ -214,40 +242,7 @@ async function getByUser(userId) {
     return { Proyectos, error: null };
 }
 
-// async function getByUser(userId) {
-//     // Primero, obtenemos los IDs de los proyectos en los que el usuario está involucrado
-//     const { data: proyectoIds, error: errorIds } = await supabase
-//         .from('Miembro_Proyecto')
-//         .select('Proyecto_ID')
-//         .eq('Usuario_ID', userId);
 
-//     if (errorIds) {
-//         console.error('Error al obtener IDs de proyectos:', errorIds);
-//         return { Proyectos: null, error: errorIds };
-//     }
-
-//     // Si no hay proyectos asociados, devolvemos un array vacío
-//     if (!proyectoIds || proyectoIds.length === 0) {
-//         return { Proyectos: [], error: null };
-//     }
-
-//     // Extraemos los IDs en un array simple
-//     const ids = proyectoIds.map(item => item.Proyecto_ID);
-
-//     // Luego, usamos esos IDs para obtener los proyectos
-//     const { data: Proyectos, error } = await supabase
-//         .from('Proyectos')
-//         .select('*')
-//         .in('Proyecto_ID', ids);
-
-//     if (error) {
-//         console.error('Error al obtener proyectos:', error);
-//     } else {
-//         console.log('Proyectos del usuario:', Proyectos);
-//     }
-
-//     return { Proyectos, error };
-// }
 
 export default {
     create,

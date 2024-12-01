@@ -19,8 +19,8 @@ const create = async (req, res) => {
         const { nombre, descripcion, userId } = req.body;
         const { data, error } = await project.create(nombre, descripcion, userId);
         if (error) {
-            console.log("Supabase error code: ", error.code);
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(201).send(data);
     } catch (error) {
@@ -39,17 +39,17 @@ const update = async (req, res) => {
                 schema: {
                     nombre: 'Proyecto',
                     descripcion: 'Descripcion',
-                    id: 1
+                    projectId: 1,
+                    requestUserId: 'u12ms2i919al'
                 }
             }
     */
     try {
-        const { nombre, descripcion, id } = req.body;
-        const { data, error } = await project.update(nombre, descripcion, id);
+        const { nombre, descripcion, projectId, requestUserId } = req.body;
+        const { data, error } = await project.update(nombre, descripcion, projectId, requestUserId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -61,20 +61,22 @@ const update = async (req, res) => {
 const eliminate = async (req, res) => {
     /* #swagger.tags = ['Projects']
        #swagger.description = 'Endpoint para eliminar un proyecto.'
-       #swagger.parameters['id'] = {
-                in: 'path',
-                description: 'Id del proyecto',
+       #swagger.parameters['obj'] = {
+                in: 'body',
+                description: 'Datos del proyecto',
                 required: true,
-                type: 'integer'
-        }      
+                schema: {
+                    projectId: 1,
+                    requestUserId: 'u12ms2i919al'
+                }
+            }    
     */
     try {
-        const { id } = req.params;
-        const { data, error } = await project.eliminate(id);
+        const { projectId, requestUserId } = req.body;
+        const { data, error } = await project.eliminate(projectId, requestUserId);
         if (error) {
-            const errorStatusCode = parseInt(error.status, 10)
-            console.log(errorStatusCode);
-            return res.status(errorStatusCode).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -90,8 +92,8 @@ const getProyectos = async (req, res) => {
     try {
         const { data, error } = await project.getProyectos();
         if (error) {
-            console.log("Supabase error code: ", error.code);
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -114,8 +116,8 @@ const getById = async (req, res) => {
         const { id } = req.params;
         const { data, error } = await project.getById(id);
         if (error) {
-            console.log("Supabase error code: ", error.code);
-            return res.status(500).send(error.message);
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
         }
         return res.status(200).send(data);
     } catch (error) {
@@ -146,8 +148,6 @@ const getByUser = async (req, res) => {
         return res.status(500).send(error.message);
     }
 }
-
-
 
 export default {
     create,
