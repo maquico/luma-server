@@ -20,6 +20,7 @@ import badgeObtainedRouter from './src/routes/badgeObtained.router.js';
 import rolesRouter from './src/routes/roles.router.js';
 import commentsRouter from './src/routes/comments.router.js';
 import dashboardRouter from './src/routes/dashboard.router.js';
+import iconRouter from './src/routes/icon.router.js';
 import { serve, setup } from 'swagger-ui-express';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
@@ -145,6 +146,7 @@ const start = async () => {
   app.use('/api/roles', rolesRouter);
   app.use('/api/comments', commentsRouter);
   app.use('/api/dashboard', dashboardRouter);
+  app.use('/api/icon', iconRouter);
 
   app.get('/', (req, res) => res.redirect(admin.options.rootPath));
 
