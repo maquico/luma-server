@@ -122,7 +122,7 @@ async function updateMemberRole(projectId, userId, roleId, requestUserId){
     } else {
       return {
         data: {
-          message: `User ${userId} in project ${projectId} currently has role ${roleId}`,
+          message: `User ${userId} in project ${projectId} now has role ${roleId}`,
           function_data: data,
         },
         error: null,
@@ -131,17 +131,34 @@ async function updateMemberRole(projectId, userId, roleId, requestUserId){
   }
 }
 
-// async function checkAtLeastOneLeader(projectId) {
-//   const { data, error } = await getByProjectId(projectId);
-//   if (error) {
-//     console.error("Error verifying if at least one leader exists", error);
-//     return { data: null, error };
-//   }
-//   
-//   // check if at least one leader exists
-//   const hasLeader = data.some((member) => member.Roles.nombre === 'Lider');
-//   return { data: hasLeader, error: null };
-// }
+// Update member role function calling the psql function
+async function deleteMemberClient(projectId, userId, requestUserId){
+  const functionParams = {
+    p_project_id: projectId,
+    p_user_id: userId,
+    p_request_user_id: requestUserId
+  };
+
+  const { data, error } = await supabase.rpc('delete_member_from_project', functionParams);
+  if (error) {
+    console.log(error);
+    return { data: null, error };
+  } else {
+       // Check the content of the data returned by the function
+    if (data.startsWith('Error:')) {
+      const errorObject = { message: data, status: 400 };
+      return { data: null, error: errorObject };
+    } else {
+      return {
+        data: {
+          message: `User ${userId} removed from project ${projectId} `,
+          function_data: data,
+        },
+        error: null,
+      };
+    }
+  }
+}
 
 export default {
   create,
@@ -154,4 +171,5 @@ export default {
   getByProjectId,
   getProjectsIdsByUserId,
   checkMemberRole,
+  deleteMemberClient,
 };

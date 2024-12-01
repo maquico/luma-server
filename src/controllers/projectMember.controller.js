@@ -1,8 +1,9 @@
+import { request } from 'express';
 import member from '../services/projectMember.service.js'
 
 // Controller using create service with try catch for error handling
 const create = async (req, res) => {
-    /* #swagger.tags = ['Project Members']
+    /* #swagger.tags = ['Admin / Project Members']
          #swagger.description = 'Endpoint para agregar un miembro a un proyecto.'
             #swagger.parameters['obj'] = {
                 in: 'body',
@@ -31,7 +32,7 @@ const create = async (req, res) => {
 
 //Controller using update service with try catch for error handling
 const update = async (req, res) => {
-    /* #swagger.tags = ['Project Members']
+    /* #swagger.tags = ['Admin / Project Members']
          #swagger.description = 'Endpoint para actualizar un miembro de un proyecto.'
             #swagger.parameters['obj'] = {
                 in: 'body',
@@ -90,21 +91,48 @@ const updateRole = async (req, res) => {
 
 // Controller using eliminate service with try catch for error handling
 const eliminate = async (req, res) => {
-    /* #swagger.tags = ['Project Members']
-         #swagger.description = 'Endpoint para eliminar un miembro de un proyecto.'
-            #swagger.parameters['obj'] = {
-                in: 'body',
-                description: 'Datos del miembro',
-                required: true,
-                schema: {
-                    projectId: 1,
-                    userId: 'u12ms2i919al'
-                }
-            }
+    /* #swagger.tags = ['Admin / Project Members']
+       #swagger.description = 'Endpoint para eliminar un miembro de un proyecto (admin)'
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos del miembro',
+           required: true,
+           schema: {
+               projectId: 1,
+               userId: 'u12ms2i919al'
+           }
+       }
     */
     try {
         const { projectId, userId } = req.body;
         const { data, error } = await member.eliminate(projectId, userId);
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+const deleteMemberClient = async (req, res) => {
+    /* #swagger.tags = ['Project Members']
+       #swagger.description = 'Endpoint para eliminar un miembro de un proyecto. Para ser consumido por el cliente'
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos del miembro',
+           required: true,
+           schema: {
+               projectId: 1,
+               userId: 'u12ms2i919al',
+               requestUserId: 'u12ms2i919al'
+           }
+       }
+    */
+    try {
+        const { projectId, userId, requestUserId } = req.body;
+        const { data, error } = await member.deleteMemberClient(projectId, userId, requestUserId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
@@ -238,6 +266,7 @@ export default {
     update,
     updateRole,
     eliminate,
+    deleteMemberClient,
     getMiembros,
     getByUserProject,
     getByUserId,
