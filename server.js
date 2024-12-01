@@ -153,7 +153,7 @@ const start = async () => {
       console.log(`dev [ Luma - Backoffice ] started on http://${process.env.HOST}${admin.options.rootPath}`);
     }
     else {
-      console.log(`prod [ Luma - Backoffice ] started on https://${process.env.HOST}:${process.env.PORT}${admin.options.rootPath}`);
+      console.log(`prod [ Luma - Backoffice ] started on https://${process.env.HOST}${admin.options.rootPath}`);
     }
   });
 };
