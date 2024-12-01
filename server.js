@@ -149,7 +149,12 @@ const start = async () => {
   app.get('/', (req, res) => res.redirect(admin.options.rootPath));
 
   app.listen(PORT, () => {
-    console.log(`AdminJS started on http://${process.env.HOST}${admin.options.rootPath}`);
+    if (process.env.NODE_ENV !== 'production'){
+      console.log(`dev [ Luma - Backoffice ] started on http://${process.env.HOST}${admin.options.rootPath}`);
+    }
+    else {
+      console.log(`prod [ Luma - Backoffice ] started on https://${process.env.HOST}:${process.env.PORT}${admin.options.rootPath}`);
+    }
   });
 };
 
