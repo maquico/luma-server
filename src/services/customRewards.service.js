@@ -54,14 +54,16 @@ async function create(projectId, iconoId, nombre, descripcion, precio, cantidad,
     return { data, error };
 }
 
-
-
-async function eliminate(id) {
-    const { error } = await supabase
+async function eliminate(rewardId) {
+    const { data, error } = await supabase
         .from('Recompensas')
-        .delete()
-        .eq('Recompensa_ID', id)
-    return { error };
+        .update({
+            eliminado: true
+        })
+        .eq('Recompensa_ID', rewardId)
+        .eq('eliminado', false)
+        .select()
+    return { data, error };
 }
 
 async function update(iconoId, nombre, descripcion, precio, cantidad, limite, id) {
@@ -76,6 +78,7 @@ async function update(iconoId, nombre, descripcion, precio, cantidad, limite, id
             limite: limite,
         })
         .eq('Recompensa_ID', id)
+        .eq('eliminado', false)
         .select()
     return { data, error };
 }
@@ -84,6 +87,7 @@ async function getRecompensas() {
     const { data, error } = await supabase
         .from('Recompensas')
         .select('*')
+        .eq('eliminado', false)
     return { data, error };
 }
 
@@ -92,6 +96,7 @@ async function getById(id) {
         .from('Recompensas')
         .select('*')
         .eq('Recompensa_ID', id)
+        .eq('eliminado', false)
     return { data, error };
 }
 
@@ -100,6 +105,7 @@ async function getByProject(projectId, columns='*') {
         .from('Recompensas')
         .select(columns)
         .eq('Proyecto_ID', projectId)
+        .eq('eliminado', false)
     return { data, error };
 }
 
@@ -193,6 +199,7 @@ async function buyCustomReward(userId, rewardId) {
         .from('Recompensas')
         .select('precio, limite, totalCompras, cantidad, Proyecto_ID')
         .eq('Recompensa_ID', rewardId)
+        .eq('eliminado', false)
         .single();
 
     if (rewardError) {

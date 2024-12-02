@@ -80,12 +80,12 @@ const eliminate = async (req, res) => {
     */
     try {
         const { id } = req.body;
-        const { error } = await rewards.eliminate(id);
+        const { data, error } = await rewards.eliminate(id);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
-        return res.status(200).send('Recompensa eliminada');
+        return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send(error.message);
     }
