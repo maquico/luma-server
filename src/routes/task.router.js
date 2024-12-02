@@ -12,5 +12,6 @@ router.put('/:id', taskController.update);
 router.delete('/:id', taskController.deleteById);
 router.put('/status/:id', taskController.updateTaskStatus);
 router.get('/approved/:id', taskController.approvedTasksByProject);
+router.put('/byRol/:id', taskController.updateByRole);
 
 export default router;
