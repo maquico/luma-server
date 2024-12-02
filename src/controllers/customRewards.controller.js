@@ -1,3 +1,4 @@
+import { request } from 'express';
 import rewards from '../services/customRewards.service.js'
 
 // Controller using createAdmin service with try catch for error handling
@@ -74,18 +75,19 @@ const eliminate = async (req, res) => {
             description: 'Datos de la recompensa',
             required: true,
             schema: {
-              id: 123456
+              rewardId: 123456,
+              requestUserId: 'u12ms2i919al'
             }
         }
     */
     try {
-        const { id } = req.body;
-        const { error } = await rewards.eliminate(id);
+        const { rewardId, requestUserId } = req.body;
+        const { data, error } = await rewards.eliminate(rewardId, requestUserId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
-        return res.status(200).send('Recompensa eliminada');
+        return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send(error.message);
     }
@@ -106,13 +108,21 @@ const update = async (req, res) => {
                precio: 100,
                cantidad: 10,
                limite: 5,
-               id: 123456
+               rewardId: 123456,
+               requestUserId: 'u12ms2i919al'
            }
        }   
     */
     try {
-        const { iconoId, nombre, descripcion, precio, cantidad, limite, id } = req.body;
-        const { data, error } = await rewards.update(iconoId, nombre, descripcion, precio, cantidad, limite, id);
+        const { iconoId, nombre, descripcion, precio, cantidad, limite, rewardId, requestUserId } = req.body;
+        const { data, error } = await rewards.update(iconoId,
+                                                    nombre, 
+                                                    descripcion, 
+                                                    precio, 
+                                                    cantidad, 
+                                                    limite, 
+                                                    rewardId, 
+                                                    requestUserId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
