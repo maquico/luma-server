@@ -54,7 +54,25 @@ async function create(projectId, iconoId, nombre, descripcion, precio, cantidad,
     return { data, error };
 }
 
-async function eliminate(rewardId) {
+async function eliminate(rewardId, requestUserId) {
+    // get project id from reward id
+    const { data: rewardData, error: rewardError } = await getById(rewardId, 'Proyecto_ID');
+    if (rewardError) {
+        console.error('Error al obtener la recompensa:', rewardError);
+        return { data: null, error: rewardError };
+    }
+
+    const projectId = rewardData[0].Proyecto_ID;
+    const { data: isLeader, error: leaderError } = await projectMemberService.checkMemberRole(requestUserId, projectId, "Lider");
+    if (leaderError) {
+        console.error('Error al verificar si el usuario es líder:', leaderError);
+        return { data: null, error: leaderError };
+    }
+
+    if (!isLeader) {
+        const errorObject = { message: 'El usuario no tiene permisos para editar el proyecto.', status: 403 };
+        return { data: null, error: errorObject };
+    }
     const { data, error } = await supabase
         .from('Recompensas')
         .update({
@@ -66,7 +84,26 @@ async function eliminate(rewardId) {
     return { data, error };
 }
 
-async function update(iconoId, nombre, descripcion, precio, cantidad, limite, id) {
+async function update(iconoId, nombre, descripcion, precio, cantidad, limite, rewardId, requestUserId) {
+    // get project id from reward id
+    const { data: rewardData, error: rewardError } = await getById(rewardId, 'Proyecto_ID');
+    if (rewardError) {
+        console.error('Error al obtener la recompensa:', rewardError);
+        return { data: null, error: rewardError };
+    }
+
+    const projectId = rewardData[0].Proyecto_ID;
+    const { data: isLeader, error: leaderError } = await projectMemberService.checkMemberRole(requestUserId, projectId, "Lider");
+    if (leaderError) {
+        console.error('Error al verificar si el usuario es líder:', leaderError);
+        return { data: null, error: leaderError };
+    }
+
+    if (!isLeader) {
+        const errorObject = { message: 'El usuario no tiene permisos para editar el proyecto.', status: 403 };
+        return { data: null, error: errorObject };
+    }
+
     const { data, error } = await supabase
         .from('Recompensas')
         .update({
@@ -77,7 +114,7 @@ async function update(iconoId, nombre, descripcion, precio, cantidad, limite, id
             cantidad: cantidad,
             limite: limite,
         })
-        .eq('Recompensa_ID', id)
+        .eq('Recompensa_ID', rewardId)
         .eq('eliminado', false)
         .select()
     return { data, error };
@@ -91,10 +128,10 @@ async function getRecompensas() {
     return { data, error };
 }
 
-async function getById(id) {
+async function getById(id, columns='*') {
     const { data, error } = await supabase
         .from('Recompensas')
-        .select('*')
+        .select(columns)
         .eq('Recompensa_ID', id)
         .eq('eliminado', false)
     return { data, error };
