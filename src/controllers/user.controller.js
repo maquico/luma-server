@@ -75,8 +75,8 @@ const sendOtp = async (req, res) => {
     const { email } = req.body;
     const { data, error } = await user.sendOtp(email);
     if (error) {
-                  const statusCode = error.status ? parseInt(error.status) : 500;
-            return res.status(statusCode).send(error.message);
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -102,8 +102,8 @@ const verifyOtp = async (req, res) => {
     const { email, token } = req.body;
     const { data, error } = await user.verifyOtp(email, token);
     if (error) {
-                  const statusCode = error.status ? parseInt(error.status) : 500;
-            return res.status(statusCode).send(error.message);
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
     }
     return res.status(200).send(data);
   } catch (error) {
@@ -130,7 +130,7 @@ const getByIdAdmin = async (req, res) => {
     const { columns } = req.query; // Extract columns from the query parameters
 
     const { data, error } = await user.getById(id, columns || '*'); // Pass columns if available, otherwise default to '*'
-    
+
     if (error) {
       const statusCode = error.status ? parseInt(error.status) : 500;
       return res.status(statusCode).send(error.message);
@@ -154,8 +154,8 @@ const getById = async (req, res) => {
   try {
     const { id } = req.params;
     const columns = "Usuario_ID,nombre,apellido,correo,nivel,monedas,foto,Idioma_ID"
-    const { data, error } = await user.getById(id, columns); 
-    
+    const { data, error } = await user.getById(id, columns);
+
     if (error) {
       const statusCode = error.status ? parseInt(error.status) : 500;
       return res.status(statusCode).send(error.message);
@@ -224,7 +224,7 @@ const updateCustomUser = async (req, res) => {
   */
   try {
     const { id } = req.params; // Extract user ID from URL
-    let updateFields = { ...req.body }; 
+    let updateFields = { ...req.body };
 
     // Prevent the following fields from being updated
     const restrictedFields = ['correo', 'contraseña', 'Usuario_ID', 'foto', 'ultimoInicioSesion'];
@@ -268,13 +268,13 @@ const updateAuthUser = async (req, res) => {
       const statusCode = error.status ? parseInt(error.status) : 500;
       return res.status(statusCode).send(error.message);
     }
-  
+
     return res.status(200).send(data);
   } catch (error) {
     return
   }
 };
-  
+
 
 const resetEmail = async (req, res) => {
   /* #swagger.tags = ['User']
@@ -368,33 +368,63 @@ const update = async (req, res) => {
     const { id } = req.body;
     const userImage = req.file; // Use req.file for file uploads
     if (userImage) {
-        // Log the file details for debugging
-        console.log('File received:', userImage)
-        // Extract file name and type
-        const fileName = `${id}-${userImage.originalname}`;
-        const mimeType = userImage.mimetype;
-        const fileBuffer = userImage.buffer.toString('base64');
-        // Define the file path and bucket name
-        const filePath = 'avatars/';
-        const bucketName = 'luma-assets'
-        // Upload the file using the uploadFile function
-        const { signedUrl, success, error: uploadError } = await uploadFile(fileBuffer, fileName, mimeType, filePath, bucketName)
-        if (!success) {
-            return res.status(500).send({ message: 'Error uploading file', uploadError });
-        }
-        imageSignedUrl = signedUrl;
+      // Log the file details for debugging
+      console.log('File received:', userImage)
+      // Extract file name and type
+      const fileName = `${id}-${userImage.originalname}`;
+      const mimeType = userImage.mimetype;
+      const fileBuffer = userImage.buffer.toString('base64');
+      // Define the file path and bucket name
+      const filePath = 'avatars/';
+      const bucketName = 'luma-assets'
+      // Upload the file using the uploadFile function
+      const { signedUrl, success, error: uploadError } = await uploadFile(fileBuffer, fileName, mimeType, filePath, bucketName)
+      if (!success) {
+        return res.status(500).send({ message: 'Error uploading file', uploadError });
+      }
+      imageSignedUrl = signedUrl;
     }
     if (req.body.firstName) {
-        objFirstName = req.body.firstName;
+      objFirstName = req.body.firstName;
     }
     if (req.body.lastName) {
-        objLastName = req.body.lastName;
+      objLastName = req.body.lastName;
     }
     const updateFields = {
       nombre: objFirstName,
       apellido: objLastName,
       foto: imageSignedUrl
     };
+    const { data, error } = await user.update(id, updateFields);
+
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    }
+
+    return res.status(200).send(data);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
+const updateLang = async (req, res) => {
+  /* 
+     #swagger.tags = ['User']
+     #swagger.description = 'Endpoint para actualizar el idioma de un usuario (para el cliente).'
+     #swagger.parameters['obj'] = {
+         in: 'body',
+         description: 'Datos para actualizar el usuario',
+         required: true,
+         schema: {
+            Idioma_ID: 1,
+          }
+      }
+  */
+  try {
+    const { id } = req.params; // Extract user ID from URL
+    const updateFields = req.body; // Extract fields to update from request body
+
     const { data, error } = await user.update(id, updateFields);
 
     if (error) {
@@ -422,4 +452,5 @@ export default {
   resetEmail,
   deleteById,
   update,
+  updateLang,
 };

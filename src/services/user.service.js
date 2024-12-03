@@ -1,19 +1,19 @@
-import supabaseConfig from "../configs/supabase.js"; 
-const { supabase, supabaseAdmin } = supabaseConfig; 
+import supabaseConfig from "../configs/supabase.js";
+const { supabase, supabaseAdmin } = supabaseConfig;
 
 async function create(email, password, first_name, last_name) {
-  const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
         options: {
-          data: {
-            first_name: first_name,
-            last_name: last_name,
-          },
+            data: {
+                first_name: first_name,
+                last_name: last_name,
+            },
         },
-      })
-  error ? console.log(error) : console.log(`User created: ${data.user.email}`)
-  return { data, error };
+    })
+    error ? console.log(error) : console.log(`User created: ${data.user.email}`)
+    return { data, error };
 }
 
 async function getByEmail(email) {
@@ -28,28 +28,28 @@ async function getByEmail(email) {
 async function getById(id, columns = '*') {
     const { data, error } = await supabase
         .from('Usuarios')
-        .select(columns)  
+        .select(columns)
         .eq('Usuario_ID', id);
 
     error ? console.log(error) : console.log(`User found: ${data[0].correo}`)
     return { data, error };
 }
 
-async function sendOtp(email){
+async function sendOtp(email) {
     const { data, error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-          shouldCreateUser: false,
+            shouldCreateUser: false,
         },
     })
     error ? console.log(error) : console.log(`OTP sent to user: ${email}`)
     return { data, error };
 }
 
-async function verifyOtp(email, token){
+async function verifyOtp(email, token) {
     const { data, error } = await supabase.auth.verifyOtp({
-        email, 
-        token, 
+        email,
+        token,
         type: 'email'
     })
     error ? console.log(error) : console.log(`OTP verified for user: ${email}`)
@@ -90,7 +90,7 @@ async function updateAuth(userId, updateFields) {
 }
 
 async function update(userId, updateFields) {
-    let returnData = {message: "", data: {}};
+    let returnData = { message: "", data: {} };
 
     // Create update object based on provided fields
     const updateObject = {};
@@ -111,7 +111,7 @@ async function update(userId, updateFields) {
         .from('Usuarios')
         .update(updateObject)
         .eq('Usuario_ID', userId);
-    console.log( data, error);
+    console.log(data, error);
     if (error) {
         console.log("Error updating on supabase: ", error);
     } else {
@@ -143,12 +143,12 @@ async function get(columns = '*', getDeleted = true) {
 }
 
 async function deleteById(userId) {
-    let returnData = {message: "", data: {}};
+    let returnData = { message: "", data: {} };
     const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
         userId,
         true // enables soft delete 
     );
-    
+
     if (error) {
         console.log("Error deleting user on supabase: ", error);
     } else {
@@ -167,7 +167,7 @@ async function getByIds(userIds, columns = '*') {
 
     error ? console.log(error) : console.log(`Users found: ${JSON.stringify(data)}`)
     return { data, error };
-}   
+}
 
 export default {
     create,
