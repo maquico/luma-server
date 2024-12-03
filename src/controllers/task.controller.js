@@ -205,10 +205,15 @@ const deleteById = async (req, res) => {
     /* #swagger.tags = ['Admin / Task']
        #swagger.description = 'Endpoint para eliminar una tarea.'
        #swagger.parameters['id'] = { description: 'ID de la tarea', required: true }
+       #swagger.parameters['userid'] = { description: 'ID del usuario', required: true }
+       #swagger.parameters['projectid'] = { description: 'ID del proyecto', required: true }
     */
     try {
         const taskId = req.params.id;
-        const { data, error } = await task.deleteById(taskId);
+        const userid = req.params.userid;
+        const projectid = req.params.projectid;
+
+        const { data, error } = await task.deleteById(taskId, userid, projectid);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);

@@ -59,6 +59,9 @@ async function update(taskId, taskObj) {
         taskObj.etiquetas = processedTags;
     }
 
+    taskObj.valorGemas = currenciesAndPoints.calculateGemPrice(taskObj.prioridad, taskObj.tiempo);
+    taskObj.puntosExperiencia = currenciesAndPoints.calculateExperiencePoints(taskObj.prioridad, taskObj.tiempo);
+
     let returnData = { message: "", data: {} };
     const { data, error } = await supabase
         .from('Tareas')
@@ -182,21 +185,45 @@ async function get() {
     return { data, error };
 }
 
-async function deleteById(taskId) {
+async function deleteById(taskId, userId, projectId) {
+    const LIDER_ROLE_NAME = "Lider"; // Nombre del rol líder
+
+    // Verificar si el usuario tiene el rol de líder en el proyecto
+    const { data: hasRole, error: roleError } = await projectMemberService.checkMemberRole(userId, projectId, LIDER_ROLE_NAME);
+
+    if (roleError) {
+        console.error("Error al verificar el rol del usuario:", roleError);
+        return { data: null, error: roleError };
+    }
+
+    if (!hasRole) {
+        return {
+            data: null,
+            error: {
+                message: "Permiso denegado: solo los usuarios con el rol de líder pueden eliminar tareas.",
+                status: 403,
+            },
+        };
+    }
+
+    // Proceder con la eliminación si el usuario es líder
     let returnData = { message: "", data: {} };
     const { data, error } = await supabase
-        .from('Tareas')
+        .from("Tareas")
         .delete()
-        .eq('Tarea_ID', taskId);
+        .eq("Tarea_ID", taskId);
 
     if (error) {
-        console.log("Error deleting task on supabase: ", error);
-    } else {
-        returnData.message = `Task with id ${taskId} deleted`;
-        returnData.data.taskId = taskId;
+        console.error("Error al eliminar la tarea en Supabase:", error);
+        return { data: null, error };
     }
-    return { data: returnData, error };
+
+    returnData.message = `Tarea con ID ${taskId} eliminada correctamente.`;
+    returnData.data.taskId = taskId;
+
+    return { data: returnData, error: null };
 }
+
 
 async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
     let returnData = { message: "", data: {} };
