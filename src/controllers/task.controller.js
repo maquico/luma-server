@@ -205,10 +205,15 @@ const deleteById = async (req, res) => {
     /* #swagger.tags = ['Admin / Task']
        #swagger.description = 'Endpoint para eliminar una tarea.'
        #swagger.parameters['id'] = { description: 'ID de la tarea', required: true }
+       #swagger.parameters['userid'] = { description: 'ID del usuario', required: true }
+       #swagger.parameters['projectid'] = { description: 'ID del proyecto', required: true }
     */
     try {
         const taskId = req.params.id;
-        const { data, error } = await task.deleteById(taskId);
+        const userid = req.params.userid;
+        const projectid = req.params.projectid;
+
+        const { data, error } = await task.deleteById(taskId, userid, projectid);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
@@ -239,6 +244,56 @@ const approvedTasksByProject = async (req, res) => {
     }
 }
 
+
+// Controller using updateByRole service with try-catch for error handling
+const updateByRole = async (req, res) => {
+    /* #swagger.tags = ['Task']
+       #swagger.description = 'Endpoint para actualizar una tarea según el rol del usuario.'
+       #swagger.parameters['id'] = {
+           in: 'path',
+           type: 'string',
+           required: true,
+           description: 'ID of the user'
+       }
+       #swagger.parameters['obj'] = {
+           in: 'body',
+           description: 'Datos de la tarea',
+           required: true,
+           schema: {
+               Proyecto_ID: 1,
+               Task_ID: 1,
+               nombre: 'Task',
+               prioridad: 1,
+               tiempo: 120,
+               fechaInicio: '2021-09-01',
+               fechaFin: '2021-09-02',
+               Usuario_ID: 'UUID',
+               esCritica: false,
+               gastos: 100,
+               presupuesto: 200,
+               descripcion: 'Task description',
+               etiquetas: 'tag1,tag2'
+           }
+       }
+    */
+    try {
+        const taskObj = req.body; // El objeto de tarea recibido del cuerpo de la solicitud
+        const userId = req.params.id; // El ID del usuario extraído de los parámetros de la URL
+
+        // Usamos la función updateByRole del servicio con el objeto de tarea y el ID de usuario
+        const { data, error } = await task.updateByRole(taskObj, userId);
+
+        if (error) {
+            const statusCode = error.status ? parseInt(error.status) : 500;
+            return res.status(statusCode).send(error.message);
+        }
+
+        return res.status(200).send(data);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
 export default {
     create,
     get,
@@ -249,5 +304,6 @@ export default {
     update,
     updateTaskStatus,
     deleteById,
-    approvedTasksByProject
+    approvedTasksByProject,
+    updateByRole
 };

@@ -418,6 +418,7 @@ model Iconos {
   nombre            String        @db.VarChar(100)
   fechaRegistro     DateTime      @default(now()) @db.Timestamp(6)
   fechaModificacion DateTime?     @db.Timestamp(6)
+  foto              String?       @default("NULL")
   Recompensas       Recompensas[]
 
   @@schema("public")
@@ -542,10 +543,12 @@ model Recompensas {
   fechaRegistro         DateTime                @default(now()) @db.Timestamp(6)
   fechaModificacion     DateTime?               @db.Timestamp(6)
   totalCompras          Int                     @default(0)
+  eliminado             Boolean                 @default(false)
   Historial_Recompensas Historial_Recompensas[]
   Iconos                Iconos                  @relation(fields: [Icono_ID], references: [Icono_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Recompensas.Icono_ID")
   Proyectos             Proyectos               @relation(fields: [Proyecto_ID], references: [Proyecto_ID], onDelete: NoAction, onUpdate: NoAction, map: "FK_Recompensas.Proyecto_ID")
 
+  @@index([eliminado])
   @@schema("public")
 }
 
@@ -609,7 +612,6 @@ model Temas {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Usuarios {
-  Usuario_ID            String                  @id @unique @db.Uuid
   nombre                String                  @db.VarChar(100)
   apellido              String                  @db.VarChar(100)
   correo                String                  @db.VarChar(100)
@@ -625,6 +627,7 @@ model Usuarios {
   esAdmin               Boolean                 @default(false)
   Idioma_ID             Int?
   contrase_a            String?                 @map("contraseña") @db.VarChar(255)
+  Usuario_ID            String                  @id @unique @db.Uuid
   confirmado            Boolean                 @default(false)
   ultimoInicioSesion    DateTime?               @db.Timestamp(6)
   eliminado             Boolean                 @default(false)
@@ -641,6 +644,15 @@ model Usuarios {
 
   @@index([eliminado, Usuario_ID])
   @@index([eliminado])
+  @@schema("public")
+}
+
+model session {
+  sid    String   @id @db.VarChar
+  sess   Json     @db.Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
   @@schema("public")
 }
 
