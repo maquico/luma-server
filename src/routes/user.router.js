@@ -18,6 +18,7 @@ router.get('/admin/:id', userController.getByIdAdmin);
 router.get('/admin', userController.getAdmin);
 router.get('/:id', userController.getById);
 router.get('/', userController.getClient);
+router.get('/password/:id', userController.getEncryptedPassword);
 router.put('/custom/:id', userController.updateCustomUser);
 router.put('/auth/:id', userController.updateAuthUser);
 router.put('/email/reset', userController.resetEmail);

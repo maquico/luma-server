@@ -58,6 +58,31 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Use the getById service sending "contraseña" as a column to get the encrypted password
+const getEncryptedPassword = async (req, res) => {
+  /* #swagger.tags = ['User']
+        #swagger.description = 'Endpoint para obtener la contraseña encriptada de un usuario.'
+        #swagger.parameters['id'] = {
+            description: 'ID del usuario',
+            type: 'string',
+            required: true
+        }
+  */
+  try {
+    const { id } = req.params;
+    const columns = "contraseña";
+    const { data, error } = await user.getById(id, columns);
+    if (error) {
+      const statusCode = error.status ? parseInt(error.status) : 500;
+      return res.status(statusCode).send(error.message);
+    } else {
+      return res.status(200).send(data[0].contraseña);
+    }
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
 // Controller for sending otp
 const sendOtp = async (req, res) => {
   /* #swagger.tags = ['User']
@@ -447,6 +472,7 @@ export default {
   getById,
   getAdmin,
   getClient,
+  getEncryptedPassword,
   updateCustomUser,
   updateAuthUser,
   resetEmail,
