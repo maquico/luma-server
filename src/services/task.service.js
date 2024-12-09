@@ -58,9 +58,12 @@ async function update(taskId, taskObj) {
         const processedTags = tagsUtils.processTags(taskObj.etiquetas);
         taskObj.etiquetas = processedTags;
     }
+    
+    if (taskObj.prioridad && taskObj.tiempo) {
 
-    taskObj.valorGemas = currenciesAndPoints.calculateGemPrice(taskObj.prioridad, taskObj.tiempo);
-    taskObj.puntosExperiencia = currenciesAndPoints.calculateExperiencePoints(taskObj.prioridad, taskObj.tiempo);
+        taskObj.valorGemas = currenciesAndPoints.calculateGemPrice(taskObj.prioridad, taskObj.tiempo);
+        taskObj.puntosExperiencia = currenciesAndPoints.calculateExperiencePoints(taskObj.prioridad, taskObj.tiempo);
+    }
 
     let returnData = { message: "", data: {} };
     const { data, error } = await supabase
@@ -276,7 +279,12 @@ async function updateTaskStatus(taskId, projectId, newStatusId, userId) {
 
     }
     else if (newStatusId !== task.Estado_Tarea_ID) {
-        const { data, error: updateError } = await update(taskId, { Estado_Tarea_ID: newStatusId });
+        const updateObject = {
+            Estado_Tarea_ID: newStatusId,
+            prioridad: task.prioridad,
+            tiempo: task.tiempo,
+        };
+        const { data, error: updateError } = await update(taskId, updateObject);
 
         if (updateError) {
             console.log("Error updating task status on supabase: ", updateError);
