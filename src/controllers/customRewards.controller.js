@@ -187,7 +187,7 @@ const getByProject = async (req, res) => {
     */
     try {
         const { projectId } = req.params;
-        const { data, error } = await rewards.getByProject(projectId);
+        const { data, error } = await rewards.getByProject(projectId, "*, Iconos(Icono_ID, nombre, foto)");
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
