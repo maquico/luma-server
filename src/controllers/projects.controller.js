@@ -138,12 +138,12 @@ const getByUser = async (req, res) => {
     */
     try {
         const { userId } = req.params;
-        const { Proyectos, error } = await project.getByUser(userId);
+        const { data, error } = await project.getByUserId(userId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
-        return res.status(200).send(Proyectos);
+        return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send(error.message);
     }

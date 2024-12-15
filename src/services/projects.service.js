@@ -1,3 +1,4 @@
+import { query } from "express";
 import supabaseConfig from "../configs/supabase.js";
 import memberService from './projectMember.service.js';
 const { supabase } = supabaseConfig;
@@ -254,6 +255,53 @@ async function getByUser(userId) {
     return { Proyectos, error: null };
 }
 
+async function getByUserId2(userId) {
+    // Call the get_projects_user function in PostgreSQL
+    const startTime = Date.now(); // Record the start time
+    const { data, error } = await supabase
+        .rpc('get_user_projects', {
+            user_id: userId
+        });
+    const endTime = Date.now(); // Record the end time
+    const executionTime = endTime - startTime; // Calculate the execution time
+    console.log(`Query execution time: ${executionTime}ms`);
+    console.log('Data:', data);
+    return { data, error };
+}
+
+async function getByUserId(userId) {
+    const startTime = Date.now(); // Record the start time
+
+    // Call the get_user_projects function in PostgreSQL
+    const { data, error } = await supabase
+        .rpc('get_user_projects', {
+            user_id: userId
+        });
+
+    const endTime = Date.now(); // Record the end time
+
+    if (data) {
+        // Transform the keys to match your frontend expectations
+        const transformedData = data.map(project => ({
+            Proyecto_ID: project.proyecto_id,
+            nombre: project.nombre,
+            descripcion: project.descripcion,
+            fechaRegistro: project.fecharegistro,
+            members: project.members,
+            creator: project.creator,
+            currentUserGems: project.currentusergems,
+            queryingUserRole: project.queryinguserrole,
+        }));
+
+        const executionTime = endTime - startTime; // Calculate the execution time
+        console.log(`Query execution time: ${executionTime}ms`);
+        console.log('Transformed Data:', transformedData);
+        return { data: transformedData, error };
+    } else {
+        console.log('Error:', error);
+        return { data: null, error };
+    }
+}
 
 
 export default {
@@ -261,6 +309,7 @@ export default {
     getProyectos,
     getById,
     getByUser,
+    getByUserId,
     update,
     eliminate,
 }
