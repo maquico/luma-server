@@ -13,13 +13,14 @@ const create = async (req, res) => {
                 email: 'example@gmail.com',
                 password: 'password',
                 first_name: 'First',
-                last_name: 'Last'
+                last_name: 'Last',
+                invite_token: null
             }
         }
   */
   try {
-    const { email, password, first_name, last_name } = req.body;
-    const { data, error } = await user.create(email, password, first_name, last_name);
+    const { email, password, first_name, last_name, invite_token } = req.body;
+    const { data, error } = await user.create(email, password, first_name, last_name, invite_token);
     if (error) {
       const statusCode = error.status ? parseInt(error.status) : 500;
       return res.status(statusCode).send(error.message);
