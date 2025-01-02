@@ -1,7 +1,15 @@
 import supabaseConfig from "../configs/supabase.js";
 const { supabase, supabaseAdmin } = supabaseConfig;
 
-async function create(email, password, first_name, last_name) {
+const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
+
+async function create(email, password, first_name, last_name, inviteToken=null) {
+    
+    let redirectUrl = DOMAIN + "/account/login" 
+    if (inviteToken) {
+        redirectUrl = DOMAIN  + `/invite/${inviteToken}/login`   
+    }
+
     const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
@@ -10,8 +18,10 @@ async function create(email, password, first_name, last_name) {
                 first_name: first_name,
                 last_name: last_name,
             },
+            emailRedirectTo: redirectUrl
         },
     })
+
     error ? console.log(error) : console.log(`User created: ${data.user.email}`)
     return { data, error };
 }
