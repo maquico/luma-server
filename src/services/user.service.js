@@ -3,10 +3,11 @@ const { supabase, supabaseAdmin } = supabaseConfig;
 
 const DOMAIN = process.env.DOMAIN || 'http://localhost:5173';
 
-async function create(email, password, first_name, last_name, invite_token=null) {
+async function create(email, password, first_name, last_name, invite_token) {
     
     let redirectUrl = DOMAIN + "/account/login" 
     if (invite_token) {
+        console.log('Invite token provided on signup request', invite_token)
         redirectUrl = DOMAIN + `/invite/${invite_token}/login`   
     }
 
