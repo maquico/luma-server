@@ -34,6 +34,14 @@ async function obtenerRankingGemas(projectId) {
 
     if (errorRecompensas) throw errorRecompensas;
 
+    // Obtener tareas asignadas por usuario en el proyecto
+    const { data: tareas, error: errorTareas } = await supabase
+        .from('Tareas')
+        .select('Usuario_ID')
+        .eq('Proyecto_ID', projectId);
+
+    if (errorTareas) throw errorTareas;
+
     // Calcular total de gemas obtenidas por usuario
     const gemasGastadasPorUsuario = recompensas.reduce((acc, recompensa) => {
         const usuarioID = recompensa.Usuario_ID;
@@ -42,13 +50,25 @@ async function obtenerRankingGemas(projectId) {
         return acc;
     }, {});
 
+    // Calcular total de tareas asignadas por usuario
+    const tareasPorUsuario = tareas.reduce((acc, tarea) => {
+        const usuarioID = tarea.Usuario_ID;
+        if (!acc[usuarioID]) acc[usuarioID] = 0;
+        acc[usuarioID]++;
+        return acc;
+    }, {});
+
+    // Construir el ranking
     const ranking = miembros.map(miembro => {
         const gemasDisponibles = miembro.gemas || 0;
         const gemasGastadas = gemasGastadasPorUsuario[miembro.Usuario_ID] || 0;
         const gemasTotales = gemasDisponibles + gemasGastadas;
+        const totalTareas = tareasPorUsuario[miembro.Usuario_ID] || 0;
+
         return {
             Usuario_ID: miembro.Usuario_ID,
-            gemasTotales
+            gemasTotales,
+            totalTareas
         };
     });
 
@@ -58,9 +78,11 @@ async function obtenerRankingGemas(projectId) {
 
     return ranking.map(r => ({
         nombre: nombresMiembros.find(n => n.Usuario_ID === r.Usuario_ID).nombreCompleto,
-        gemasTotales: r.gemasTotales
+        gemasTotales: r.gemasTotales,
+        totalTareas: r.totalTareas
     })).sort((a, b) => b.gemasTotales - a.gemasTotales);
 }
+
 
 // 2. Conteo de tareas por estado
 async function obtenerConteoTareas(projectId) {
