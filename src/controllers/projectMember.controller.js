@@ -116,29 +116,24 @@ const eliminate = async (req, res) => {
 const deleteMemberClient = async (req, res) => {
     /* #swagger.tags = ['Project Members']
        #swagger.description = 'Endpoint para eliminar un miembro de un proyecto. Para ser consumido por el cliente'
-       #swagger.parameters['obj'] = {
-           in: 'body',
-           description: 'Datos del miembro',
-           required: true,
-           schema: {
-               projectId: 1,
-               userId: 'u12ms2i919al',
-               requestUserId: 'u12ms2i919al'
-           }
-       }
+       #swagger.parameters['projectId'] = { in: 'query', description: 'ID del proyecto', required: true }
+       #swagger.parameters['userId'] = { in: 'query', description: 'ID del usuario a eliminar', required: true }
+       #swagger.parameters['requestUserId'] = { in: 'query', description: 'ID del usuario que solicita la eliminación', required: true }
     */
     try {
-        const { projectId, userId, requestUserId } = req.body;
+        const { projectId, userId, requestUserId } = req.query; // Use req.query to access query parameters
         const { data, error } = await member.deleteMemberClient(projectId, userId, requestUserId);
+
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
         }
+
         return res.status(200).send(data);
     } catch (error) {
         return res.status(500).send(error.message);
     }
-}
+};
 
 // Controller using getMiembros service with try catch for error handling
 const getMiembros = async (req, res) => {
