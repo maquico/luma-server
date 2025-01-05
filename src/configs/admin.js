@@ -112,13 +112,13 @@ const initializeAdminJS = async () => {
       }
     ],
     branding: {
-      companyName: 'Luma - Backoffice', 
-      logo: '/assets/luma-logo.png',         
-      favicon: '',   
+      companyName: 'Luma - Backoffice',
+      logo: '/assets/luma-logo.png',
+      favicon: '/assets/luma-favicon.ico',
       theme: {
         colors: {
-          primary100: PURPLE, 
-          primary80: PURPLE,  
+          primary100: PURPLE,
+          primary80: PURPLE,
           primary60: PINK,
           accent: ORANGE,
         },
@@ -131,8 +131,8 @@ const initializeAdminJS = async () => {
     conObject: {
       connectionString: process.env.DATABASE_URL,
       ssl: {
-        rejectUnauthorized: false, 
-    },
+        rejectUnauthorized: false,
+      },
     },
     tableName: 'session',
     createTableIfMissing: true,
