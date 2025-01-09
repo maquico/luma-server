@@ -241,9 +241,43 @@ async function sendEmail(email, projectId) {
     try {
       const to = [email];
       const subject = 'Invitation to join project';
-      const html = '<p>Hello! You have been invited to join a project.</p>' 
-              + '<p>Click on the following link to accept the invitation: </p>'
-              + `<a href="${invitationData}">${invitationData}</a>`
+      const html = `<table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-spacing: 0; border-collapse: collapse; background-color: #ffffff; padding: 20px 0;">
+      <tr>
+        <td>
+          <table border="0" cellpadding="0" cellspacing="0" width="700" align="center" style="border-spacing: 0; border-collapse: collapse; margin: 0 auto; background-color: #ffffff; overflow: hidden;">
+            <tr>
+              <td style="background: linear-gradient(90deg, #a736f1, #f85e6f); padding: 40px; text-align: center; border-radius: 0 0 16px 16px ;">
+                <!-- Header section with gradient background -->
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 30px; text-align: center; color: #333;">
+                <h2 style="font-size: 24px; margin-bottom: 20px;">Hola</h2>
+                <p style="margin-bottom: 20px; line-height: 1.5;">
+                  Has sido invitado a unirte a un proyecto en Luma. Para aceptar la invitación y comenzar a colaborar con tu equipo, haz clic en el siguiente botón:
+                </p>
+                <div style="margin: 20px 0;">
+                  <a href="${invitationData}" style="display: inline-block; padding: 10px 20px; font-size: 18px; font-weight: bold; color: #ffffff; background-color: #f85e6f; border-radius: 4px; text-decoration: none;">Aceptar Invitación</a>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.5;">
+                  Si no esperabas recibir esta invitación o tienes alguna pregunta, contáctanos a través de [Correo de Soporte] o visita nuestra página de ayuda en [URL de la página de ayuda].
+                </p>
+                <p style="margin-bottom: 20px; line-height: 1.5;">Gracias por confiar en Luma.</p>
+                <p style="margin-bottom: 0; line-height: 1.5;">Saludos cordiales,<br />El equipo de Luma</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 20px; font-size: 12px; color: #666; text-align: center; background-color: #f3f3f3; border-radius: 16px 16px 0 0 ;">
+                <a href="#" style="color: #666; text-decoration: none; margin: 0 5px;">Preferencias</a> ·
+                <a href="#" style="color: #666; text-decoration: none; margin: 0 5px;">Términos</a> ·
+                <a href="#" style="color: #666; text-decoration: none; margin: 0 5px;">Privacidad</a> ·
+                <a href="#" style="color: #666; text-decoration: none; margin: 0 5px;">Iniciar sesión</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>`
       response = await sendMail(to, subject, html);
       errorObject = null;
     } catch (error) {
