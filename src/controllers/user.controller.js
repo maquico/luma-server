@@ -179,7 +179,7 @@ const getById = async (req, res) => {
   */
   try {
     const { id } = req.params;
-    const columns = "Usuario_ID,nombre,apellido,correo,nivel,monedas,foto,Idioma_ID"
+    const columns = "Usuario_ID,nombre,apellido,correo,experiencia,nivel,monedas,foto,Idioma_ID"
     const { data, error } = await user.getById(id, columns);
 
     if (error) {
