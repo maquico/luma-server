@@ -190,17 +190,19 @@ async function getByUserShop(userId) {
 
     // Map the recompensas with the custom rewards history
     const customRewardsMap = recompensas.map(reward => {
-        const customRewardHistory = customRewardsHistory.find(hist => hist.Recompensa_ID === reward.Recompensa_ID);
-        const customRewardBought = customRewardHistory ? customRewardHistory.cantidadComprada : 0;
-        const customRewardAvailable = customRewardBought < reward.limite && reward.totalCompras < reward.cantidad;
+        const customRewardHistory = customRewardsHistory.filter(hist => hist.Recompensa_ID === reward.Recompensa_ID);
+        const customRewardBought = customRewardHistory ? customRewardHistory.length: 0;
+        const customRewardIsAvailable = customRewardBought < reward.limite && reward.totalCompras < reward.cantidad;
+        const customRewardAvailable = reward.cantidad - reward.totalCompras;
 
         return {
             type: 'custom',
             id: reward.Recompensa_ID,
             name: reward.nombre,
             price: reward.precio,
-            available: customRewardAvailable,
-            totalAvailable: reward.cantidad,
+            available: customRewardIsAvailable,
+            totalCreated: reward.cantidad,
+            totalAvailable: customRewardAvailable,
             totalBought: customRewardBought,
             totalCapacity: reward.limite,
             metadata: {
