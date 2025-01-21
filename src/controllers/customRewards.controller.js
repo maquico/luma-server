@@ -209,8 +209,8 @@ const getByUserShop = async (req, res) => {
             }
     */
     try {
-        const { projectId, userId } = req.params;
-        const { data, error } = await rewards.getByUserShop(userId, projectId);
+        const { userId } = req.params;
+        const { data, error } = await rewards.getByUserShop(userId);
         if (error) {
             const statusCode = error.status ? parseInt(error.status) : 500;
             return res.status(statusCode).send(error.message);
